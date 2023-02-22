@@ -5,10 +5,13 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.config.TESConfig;
 import net.tslat.tes.core.particle.TESParticleManager;
 import net.tslat.tes.core.state.TESEntityTracking;
+import net.tslat.tes.networking.SyncEffectsPacket;
 
 public class TESClient implements ClientModInitializer {
 	@Override
@@ -26,5 +29,9 @@ public class TESClient implements ClientModInitializer {
 
 		TESParticleManager.tick();
 		TESEntityTracking.tick();
+	}
+
+	public static void sendPacket(ResourceLocation packetId, FriendlyByteBuf buffer) {
+		ClientPlayNetworking.send(packetId, buffer);
 	}
 }

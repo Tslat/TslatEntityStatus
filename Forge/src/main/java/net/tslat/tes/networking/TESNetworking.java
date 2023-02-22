@@ -21,7 +21,7 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 		}
 
 		if (rev.equals(REV)) {
-			EFFECTS_SYNCING_ENABLED = TESAPI.getConfig().hudPotionIcons();
+			EFFECTS_SYNCING_ENABLED = TESAPI.getConfig().hudPotionIcons() || TESAPI.getConfig().inWorldHudPotionIcons();
 
 			return true;
 		}
@@ -35,7 +35,7 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 		}
 
 		if (rev.equals(REV)) {
-			EFFECTS_SYNCING_ENABLED = TESAPI.getConfig().hudPotionIcons();
+			EFFECTS_SYNCING_ENABLED = TESAPI.getConfig().hudPotionIcons() || TESAPI.getConfig().inWorldHudPotionIcons();
 
 			return true;
 		}

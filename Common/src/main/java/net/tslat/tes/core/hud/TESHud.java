@@ -140,7 +140,7 @@ public class TESHud {
 
 		poseStack.pushPose();
 		poseStack.translate(position.x, position.y, position.z);
-		poseStack.translate(0, entity.getBbHeight() + 0.75f, 0);
+		poseStack.translate(0, entity.getBbHeight() + 0.5f, 0);
 
 		TESClientUtil.positionFacingCamera(poseStack);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180));
@@ -153,7 +153,7 @@ public class TESHud {
 			int offset = element.render(poseStack, mc, partialTick, entity, hudOpacity, true);
 
 			if (offset > 0)
-				poseStack.translate(0, -(4 + offset), 0);
+				poseStack.translate(0, -(2 + offset), 0);
 		}
 
 		RenderSystem.setShaderColor(1, 1, 1, 1);

@@ -59,7 +59,7 @@ public final class BuiltinHudElements {
 		boolean doSegments = inWorldHud ? config.inWorldBarsSegments() : config.hudHealthBarSegments();
 
 		poseStack.pushPose();
-		poseStack.translate(0, 2, 0);
+		poseStack.translate(0, inWorldHud ? 4 : 1, 0);
 
 		if (inWorldHud)
 			poseStack.translate(barWidth * -0.5f, 0, 0);
@@ -87,7 +87,7 @@ public final class BuiltinHudElements {
 
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-			TESClientUtil.drawColouredSquare(poseStack, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 2, 2, 0x090909 | (int)(opacity * 255 * 0.5f) << 24);
+			TESClientUtil.drawColouredSquare(poseStack, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 1, 9, 0x090909 | (int)(opacity * 255 * 0.5f) << 24);
 			TESClientUtil.drawText(poseStack, healthText, center - halfTextWidth, -1, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255));
 		}
 
@@ -111,6 +111,7 @@ public final class BuiltinHudElements {
 		if (armour <= 0)
 			return 0;
 
+		poseStack.pushPose();
 		float toughness = TESUtil.getArmourToughness(entity);
 		int textColour = FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255);
 
@@ -132,6 +133,8 @@ public final class BuiltinHudElements {
 
 		if (toughness > 0)
 			TESClientUtil.drawText(poseStack, "x" + TESUtil.roundToDecimal(toughness, 1), 43, 1, textColour);
+
+		poseStack.popPose();
 
 		return mc.font.lineHeight;
 	}
@@ -186,31 +189,41 @@ public final class BuiltinHudElements {
 		if (entityState == null || entityState.getEffects().isEmpty())
 			return 0;
 
-		int x = 0;
-		int y = 0;
+
+		int effectsSize = entityState.getEffects().size();
 		MobEffectTextureManager textureManager = mc.getMobEffectTextures();
 		int barLength = inWorldHud ? TESAPI.getConfig().inWorldBarsLength() : TESAPI.getConfig().hudHealthBarLength();
+		float maxX = barLength * 2f;
+		int iconsPerRow = (int)Math.floor(maxX / 18f);
+		int rows = (int)Math.ceil(effectsSize / (float)iconsPerRow);
+		int x = inWorldHud ? (Math.min(effectsSize, iconsPerRow) * -9) : 0;
+		int y = 0;
+		int i = 0;
 
 		poseStack.pushPose();
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		poseStack.scale(0.5f, 0.5f, 1);
 
+		if (inWorldHud)
+			poseStack.translate(0, Math.floor(effectsSize * 18 / maxX) * -18, 0);
+
 		for (ResourceLocation effectId : entityState.getEffects()) {
 			TextureAtlasSprite sprite = textureManager.get(BuiltInRegistries.MOB_EFFECT.get(effectId));
 
 			RenderSystem.setShaderTexture(0, sprite.atlasLocation());
-			GuiComponent.blit(poseStack, x, y, 0, 18, 18, sprite);
+			GuiComponent.blit(poseStack, i * 18 + x, y, 0, 18, 18, sprite);
 
-			x += 18;
-
-			if (x / 2f >= barLength - 9) {
-				x = 0;
+			if (++i >= iconsPerRow) {
+				i = 0;
 				y += 18;
+
+				if (inWorldHud && y / 18 == rows - 1)
+					x = (effectsSize % iconsPerRow) % iconsPerRow * -9;
 			}
 		}
 
 		poseStack.popPose();
 
-		return (int)(x / 2f);
+		return (int)Math.ceil(effectsSize / (float)iconsPerRow) * 9;
 	}
 }

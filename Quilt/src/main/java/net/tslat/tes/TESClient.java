@@ -2,6 +2,8 @@ package net.tslat.tes;
 
 import eu.midnightdust.lib.config.MidnightConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.config.TESConfig;
 import net.tslat.tes.core.particle.TESParticleManager;
@@ -28,5 +30,9 @@ public class TESClient implements ClientModInitializer {
 
 		TESParticleManager.tick();
 		TESEntityTracking.tick();
+	}
+
+	public static void sendPacket(ResourceLocation packetId, FriendlyByteBuf buffer) {
+		ClientPlayNetworking.send(packetId, buffer);
 	}
 }
