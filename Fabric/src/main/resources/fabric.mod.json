@@ -1,0 +1,38 @@
+{
+    "schemaVersion": 1,
+    "id": "tslatentitystatus",
+    "version": "${version}",
+  
+    "name": "TES",
+    "description": "View entity health and other statuses. Make smacking things fun again!",
+    "authors": [
+      "Tslat"
+    ],
+    "contact": {
+      "homepage": "",
+      "sources": "https://github.com/Tslat/TslatEntityStatus"
+    },
+  
+    "license": "MPL-2.0",
+    "icon": "",
+  
+    "environment": "*",
+    "entrypoints": {
+      "main": [
+        "net.tslat.tes.TES"
+      ],
+      "client": [
+        "net.tslat.tes.TESClient"
+      ]
+    },
+    "mixins": [
+      "tslatentitystatus.mixins.json"
+    ],
+    "depends": {
+      "fabricloader": ">=0.14",
+      "fabric": "*",
+      "minecraft": "1.19.x",
+      "java": ">=17"
+    }
+  }
+  
