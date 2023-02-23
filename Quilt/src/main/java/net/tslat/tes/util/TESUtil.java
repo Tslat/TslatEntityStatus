@@ -12,7 +12,6 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.monster.Enemy;
 import net.tslat.tes.api.TESEntityType;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.entity.multipart.api.EntityPart;
 
 import java.util.Map;
 
@@ -28,9 +27,6 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 
 			return livingEntity;
 		}
-
-		if (entity instanceof EntityPart<?> partEntity && partEntity.getOwner() instanceof LivingEntity parent)
-			return parent;
 
 		return null;
 	}

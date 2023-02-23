@@ -84,7 +84,7 @@ public interface TESParticle<D> {
 
 			@Override
 			public void perTickModifier(TESParticle<?> particle, int lifetime, Vector3f pos, Vector3f prevPos, Vector3f velocity, Random random) {
-				velocity.sub(new Vector3f());
+				velocity.sub(new Vector3f(0, 0.05f, 0));
 				pos.add(velocity);
 			}
 		};

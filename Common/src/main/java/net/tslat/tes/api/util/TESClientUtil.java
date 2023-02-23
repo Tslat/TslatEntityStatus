@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +34,7 @@ public final class TESClientUtil {
 	 * Draw some text on screen at a given position, offset for the text's height and width
 	 */
 	public static void renderCenteredText(String text, PoseStack poseStack, Font fontRenderer, float x, float y, int colour) {
-		renderCenteredText(Component.literal(text), poseStack, fontRenderer, x, y, colour);
+		renderCenteredText(new TextComponent(text), poseStack, fontRenderer, x, y, colour);
 	}
 
 	/**
@@ -233,7 +234,7 @@ public final class TESClientUtil {
 	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
 	 */
 	public static void drawText(PoseStack poseStack, String text, float x, float y, int colour) {
-		drawText(poseStack, Component.literal(text), x, y, colour);
+		drawText(poseStack, new TextComponent(text), x, y, colour);
 	}
 
 	/**
@@ -257,7 +258,7 @@ public final class TESClientUtil {
 	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
 	 */
 	public static void drawTextWithShadow(PoseStack poseStack, String text, float x, float y, int colour) {
-		drawText(poseStack, Component.literal(text), x, y, colour);
+		drawText(poseStack, new TextComponent(text), x, y, colour);
 	}
 
 	/**

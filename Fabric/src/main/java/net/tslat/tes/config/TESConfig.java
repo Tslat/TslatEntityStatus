@@ -6,7 +6,7 @@ import net.tslat.tes.core.hud.TESHud;
 
 public final class TESConfig extends MidnightConfig implements net.tslat.tes.api.TESConfig {
 	@Comment private static final String entityTrackingDistanceComment = "How close (in blocks) entities should be before TES starts tracking them";
-	@Entry(name = "Entity Tracking Distance", isSlider = true, min = 8d, max = 512d)
+	@Entry(name = "Entity Tracking Distance", min = 8d, max = 512d)
 	private static double entityTrackingDistance = 64;
 
 	@Comment private static final String cacheCleanFrequencyComment = "How frequently TES should clear out its tracking cache. Generally this should stay at default, but if you are noticing issues you can try adjusting it";
@@ -19,7 +19,7 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 
 	@Comment private static final String hudTargetDistanceComment = "How close (in blocks) the player has to be to render a HUD for an entity under the crosshairs";
 	@Comment private static final String hudTargetDistanceComment2 = "Larger values may cost more performance";
-	@Entry(name = "HUD Target Distance", isSlider = true, min = 4d, max = 256d)
+	@Entry(name = "HUD Target Distance", min = 4d, max = 256d)
 	private static double hudTargetDistance = 64d;
 
 	@Comment private static final String hudTargetGracePeriodComment = "How long (in ticks) after looking away from an entity before its HUD should stop rendering";
@@ -67,7 +67,7 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	private static boolean hudPotionIcons = true;
 
 	@Comment private static final String hudOpacityComment = "Set how opaque the TES HUD should be, overall. The lower the value, the more transparent the HUD will be";
-	@Entry(name = "HUD Opacity", isSlider = true, min = 0f, max = 1f)
+	@Entry(name = "HUD Opacity", min = 0f, max = 1f)
 	private static float hudOpacity = 1f;
 
 	// In-world HUD //
@@ -92,7 +92,7 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	private static TESHUDActivation inWorldHUDActivation = TESHUDActivation.DAMAGED_AND_NEARBY;
 
 	@Comment private static final String inWorldHudOpacityComment = "How opaque the TES in-world entity HUD should be.";
-	@Entry(name = "In-World HUD Opacity", isSlider = true, min = 0f, max = 1f)
+	@Entry(name = "In-World HUD Opacity", min = 0f, max = 1f)
 	private static float inWorldHudOpacity = 1f;
 
 	@Comment private static final String inWorldBarsRenderTypeComment = "Select the bar render type for the in-game TES entity status HUD";
@@ -135,11 +135,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 
 	@Comment private static final String particleDecimalPointsComment = "How many decimals the numeric TES Particles should round to";
 	@Comment private static final String particleDecimalPointsComment2 = "Or set to 0 to only use whole-numbers";
-	@Entry(name = "Particle Decimal Points", isSlider = true, min = 0, max = 8)
+	@Entry(name = "Particle Decimal Points", min = 0, max = 8)
 	private static int particleDecimalPoints = 1;
 
 	@Comment private static final String particleScaleComment = "Scale modifier for TES-Particles. The higher the value, the larger the particles";
-	@Entry(name = "Particle Scale", isSlider = true, min = 0f, max = 10f)
+	@Entry(name = "Particle Scale", min = 0f, max = 10f)
 	private static float particleScale = 1f;
 
 	@Comment private static final String verbalHealthParticlesComment = "Whether TES should do verbal health-status particles (E.G. INSTAKILL) in certain situations";
