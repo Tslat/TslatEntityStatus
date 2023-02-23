@@ -1,9 +1,9 @@
 package net.tslat.tes.core.particle.type;
 
+import com.mojang.math.Vector3f;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.util.TESUtil;
 import net.tslat.tes.core.state.EntityState;
-import org.joml.Vector3f;
 
 /**
  * Generic class for numeric-based TES Particles.

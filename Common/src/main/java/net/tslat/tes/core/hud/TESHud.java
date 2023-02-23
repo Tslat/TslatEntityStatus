@@ -2,7 +2,7 @@ package net.tslat.tes.core.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
+import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -143,7 +143,7 @@ public class TESHud {
 		poseStack.translate(0, entity.getBbHeight() + 0.5f, 0);
 
 		TESClientUtil.positionFacingCamera(poseStack);
-		poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+		poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
 		poseStack.scale(0.02f, 0.02f, 0.02f);
 		RenderSystem.enableBlend();
 		RenderSystem.enableDepthTest();

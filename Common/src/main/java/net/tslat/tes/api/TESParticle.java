@@ -2,13 +2,12 @@ package net.tslat.tes.api;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
 import net.tslat.tes.api.util.TESClientUtil;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
@@ -49,14 +48,15 @@ public interface TESParticle<D> {
 	default void defaultedTextRender(Minecraft mc, PoseStack poseStack, Vector3f prevPos, Vector3f pos, float partialTick, Runnable renderCallback) {
 		float scale = 0.035f * TESAPI.getConfig().getParticleScale();
 		Camera camera = mc.gameRenderer.getMainCamera();
-		Vector3f renderPos = prevPos
-				.lerp(pos, partialTick, new Vector3f())
-				.sub(camera.getPosition().toVector3f());
+		Vector3f renderPos = prevPos.copy();
+
+		renderPos.lerp(pos, partialTick);
+		renderPos.sub(new Vector3f(camera.getPosition()));
 
 		poseStack.pushPose();
-		poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
+		poseStack.translate(renderPos.x(), renderPos.y(), renderPos.z());
 		TESClientUtil.positionFacingCamera(poseStack);
-		poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+		poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
 		poseStack.scale(scale, scale, scale);
 
 		RenderSystem.enableBlend();
@@ -84,7 +84,7 @@ public interface TESParticle<D> {
 
 			@Override
 			public void perTickModifier(TESParticle<?> particle, int lifetime, Vector3f pos, Vector3f prevPos, Vector3f velocity, Random random) {
-				velocity.sub(0, 0.05f, 0);
+				velocity.sub(new Vector3f());
 				pos.add(velocity);
 			}
 		};
@@ -98,7 +98,7 @@ public interface TESParticle<D> {
 
 			@Override
 			public void perTickModifier(TESParticle<?> particle, int lifetime, Vector3f pos, Vector3f prevPos, Vector3f velocity, Random random) {
-				velocity.sub(0, 0.02f, 0);
+				velocity.sub(new Vector3f(0, 0.02f, 0));
 				pos.add(velocity);
 			}
 		};

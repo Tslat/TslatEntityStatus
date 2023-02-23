@@ -3,7 +3,7 @@ package net.tslat.tes.util;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalEntityTypeTags;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -41,7 +41,7 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 			if (entity.getType() == EntityType.PLAYER)
 				return TESEntityType.PLAYER;
 
-			if (BuiltInRegistries.ENTITY_TYPE.getTag(ConventionalEntityTypeTags.BOSSES).orElseThrow().contains(Holder.direct(entity.getType())))
+			if (Registry.ENTITY_TYPE.getTag(ConventionalEntityTypeTags.BOSSES).orElseThrow().contains(Holder.direct(entity.getType())))
 				return TESEntityType.BOSS;
 
 			if (entity instanceof Enemy)

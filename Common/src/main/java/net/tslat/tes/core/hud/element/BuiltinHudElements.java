@@ -7,7 +7,7 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.LivingEntity;
@@ -208,9 +208,9 @@ public final class BuiltinHudElements {
 			poseStack.translate(0, Math.floor(effectsSize * 18 / maxX) * -18, 0);
 
 		for (ResourceLocation effectId : entityState.getEffects()) {
-			TextureAtlasSprite sprite = textureManager.get(BuiltInRegistries.MOB_EFFECT.get(effectId));
+			TextureAtlasSprite sprite = textureManager.get(Registry.MOB_EFFECT.get(effectId));
 
-			RenderSystem.setShaderTexture(0, sprite.atlasLocation());
+			RenderSystem.setShaderTexture(0, sprite.atlas().location());
 			GuiComponent.blit(poseStack, i * 18 + x, y, 0, 18, 18, sprite);
 
 			if (++i >= iconsPerRow) {

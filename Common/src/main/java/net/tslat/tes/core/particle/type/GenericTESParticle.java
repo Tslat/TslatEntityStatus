@@ -1,9 +1,9 @@
 package net.tslat.tes.core.particle.type;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.core.state.EntityState;
-import org.joml.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -32,7 +32,7 @@ public abstract class GenericTESParticle<D> implements TESParticle<D> {
 		this.entityState = entityState;
 		this.lifetime = lifespan;
 		this.pos = position;
-		this.prevPos = new Vector3f(this.pos);
+		this.prevPos = this.pos.copy();
 		this.animation = animation;
 		this.velocity = animation.getInitialVelocity(this, position, ThreadLocalRandom.current());
 	}
@@ -41,7 +41,7 @@ public abstract class GenericTESParticle<D> implements TESParticle<D> {
 	public void tick(Minecraft mc) {
 		this.lifetime--;
 
-		this.prevPos.set(this.pos);
+		this.prevPos.set(this.pos.x(), this.pos.y(), this.pos.z());
 		this.animation.perTickModifier(this, this.lifetime, this.pos, this.prevPos, this.velocity, ThreadLocalRandom.current());
 	}
 

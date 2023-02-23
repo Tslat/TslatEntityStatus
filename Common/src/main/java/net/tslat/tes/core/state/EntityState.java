@@ -1,5 +1,6 @@
 package net.tslat.tes.core.state;
 
+import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -8,12 +9,10 @@ import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.api.util.TESClientUtil;
-import net.tslat.tes.api.util.TESUtil;
 import net.tslat.tes.core.particle.TESParticleManager;
 import net.tslat.tes.core.particle.type.DamageParticle;
 import net.tslat.tes.core.particle.type.HealParticle;
 import net.tslat.tes.core.particle.type.TextParticle;
-import org.joml.Vector3f;
 
 import java.util.Set;
 

@@ -1,7 +1,7 @@
 package net.tslat.tes.networking;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -40,7 +40,7 @@ public class RequestEffectsPacket {
 
 				for (MobEffectInstance instance : effects) {
 					if (instance.isVisible() || instance.showIcon())
-						ids.add(BuiltInRegistries.MOB_EFFECT.getKey(instance.getEffect()));
+						ids.add(Registry.MOB_EFFECT.getKey(instance.getEffect()));
 				}
 
 				TESConstants.NETWORKING.sendEffectsSync(sender, this.entityId, ids, Set.of());

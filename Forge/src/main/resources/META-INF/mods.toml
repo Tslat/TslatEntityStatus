@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[44,)"
+loaderVersion="[43,)"
 license="MPL-2.0"
 issueTrackerURL="https://github.com/Tslat/TslatEntityStatus/issues"
 
@@ -7,7 +7,7 @@ issueTrackerURL="https://github.com/Tslat/TslatEntityStatus/issues"
 modId="tslatentitystatus"
 version="1.0.0"
 displayName="TES"
-logoFile=""
+logoFile="logo.png"
 authors="Tslat"
 displayTest="IGNORE_SERVER_VERSION"
 description='''
@@ -17,13 +17,13 @@ View entity health and other statuses. Make smacking things fun again!
 [[dependencies.tslatentitystatus]]
 modId="forge"
 mandatory=true
-versionRange="[44,)"
+versionRange="[43,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.tslatentitystatus]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.19.3,)"
+versionRange="[1.19.2,)"
 ordering="NONE"
 side="BOTH"
