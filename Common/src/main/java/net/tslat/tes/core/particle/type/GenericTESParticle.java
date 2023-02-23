@@ -2,6 +2,7 @@ package net.tslat.tes.core.particle.type;
 
 import net.minecraft.client.Minecraft;
 import net.tslat.tes.api.TESParticle;
+import net.tslat.tes.core.state.EntityState;
 import org.joml.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -17,16 +18,18 @@ public abstract class GenericTESParticle<D> implements TESParticle<D> {
 	protected final Vector3f prevPos;
 	protected final Vector3f velocity;
 	protected final Animation animation;
+	protected final EntityState entityState;
 
-	protected GenericTESParticle(Vector3f position) {
-		this(position, Animation.POP_OFF);
+	protected GenericTESParticle(EntityState entityState, Vector3f position) {
+		this(entityState, position, Animation.POP_OFF);
 	}
 
-	protected GenericTESParticle(Vector3f position, Animation animation) {
-		this(position, Animation.POP_OFF, DEFAULT_LIFESPAN);
+	protected GenericTESParticle(EntityState entityState, Vector3f position, Animation animation) {
+		this(entityState, position, Animation.POP_OFF, DEFAULT_LIFESPAN);
 	}
 
-	protected GenericTESParticle(Vector3f position, Animation animation, int lifespan) {
+	protected GenericTESParticle(EntityState entityState, Vector3f position, Animation animation, int lifespan) {
+		this.entityState = entityState;
 		this.lifetime = lifespan;
 		this.pos = position;
 		this.prevPos = new Vector3f(this.pos);

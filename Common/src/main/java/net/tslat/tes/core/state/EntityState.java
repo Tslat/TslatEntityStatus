@@ -109,22 +109,22 @@ public class EntityState {
 					this.lastTransitionHealth = this.lastHealth;
 
 				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth <= 0 && this.lastHealth >= this.entity.getMaxHealth()) {
-					particle = new TextParticle(particlePos, TESParticle.Animation.POP_OFF, TESClientUtil.translateKey("config.tes.particle.verbal.instakill"));
+					particle = new TextParticle(this, particlePos, TESParticle.Animation.POP_OFF, TESClientUtil.translateKey("config.tes.particle.verbal.instakill"));
 
 					particle.setColour(TESAPI.getConfig().getDamageParticleColour());
 				}
 				else {
-					particle = new DamageParticle(particlePos, this.lastHealth - this.currentHealth);
+					particle = new DamageParticle(this, particlePos, this.lastHealth - this.currentHealth);
 				}
 			}
 			else {
 				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth >= this.entity.getMaxHealth() && this.lastHealth <= this.entity.getMaxHealth() * 0.05f) {
-					particle = new TextParticle(particlePos, TESParticle.Animation.RISE, TESClientUtil.translateKey("config.tes.particle.verbal.fullHeal"));
+					particle = new TextParticle(this, particlePos, TESParticle.Animation.RISE, TESClientUtil.translateKey("config.tes.particle.verbal.fullHeal"));
 
 					particle.setColour(TESAPI.getConfig().getHealParticleColour());
 				}
 				else {
-					particle = new HealParticle(particlePos, this.currentHealth - this.lastHealth);
+					particle = new HealParticle(this, particlePos, this.currentHealth - this.lastHealth);
 				}
 			}
 

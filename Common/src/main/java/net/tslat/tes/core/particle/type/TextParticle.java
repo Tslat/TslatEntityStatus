@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.api.util.TESClientUtil;
+import net.tslat.tes.core.state.EntityState;
 import org.joml.Vector3f;
 
 /**
@@ -14,16 +15,16 @@ public class TextParticle extends GenericTESParticle<String> {
 	protected String text;
 	protected int colour = 0xFFFFFFFF;
 
-	public TextParticle(Vector3f position, String text) {
-		this(position, Animation.POP_OFF, text);
+	public TextParticle(EntityState entityState, Vector3f position, String text) {
+		this(entityState, position, Animation.POP_OFF, text);
 	}
 
-	public TextParticle(Vector3f position, Animation animation, String text) {
-		this(position, animation, text, DEFAULT_LIFESPAN);
+	public TextParticle(EntityState entityState, Vector3f position, Animation animation, String text) {
+		this(entityState, position, animation, text, DEFAULT_LIFESPAN);
 	}
 
-	public TextParticle(Vector3f position, Animation animation, String text, int lifespan) {
-		super(position, animation, lifespan);
+	public TextParticle(EntityState entityState, Vector3f position, Animation animation, String text, int lifespan) {
+		super(entityState, position, animation, lifespan);
 
 		updateData(text);
 	}
