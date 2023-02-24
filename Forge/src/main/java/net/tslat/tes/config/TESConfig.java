@@ -25,6 +25,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.BooleanValue hudEntityIcons;
 	private final ForgeConfigSpec.BooleanValue hudPotionIcons;
 	private final ForgeConfigSpec.DoubleValue hudOpacity;
+	private final ForgeConfigSpec.DoubleValue hudBarFontBackingOpacity;
 
 	private final ForgeConfigSpec.BooleanValue inWorldBarsEnabled;
 	private final ForgeConfigSpec.EnumValue<TESHUDActivation> inWorldHUDActivation;
@@ -129,6 +130,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Set how opaque the TES HUD should be, overall. The lower the value, the more transparent the HUD will be")
 				.translation("config.tes.hud.opacity")
 				.defineInRange("hudOpacity", 1d, 0d, 1d);
+
+		this.hudBarFontBackingOpacity = config
+				.comment("Set how opaque the background behind the text on TES bars, if a render type is set that renders text")
+				.translation("config.tes.hud.barFontBackingOpacity")
+				.defineInRange("hudBarFontBackingOpacity", 0.5f, 0d, 1d);
 
 		config.pop();
 		config.push("In-World Bars Settings");
@@ -293,6 +299,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public float hudOpacity() {
 		return this.hudOpacity.get().floatValue();
+	}
+
+	@Override
+	public float hudBarFontBackingOpacity() {
+		return this.hudBarFontBackingOpacity.get().floatValue();
 	}
 
 	@Override

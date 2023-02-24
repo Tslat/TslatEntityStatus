@@ -1,5 +1,6 @@
 subprojects {
 	apply plugin: 'java'
+	apply plugin: 'maven-publish'
 
 	java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 	java.withSourcesJar()
@@ -30,5 +31,23 @@ subprojects {
 
 	tasks.withType(GenerateModuleMetadata) {
 		enabled = false
+	}
+
+	publishing {
+		publications {
+			maven(MavenPublication) {
+				from components.java
+			}
+		}
+
+		repositories {
+			maven {
+				url 'https://repo.repsy.io/mvn/tslat/tslatentitystatus'
+				credentials {
+					username project.findProperty("repsy.user") ?: System.getenv("REPSY_USERNAME")
+					password project.findProperty("repsy.password") ?: System.getenv("REPSY_PASSWORD")
+				}
+			}
+		}
 	}
 }

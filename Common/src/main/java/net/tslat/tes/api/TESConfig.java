@@ -70,6 +70,11 @@ public interface TESConfig {
 	float hudOpacity();
 
 	/**
+	 * Set how opaque the background behind the text on TES bars, if a render type is set that renders text
+	 */
+	float hudBarFontBackingOpacity();
+
+	/**
 	 * Get the health render type for the TES HUD.<br>
 	 * Available options are:
 	 * <ul>

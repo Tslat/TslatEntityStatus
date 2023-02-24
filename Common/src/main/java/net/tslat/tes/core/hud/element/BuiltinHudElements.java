@@ -87,7 +87,7 @@ public final class BuiltinHudElements {
 
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-			TESClientUtil.drawColouredSquare(poseStack, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 1, 9, 0x090909 | (int)(opacity * 255 * 0.5f) << 24);
+			TESClientUtil.drawColouredSquare(poseStack, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 1, 9, 0x090909 | (int)(opacity * 255 * TESConstants.CONFIG.hudBarFontBackingOpacity()) << 24);
 			TESClientUtil.drawText(poseStack, healthText, center - halfTextWidth, -1, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255));
 		}
 

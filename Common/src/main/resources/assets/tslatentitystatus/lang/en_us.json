@@ -14,6 +14,7 @@
   "config.tes.hud.entityIcons": "HUD Entity Icons",
   "config.tes.hud.potionIcons": "HUD Entity Effects Icons",
   "config.tes.hud.opacity": "HUD Opacity",
+  "config.tes.hud.barFontBackingOpacity": "TES Bar Font Backing Opacity",
   "config.tes.inWorldHud.enabled": "In-World HUD Enabled",
   "config.tes.inWorldHud.activation": "In-World HUD Activation",
   "config.tes.inWorldHud.barsRenderType": "In-World HUD Bars Render Type",

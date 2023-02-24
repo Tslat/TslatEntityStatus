@@ -71,6 +71,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "HUD Opacity", isSlider = true, min = 0f, max = 1f)
 	public static float hudOpacity = 1f;
 
+	@Comment public static final String hudBarFontBackingOpacityComment = "Set how opaque the background behind the text on TES bars, if a render type is set that renders text";
+	@Entry(name = "TES Bar Font Backing Opacity", isSlider = true, min = 0f, max = 1f)
+	public static float hudBarFontBackingOpacity = 0.5f;
+
 	// In-world HUD //
 
 	@Comment public static final String inWorldHudEnabledComment = "Whether TES should do in-world entity status bars";
@@ -213,6 +217,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public float hudOpacity() {
 		return hudOpacity;
+	}
+
+	@Override
+	public float hudBarFontBackingOpacity() {
+		return hudBarFontBackingOpacity;
 	}
 
 	@Override
