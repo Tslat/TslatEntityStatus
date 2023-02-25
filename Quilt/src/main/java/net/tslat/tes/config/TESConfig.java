@@ -71,6 +71,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "HUD Opacity", isSlider = true, min = 0f, max = 1f)
 	public static float hudOpacity = 1f;
 
+	@Comment public static final String hudBarFontBackingOpacityComment = "Set how opaque the background behind the text on TES bars, if a render type is set that renders text";
+	@Entry(name = "TES Bar Font Backing Opacity", isSlider = true, min = 0f, max = 1f)
+	public static float hudBarFontBackingOpacity = 0.5f;
+
 	// In-world HUD //
 
 	@Comment public static final String inWorldHudEnabledComment = "Whether TES should do in-world entity status bars";
@@ -127,6 +131,14 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Comment public static final String inWorldHudPotionIconsComment = "Whether the in-world entity status HUD should render the entity's effects icons";
 	@Entry(name = "In-World HUD Effects Icons")
 	public static boolean inWorldHudPotionIcons = false;
+
+	@Comment public static final String inWorldHudNameOverrideComment = "Whether the in-world TES entity status HUD should override vanilla name rendering";
+	@Entry(name = "In-World HUD Name Override")
+	public static boolean inWorldHudNameOverride = true;
+
+	@Comment public static final String inWorldHudManualVerticalOffsetComment = "Set a manual vertical offset for the TES in-world HUD (in blocks) in the event of other mods doing overhead rendering";
+	@Entry(name = "In-World HUD Manual Vertical Offset", min = Float.MIN_VALUE, max = Float.MAX_VALUE)
+	public static float inWorldHudManualVerticalOffset = 0;
 
 	// Particles //
 
@@ -216,6 +228,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	}
 
 	@Override
+	public float hudBarFontBackingOpacity() {
+		return hudBarFontBackingOpacity;
+	}
+
+	@Override
 	public TESHud.BarRenderType hudHealthRenderType() {
 		return hudBarRenderType;
 	}
@@ -278,6 +295,16 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean inWorldHudPotionIcons() {
 		return inWorldHudPotionIcons;
+	}
+
+	@Override
+	public boolean inWorldHudNameOverride() {
+		return inWorldHudNameOverride;
+	}
+
+	@Override
+	public float inWorldHudManualVerticalOffset() {
+		return inWorldHudManualVerticalOffset;
 	}
 
 	@Override
