@@ -29,7 +29,7 @@ public final class BuiltinHudElements {
 
 	public static int renderEntityName(PoseStack poseStack, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
 		if (inWorldHud) {
-			if (!TESAPI.getConfig().inWorldHudEntityName())
+			if (!TESAPI.getConfig().inWorldHudEntityName() && (!TESConstants.CONFIG.inWorldHudNameOverride() || !entity.hasCustomName()))
 				return 0;
 
 			TESClientUtil.renderCenteredText(entity.getDisplayName(), poseStack, mc.font, 0, 0, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255));
@@ -40,6 +40,8 @@ public final class BuiltinHudElements {
 
 			TESClientUtil.drawTextWithShadow(poseStack, entity.getDisplayName(), 0, 0, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255));
 		}
+
+		TESEntityTracking.markNameRendered(entity);
 
 		return mc.font.lineHeight;
 	}
@@ -87,7 +89,9 @@ public final class BuiltinHudElements {
 
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-			TESClientUtil.drawColouredSquare(poseStack, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 1, 9, 0x090909 | (int)(opacity * 255 * 0.5f) << 24);
+			poseStack.translate(0, 0, -0.001f);
+			TESClientUtil.drawColouredSquare(poseStack, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 1, 9, 0x090909 | (int)(opacity * 255 * TESConstants.CONFIG.hudBarFontBackingOpacity()) << 24);
+			poseStack.translate(0, 0, -0.001f);
 			TESClientUtil.drawText(poseStack, healthText, center - halfTextWidth, -1, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255));
 		}
 

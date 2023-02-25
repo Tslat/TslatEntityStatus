@@ -25,6 +25,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.BooleanValue hudEntityIcons;
 	private final ForgeConfigSpec.BooleanValue hudPotionIcons;
 	private final ForgeConfigSpec.DoubleValue hudOpacity;
+	private final ForgeConfigSpec.DoubleValue hudBarFontBackingOpacity;
 
 	private final ForgeConfigSpec.BooleanValue inWorldBarsEnabled;
 	private final ForgeConfigSpec.EnumValue<TESHUDActivation> inWorldHUDActivation;
@@ -36,6 +37,8 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.BooleanValue inWorldHudArmour;
 	private final ForgeConfigSpec.BooleanValue inWorldHudEntityIcons;
 	private final ForgeConfigSpec.BooleanValue inWorldHudPotionIcons;
+	private final ForgeConfigSpec.BooleanValue inWorldHudNameOverride;
+	private final ForgeConfigSpec.DoubleValue inWorldHudManualVerticalOffset;
 
 	private final ForgeConfigSpec.BooleanValue particlesEnabled;
 	private final ForgeConfigSpec.IntValue particleDecimalPoints;
@@ -130,6 +133,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.translation("config.tes.hud.opacity")
 				.defineInRange("hudOpacity", 1d, 0d, 1d);
 
+		this.hudBarFontBackingOpacity = config
+				.comment("Set how opaque the background behind the text on TES bars, if a render type is set that renders text")
+				.translation("config.tes.hud.barFontBackingOpacity")
+				.defineInRange("hudBarFontBackingOpacity", 0.5f, 0d, 1d);
+
 		config.pop();
 		config.push("In-World Bars Settings");
 
@@ -165,7 +173,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 
 		this.inWorldHudOpacity = config
 				.comment("How opaque the TES in-world entity HUD should be.")
-				.translation("config.test.inWorldHud.opacity")
+				.translation("config.tes.inWorldHud.opacity")
 				.defineInRange("inWorldHudOpacity", 1d, 0d, 1d);
 
 		this.inWorldBarsLength = config
@@ -195,8 +203,18 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 
 		this.inWorldHudPotionIcons = config
 				.comment("Whether the in-world entity status HUD should render the entity's effects icons")
-				.translation("config.tes.inWOrldHud.potionIcons")
+				.translation("config.tes.inWorldHud.potionIcons")
 				.define("inWorldHudPotionIcons", false);
+
+		this.inWorldHudNameOverride = config
+				.comment("Whether the in-world TES entity status HUD should override vanilla name rendering")
+				.translation("config.tes.inWorldHud.nameOverride")
+				.define("inWorldHudNameOverride", true);
+
+		this.inWorldHudManualVerticalOffset = config
+				.comment("Set a manual vertical offset for the TES in-world HUD (in blocks) in the event of other mods doing overhead rendering")
+				.translation("config.tes.inWorldHud.manualVerticalOffset")
+				.defineInRange("inWorldHudManualVerticalOffset", 0, Float.MIN_VALUE, Float.MAX_VALUE);
 
 		config.pop();
 		config.push("Particle Settings");
@@ -296,6 +314,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	}
 
 	@Override
+	public float hudBarFontBackingOpacity() {
+		return this.hudBarFontBackingOpacity.get().floatValue();
+	}
+
+	@Override
 	public TESHud.BarRenderType hudHealthRenderType() {
 		return this.hudHealthRenderType.get();
 	}
@@ -358,6 +381,16 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public boolean inWorldHudPotionIcons() {
 		return this.inWorldHudPotionIcons.get();
+	}
+
+	@Override
+	public boolean inWorldHudNameOverride() {
+		return this.inWorldHudNameOverride.get();
+	}
+
+	@Override
+	public float inWorldHudManualVerticalOffset() {
+		return this.inWorldHudManualVerticalOffset.get().floatValue();
 	}
 
 	@Override

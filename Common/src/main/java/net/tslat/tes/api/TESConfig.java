@@ -70,6 +70,11 @@ public interface TESConfig {
 	float hudOpacity();
 
 	/**
+	 * Set how opaque the background behind the text on TES bars, if a render type is set that renders text
+	 */
+	float hudBarFontBackingOpacity();
+
+	/**
 	 * Get the health render type for the TES HUD.<br>
 	 * Available options are:
 	 * <ul>
@@ -145,6 +150,16 @@ public interface TESConfig {
 	 * Whether the in-world TES entity status HUD should include the entity's effect icons
 	 */
 	boolean inWorldHudPotionIcons();
+
+	/**
+	 * Whether the in-world TES entity status HUD should override vanilla name rendering
+	 */
+	boolean inWorldHudNameOverride();
+
+	/**
+	 * A manual vertical offset for the TES in-world HUD (in blocks)
+	 */
+	float inWorldHudManualVerticalOffset();
 
 	/**
 	 * Whether TES should do particles for various status changes such as damage dealt or health healed
