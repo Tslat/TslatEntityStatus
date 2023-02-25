@@ -9,6 +9,7 @@
   ],
   "client": [
     "client.EntityRenderDispatcherMixin",
+    "client.EntityRendererMixin",
     "client.GameRendererMixin",
     "client.LevelRendererMixin",
     "client.MinecraftMixin"

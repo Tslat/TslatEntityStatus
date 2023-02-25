@@ -1,6 +1,8 @@
 package net.tslat.tes.core.state;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,8 +13,8 @@ import java.util.List;
 
 public final class TESEntityTracking {
 	private static final Int2ObjectOpenHashMap<EntityState> ENTITY_STATES = new Int2ObjectOpenHashMap<>(50);
-	private static int LAST_GLOBAL_RENDER_COUNT = 10;
-	private static List<LivingEntity> ENTITIES_TO_RENDER;
+	private static List<LivingEntity> ENTITIES_TO_RENDER = new ObjectArrayList<>();
+	private static IntSet RENDERED_NAMES = new IntOpenHashSet();
 
 	public static void accountForEntity(LivingEntity entity) {
 		ENTITY_STATES.compute(entity.getId(), (key, value) -> {
@@ -33,9 +35,6 @@ public final class TESEntityTracking {
 	}
 
 	public static void addEntityToRender(LivingEntity entity) {
-		if (ENTITIES_TO_RENDER == null)
-			ENTITIES_TO_RENDER = new ObjectArrayList<>(LAST_GLOBAL_RENDER_COUNT);
-
 		ENTITIES_TO_RENDER.add(entity);
 	}
 
@@ -50,17 +49,19 @@ public final class TESEntityTracking {
 	}
 
 	public static List<LivingEntity> getEntitiesToRender() {
-		if (ENTITIES_TO_RENDER == null) {
-			LAST_GLOBAL_RENDER_COUNT = 10;
-
-			return List.of();
-		}
-
 		List<LivingEntity> entities = ENTITIES_TO_RENDER;
+		ENTITIES_TO_RENDER = new ObjectArrayList<>(ENTITIES_TO_RENDER.size());
 
-		LAST_GLOBAL_RENDER_COUNT = ENTITIES_TO_RENDER.size();
-		ENTITIES_TO_RENDER = null;
+		RENDERED_NAMES.clear();
 
 		return entities;
+	}
+
+	public static boolean wasNameRendered(int entityId) {
+		return RENDERED_NAMES.contains(entityId);
+	}
+
+	public static void markNameRendered(LivingEntity entity) {
+		RENDERED_NAMES.add(entity.getId());
 	}
 }
