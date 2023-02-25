@@ -37,6 +37,8 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.BooleanValue inWorldHudArmour;
 	private final ForgeConfigSpec.BooleanValue inWorldHudEntityIcons;
 	private final ForgeConfigSpec.BooleanValue inWorldHudPotionIcons;
+	private final ForgeConfigSpec.BooleanValue inWorldHudNameOverride;
+	private final ForgeConfigSpec.DoubleValue inWorldHudManualVerticalOffset;
 
 	private final ForgeConfigSpec.BooleanValue particlesEnabled;
 	private final ForgeConfigSpec.IntValue particleDecimalPoints;
@@ -201,8 +203,18 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 
 		this.inWorldHudPotionIcons = config
 				.comment("Whether the in-world entity status HUD should render the entity's effects icons")
-				.translation("config.tes.inWOrldHud.potionIcons")
+				.translation("config.tes.inWorldHud.potionIcons")
 				.define("inWorldHudPotionIcons", false);
+
+		this.inWorldHudNameOverride = config
+				.comment("Whether the in-world TES entity status HUD should override vanilla name rendering")
+				.translation("config.tes.inWorldHud.nameOverride")
+				.define("inWorldHudNameOverride", true);
+
+		this.inWorldHudManualVerticalOffset = config
+				.comment("Set a manual vertical offset for the TES in-world HUD (in blocks) in the event of other mods doing overhead rendering")
+				.translation("config.tes.inWorldHud.manualVerticalOffset")
+				.defineInRange("inWorldHudManualVerticalOffset", 0, Float.MIN_VALUE, Float.MAX_VALUE);
 
 		config.pop();
 		config.push("Particle Settings");
@@ -369,6 +381,16 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public boolean inWorldHudPotionIcons() {
 		return this.inWorldHudPotionIcons.get();
+	}
+
+	@Override
+	public boolean inWorldHudNameOverride() {
+		return this.inWorldHudNameOverride.get();
+	}
+
+	@Override
+	public float inWorldHudManualVerticalOffset() {
+		return this.inWorldHudManualVerticalOffset.get().floatValue();
 	}
 
 	@Override

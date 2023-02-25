@@ -152,6 +152,16 @@ public interface TESConfig {
 	boolean inWorldHudPotionIcons();
 
 	/**
+	 * Whether the in-world TES entity status HUD should override vanilla name rendering
+	 */
+	boolean inWorldHudNameOverride();
+
+	/**
+	 * A manual vertical offset for the TES in-world HUD (in blocks)
+	 */
+	float inWorldHudManualVerticalOffset();
+
+	/**
 	 * Whether TES should do particles for various status changes such as damage dealt or health healed
 	 */
 	boolean particlesEnabled();

@@ -29,7 +29,7 @@ public final class BuiltinHudElements {
 
 	public static int renderEntityName(PoseStack poseStack, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
 		if (inWorldHud) {
-			if (!TESAPI.getConfig().inWorldHudEntityName() && !entity.hasCustomName())
+			if (!TESAPI.getConfig().inWorldHudEntityName() && (!TESConstants.CONFIG.inWorldHudNameOverride() || !entity.hasCustomName()))
 				return 0;
 
 			TESClientUtil.renderCenteredText(entity.getDisplayName(), poseStack, mc.font, 0, 0, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255));

@@ -141,6 +141,7 @@ public class TESHud {
 		poseStack.pushPose();
 		poseStack.translate(position.x, position.y, position.z);
 		poseStack.translate(0, entity.getBbHeight() + 0.5f, 0);
+		poseStack.translate(0, TESConstants.CONFIG.inWorldHudManualVerticalOffset(), 0);
 
 		TESClientUtil.positionFacingCamera(poseStack);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180));

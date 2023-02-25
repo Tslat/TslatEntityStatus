@@ -132,6 +132,15 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "In-World HUD Effects Icons")
 	public static boolean inWorldHudPotionIcons = false;
 
+	@Comment public static final String inWorldHudNameOverrideComment = "Whether the in-world TES entity status HUD should override vanilla name rendering";
+	@Entry(name = "In-World HUD Name Override")
+	public static boolean inWorldHudNameOverride = true;
+
+	@Comment public static final String inWorldHudManualVerticalOffsetComment = "Set a manual vertical offset for the TES in-world HUD (in blocks) in the event of other mods doing overhead rendering";
+	@Entry(name = "In-World HUD Manual Vertical Offset", min = Float.MIN_VALUE, max = Float.MAX_VALUE)
+	public static float inWorldHudManualVerticalOffset = 0;
+
+
 	// Particles //
 
 	@Comment public static final String particlesEnabledComment = "Whether TES should do particles for various status changes such as damage dealt or health healed";
@@ -287,6 +296,16 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean inWorldHudPotionIcons() {
 		return inWorldHudPotionIcons;
+	}
+
+	@Override
+	public boolean inWorldHudNameOverride() {
+		return inWorldHudNameOverride;
+	}
+
+	@Override
+	public float inWorldHudManualVerticalOffset() {
+		return inWorldHudManualVerticalOffset;
 	}
 
 	@Override
