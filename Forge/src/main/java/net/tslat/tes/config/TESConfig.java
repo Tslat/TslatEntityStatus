@@ -173,7 +173,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 
 		this.inWorldHudOpacity = config
 				.comment("How opaque the TES in-world entity HUD should be.")
-				.translation("config.test.inWorldHud.opacity")
+				.translation("config.tes.inWorldHud.opacity")
 				.defineInRange("inWorldHudOpacity", 1d, 0d, 1d);
 
 		this.inWorldBarsLength = config
