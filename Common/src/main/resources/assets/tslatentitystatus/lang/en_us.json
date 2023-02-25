@@ -25,6 +25,8 @@
   "config.test.inWorldHud.armour": "In-World HUD Armour",
   "config.test.inWorldHud.icons": "In-World HUD Entity Icons",
   "config.test.inWorldHud.potionIcons": "In-World HUD Potion Icons",
+  "config.test.inWorldHud.nameOverride": "In-World HUD Name Override",
+  "config.test.inWorldHud.manualVerticalOffset": "In-World HUD Manual Vertical Offset",
   "config.tes.particle.enabled": "Particles Enabled",
   "config.tes.particle.decimalPoints": "Particle Decimal Points",
   "config.tes.particle.scale": "Particle Scale",
