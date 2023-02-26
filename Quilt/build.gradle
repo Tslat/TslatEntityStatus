@@ -88,3 +88,13 @@ idea {
         outputDir = compileJava.destinationDirectory.asFile.get() as File
     }
 }
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = archivesBaseName
+            artifact jar
+            artifact sourcesJar
+        }
+    }
+}
