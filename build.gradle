@@ -42,6 +42,7 @@ subprojects {
 
 		repositories {
 			maven {
+				name = "Repsy"
 				url 'https://repo.repsy.io/mvn/tslat/tslatentitystatus'
 				credentials {
 					username project.findProperty("repsy.user") ?: System.getenv("REPSY_USERNAME")
