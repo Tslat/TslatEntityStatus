@@ -121,7 +121,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 		this.hudEntityIcons = config
 				.comment("Whether the TES HUD should render the entity's alignment icons")
 				.translation("config.tes.hud.entityIcons")
-				.define("hudEntityName", true);
+				.define("hudEntityIcons", true);
 
 		this.hudPotionIcons = config
 				.comment("Whether the TES HUD should render the entity's effect icons")
