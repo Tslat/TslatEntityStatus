@@ -11,6 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConfig;
 import net.tslat.tes.api.TESConstants;
@@ -158,19 +159,29 @@ public final class BuiltinHudElements {
 		TESClientUtil.prepRenderForTexture(ICONS_TEXTURE);
 
 		if (TESUtil.isFireImmune(entity)) {
-			TESClientUtil.drawSimpleTexture(poseStack, x, 0, 8, 8, 0, 0, 24);
+			TESClientUtil.drawSimpleTexture(poseStack, x, 0, 8, 8, 0, 0, 32);
 
 			x += 9;
 		}
 
 		if (TESUtil.isMeleeMob(entity)) {
-			TESClientUtil.drawSimpleTexture(poseStack, x, 0, 8, 8, 8, 0, 24);
+			TESClientUtil.drawSimpleTexture(poseStack, x, 0, 8, 8, 8, 0, 32);
 
 			x += 9;
 		}
 
 		if (TESUtil.isRangedMob(entity)) {
-			TESClientUtil.drawSimpleTexture(poseStack, x, 0, 8, 8, 16, 0, 24);
+			TESClientUtil.drawSimpleTexture(poseStack, x, 0, 8, 8, 16, 0, 32);
+
+			x += 9;
+		}
+
+		MobType mobType = entity.getMobType();
+
+		if (mobType != MobType.UNDEFINED) {
+			int mobTypeU = mobType == MobType.WATER ? 24 : (mobType == MobType.ILLAGER ? 16 : (mobType == MobType.ARTHROPOD ? 8 : 0));
+
+			TESClientUtil.drawSimpleTexture(poseStack, x, 0, 8, 8, mobTypeU, 8, 32);
 
 			x += 9;
 		}
