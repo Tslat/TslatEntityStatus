@@ -135,8 +135,8 @@ public final class TESClientUtil {
 		entity.animationPosition = 0;
 		entity.attackAnim = 0;
 		entity.oAttackAnim = 0;
-		entity.animationSpeed = 0;
-		entity.animationSpeedOld = 0;
+		//entity.animationSpeed = 0;
+		//entity.animationSpeedOld = 0;
 
 		Lighting.setupForEntityInInventory();
 
@@ -156,8 +156,8 @@ public final class TESClientUtil {
 		entity.animationPosition = limbSwingPrev;
 		entity.attackAnim = attackTimePrev;
 		entity.oAttackAnim = attackTimeOldPrev;
-		entity.animationSpeed = animSpeedPrev;
-		entity.animationSpeedOld = animSpeedOldPrev;
+		//entity.animationSpeed = animSpeedPrev;
+		//entity.animationSpeedOld = animSpeedOldPrev;
 
 		poseStack.popPose();
 	}
