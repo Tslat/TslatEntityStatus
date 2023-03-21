@@ -20,7 +20,7 @@ public final class TESEntityTracking {
 		ENTITY_STATES.compute(entity.getId(), (key, value) -> {
 			double trackingDist = TESAPI.getConfig().getEntityTrackingDistance();
 
-			if (entity.distanceToSqr(Minecraft.getInstance().cameraEntity) > trackingDist * trackingDist)
+			if (entity.distanceToSqr((Minecraft.getInstance().cameraEntity == null ? Minecraft.getInstance().player : Minecraft.getInstance().cameraEntity)) > trackingDist * trackingDist)
 				return null;
 
 			return value == null ? new EntityState(entity) : value;
