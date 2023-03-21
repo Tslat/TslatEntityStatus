@@ -8,7 +8,8 @@ dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.layered {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${minecraft_version}:${mappings_version}@zip")
+        //parchment("org.parchmentmc.data:parchment-${minecraft_version}:${mappings_version}@zip") Temp disabled until Parchment updates
+        parchment("org.parchmentmc.data:parchment-1.19.3:2023.03.12@zip")
     }
     modImplementation "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
     modImplementation ("org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilted_fapi_version}-${minecraft_version}") {

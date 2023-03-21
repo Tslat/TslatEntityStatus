@@ -25,15 +25,15 @@
     "depends": [
       {
         "id": "quilt_loader",
-        "versions": ">=0.18.1-"
+        "versions": ">=0.18.6-"
       },
       {
         "id": "quilted_fabric_api",
-        "versions": ">=5.0.0-"
+        "versions": ">=6.0.0-"
       },
       {
         "id": "minecraft",
-        "versions": ">=1.19.3"
+        "versions": ">=1.19.4"
       }
     ]
   },

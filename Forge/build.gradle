@@ -7,6 +7,7 @@ plugins {
 archivesBaseName = "${mod_name}-forge-${minecraft_version}"
 
 minecraft {
+    //mappings channel: mappings_channel, version: "${minecraft_version}-${mappings_version}" Temp disabled until parchment updates
     mappings channel: mappings_channel, version: "${mappings_version}-${minecraft_version}"
     //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
