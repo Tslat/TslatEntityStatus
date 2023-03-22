@@ -8,6 +8,8 @@ import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.state.EntityState;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
+
 /**
  * Built-in class for text-based {@link TESParticle TES Particles}
  */
@@ -15,15 +17,15 @@ public class TextParticle extends GenericTESParticle<String> {
 	protected String text;
 	protected int colour = 0xFFFFFFFF;
 
-	public TextParticle(EntityState entityState, Vector3f position, String text) {
+	public TextParticle(@Nullable EntityState entityState, Vector3f position, String text) {
 		this(entityState, position, Animation.POP_OFF, text);
 	}
 
-	public TextParticle(EntityState entityState, Vector3f position, Animation animation, String text) {
+	public TextParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, String text) {
 		this(entityState, position, animation, text, DEFAULT_LIFESPAN);
 	}
 
-	public TextParticle(EntityState entityState, Vector3f position, Animation animation, String text, int lifespan) {
+	public TextParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, String text, int lifespan) {
 		super(entityState, position, animation, lifespan);
 
 		updateData(text);

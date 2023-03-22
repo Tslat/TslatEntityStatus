@@ -8,18 +8,23 @@ import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.state.EntityState;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
+
+/**
+ * Generic class for {@link Component}-based TES Particles
+ */
 public class ComponentParticle extends GenericTESParticle<Component> {
 	protected Component contents;
 
-	public ComponentParticle(EntityState entityState, Vector3f position, Component contents) {
+	public ComponentParticle(@Nullable EntityState entityState, Vector3f position, Component contents) {
 		this(entityState, position, Animation.POP_OFF, contents);
 	}
 
-	public ComponentParticle(EntityState entityState, Vector3f position, Animation animation, Component contents) {
+	public ComponentParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, Component contents) {
 		this(entityState, position, animation, contents, DEFAULT_LIFESPAN);
 	}
 
-	public ComponentParticle(EntityState entityState, Vector3f position, Animation animation, Component contents, int lifespan) {
+	public ComponentParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, Component contents, int lifespan) {
 		super(entityState, position, animation, lifespan);
 
 		updateData(contents);
