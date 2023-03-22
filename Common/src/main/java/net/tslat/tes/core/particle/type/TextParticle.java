@@ -33,8 +33,10 @@ public class TextParticle extends GenericTESParticle<String> {
 	 * Set the rendering colour for this particle.<br>
 	 * Format is ARGB
 	 */
-	public void setColour(int colour) {
+	public TextParticle withColour(int colour) {
 		this.colour = colour;
+
+		return this;
 	}
 
 	/**
