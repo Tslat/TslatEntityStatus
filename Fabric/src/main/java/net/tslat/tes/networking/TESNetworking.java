@@ -3,12 +3,14 @@ package net.tslat.tes.networking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.TESClient;
 import net.tslat.tes.api.TESAPI;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -52,6 +54,17 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 
 		for (ServerPlayer player : PlayerLookup.tracking(targetedEntity)) {
 			ServerPlayNetworking.send(player, SyncEffectsPacket.ID, buffer);
+		}
+	}
+
+	@Override
+	public void sendParticleClaim(ResourceLocation claimantId, LivingEntity targetedEntity, @Nullable CompoundTag additionalData) {
+		FriendlyByteBuf buffer = PacketByteBufs.create();
+
+		new ParticleClaimPacket(targetedEntity.getId(), claimantId, additionalData).encode(buffer);
+
+		for (ServerPlayer player : PlayerLookup.tracking(targetedEntity)) {
+			ServerPlayNetworking.send(player, ParticleClaimPacket.ID, buffer);
 		}
 	}
 }

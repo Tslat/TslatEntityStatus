@@ -1,13 +1,16 @@
 package net.tslat.tes.core.networking;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
  * Base interface for TES' networking functionality.<br>
+ * This is only functional if TES is installed on the server.<br>
  * Access this from {@link net.tslat.tes.api.TESConstants#NETWORKING TESConstants.NETWORKING}
  */
 public interface TESNetworking {
@@ -35,4 +38,12 @@ public interface TESNetworking {
 	 * @param toRemove The effects to remove from the entity's state on the client side
 	 */
 	void sendEffectsSync(LivingEntity targetedEntity, Set<ResourceLocation> toAdd, Set<ResourceLocation> toRemove);
+
+	/**
+	 * Submit a particle claim for the next/upcoming tick
+	 * @param claimantId The id of the {@link net.tslat.tes.core.particle.TESParticleClaimant claimant} to handle the claim
+	 * @param targetedEntity The entity for the claim
+	 * @param additionalData Optional additional data for the claim
+	 */
+	void sendParticleClaim(ResourceLocation claimantId, LivingEntity targetedEntity, @Nullable CompoundTag additionalData);
 }

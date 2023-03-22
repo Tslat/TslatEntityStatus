@@ -1,8 +1,10 @@
 package net.tslat.tes.api;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.core.hud.TESHud;
+import net.tslat.tes.core.particle.TESParticleClaimant;
 import net.tslat.tes.core.particle.TESParticleManager;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
@@ -47,6 +49,16 @@ public final class TESAPI {
 	}
 
 	/**
+	 * Register a {@link TESParticleClaimant} with TES for handling custom claims.<br>
+	 * This allows for overriding damage particles dynamically or doing other similar things
+	 * @param id The id of the claimant to register
+	 * @param claimant The claimant instance
+	 */
+	public static void registerParticleClaimant(ResourceLocation id, TESParticleClaimant claimant) {
+		TESParticleManager.registerParticleClaimant(id, claimant);
+	}
+
+	/**
 	 * Get the current config for TES
 	 */
 	public static TESConfig getConfig() {
@@ -75,5 +87,21 @@ public final class TESAPI {
 	@Nullable
 	public static EntityState getTESDataForEntity(int entityId) {
 		return TESEntityTracking.getStateForEntityId(entityId);
+	}
+
+	/**
+	 * Submit a particle claim to the particle manager for the next/upcoming tick.<br>
+	 * If the target entity has a health change next tick, your claimant will be called with the relevant info
+	 * @param id The id of the claimant responsible for handling the claim
+	 * @param targetEntity The entity the claim is for
+	 * @param additionalData Optional additional data passed back to the claimant at the time of the claim
+	 */
+	public static void submitParticleClaim(ResourceLocation id, LivingEntity targetEntity, @Nullable CompoundTag additionalData) {
+		if (TESConstants.IS_SERVER_SIDE) {
+			TESConstants.NETWORKING.sendParticleClaim(id, targetEntity, additionalData);
+		}
+		else {
+			TESParticleManager.addParticleClaim(targetEntity.getId(), id, additionalData);
+		}
 	}
 }
