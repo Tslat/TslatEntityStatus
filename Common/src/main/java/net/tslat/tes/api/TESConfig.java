@@ -106,6 +106,11 @@ public interface TESConfig {
 	boolean inWorldBarsEnabled();
 
 	/**
+	 * Whether the TES HUD should be rendered for the player or not
+	 */
+	boolean inWorldHudForSelf();
+
+	/**
 	 * When the TES in-world entity status bars should render
 	 */
 	TESHUDActivation inWorldHUDActivation();

@@ -17,6 +17,7 @@
   "config.tes.hud.opacity": "HUD Opacity",
   "config.tes.hud.barFontBackingOpacity": "TES Bar Font Backing Opacity",
   "config.tes.inWorldHud.enabled": "In-World HUD Enabled",
+  "config.tes.inWorldHud.self": "In-World HUD Enabled For Self",
   "config.tes.inWorldHud.activation": "In-World HUD Activation",
   "config.tes.inWorldHud.barsRenderType": "In-World HUD Bars Render Type",
   "config.tes.inWorldHud.opacity": "In-World HUD Opacity",

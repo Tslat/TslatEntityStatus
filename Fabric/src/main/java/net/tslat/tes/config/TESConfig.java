@@ -84,6 +84,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "In-World HUD Enabled")
 	public static boolean inWorldHudEnabled = true;
 
+	@Comment public static final String inWorldHudForSelfComment = "Whether the TES In-World HUD should be enabled for the player or not";
+	@Entry(name = "In-World HUD For Self")
+	public static boolean inWorldHudForSelf = true;
+
 	@Comment public static final String inWorldHUDActivationComment = "When the TES in-world status bars should render";
 	@Comment public static final String inWorldHUDActivationComment2 = "Options:";
 	@Comment public static final String inWorldHUDActivationComment3 = "ALWAYS - Any entity currently visible";
@@ -258,6 +262,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean inWorldBarsEnabled() {
 		return inWorldHudEnabled;
+	}
+
+	@Override
+	public boolean inWorldHudForSelf() {
+		return inWorldHudForSelf;
 	}
 
 	@Override

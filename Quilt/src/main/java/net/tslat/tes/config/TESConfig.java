@@ -18,6 +18,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "HUD Enabled")
 	public static boolean hudEnabled = true;
 
+	@Comment public static final String hudEnabledForSelfComment = "Whether the TES HUD should be enabled for the player or not";
+	@Entry(name = "HUD Enabled For Self")
+	public static boolean hudEnabledForSelf = true;
+
 	@Comment public static final String hudTargetDistanceComment = "How close (in blocks) the player has to be to render a HUD for an entity under the crosshairs";
 	@Comment public static final String hudTargetDistanceComment2 = "Larger values may cost more performance";
 	@Entry(name = "HUD Target Distance", isSlider = true, min = 4d, max = 256d)
@@ -84,6 +88,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Comment public static final String inWorldHudEnabledComment = "Whether TES should do in-world entity status bars";
 	@Entry(name = "In-World HUD Enabled")
 	public static boolean inWorldHudEnabled = true;
+
+	@Comment public static final String inWorldHudForSelfComment = "Whether the TES In-World HUD should be enabled for the player or not";
+	@Entry(name = "In-World HUD For Self")
+	public static boolean inWorldHudForSelf = true;
 
 	@Comment public static final String inWorldHUDActivationComment = "When the TES in-world status bars should render";
 	@Comment public static final String inWorldHUDActivationComment2 = "Options:";
@@ -260,6 +268,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean inWorldBarsEnabled() {
 		return inWorldHudEnabled;
+	}
+
+	@Override
+	public boolean inWorldHudForSelf() {
+		return inWorldHudForSelf;
 	}
 
 	@Override

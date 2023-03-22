@@ -29,6 +29,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.DoubleValue hudBarFontBackingOpacity;
 
 	private final ForgeConfigSpec.BooleanValue inWorldBarsEnabled;
+	private final ForgeConfigSpec.BooleanValue inWorldHudForSelf;
 	private final ForgeConfigSpec.EnumValue<TESHUDActivation> inWorldHUDActivation;
 	private final ForgeConfigSpec.DoubleValue inWorldHudOpacity;
 	private final ForgeConfigSpec.EnumValue<TESHud.BarRenderType> inWorldBarsRenderType;
@@ -151,6 +152,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Whether TES should do in-world entity status bars")
 				.translation("config.tes.inWorldHud.enabled")
 				.define("inWorldBarsEnabled", true);
+
+		this.inWorldHudForSelf = config
+				.comment("Whether the TES in-world HUD should be enabled for the player or not")
+				.translation("config.tes.hud.self")
+				.define("inWorldHudForSelf", false);
 
 		this.inWorldHUDActivation = config
 				.comment("When the TES in-world status bars should render",
@@ -347,6 +353,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public boolean inWorldBarsEnabled() {
 		return this.inWorldBarsEnabled.get();
+	}
+
+	@Override
+	public boolean inWorldHudForSelf() {
+		return this.inWorldHudForSelf.get();
 	}
 
 	@Override
