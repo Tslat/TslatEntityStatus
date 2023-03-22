@@ -21,6 +21,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.IntValue hudHealthBarLength;
 	private final ForgeConfigSpec.BooleanValue hudEntityDamageTint;
 	private final ForgeConfigSpec.BooleanValue hudEntityName;
+	private final ForgeConfigSpec.BooleanValue hudBossesEnabled;
 	private final ForgeConfigSpec.BooleanValue hudArmour;
 	private final ForgeConfigSpec.BooleanValue hudEntityIcons;
 	private final ForgeConfigSpec.BooleanValue hudPotionIcons;
@@ -112,6 +113,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Whether the TES HUD should render the entity's name")
 				.translation("config.tes.hud.entityName")
 				.define("hudEntityName", true);
+
+		this.hudBossesEnabled = config
+				.comment("Whether the TES HUD should render if the entity is a boss (they usually have their own boss bars)")
+				.translation("config.tes.hud.bossesEnabled")
+				.define("hudBossesEnabled", true);
 
 		this.hudArmour = config
 				.comment("Whether the TES HUD should render the entity's armour and toughness")
@@ -291,6 +297,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public boolean hudEntityName() {
 		return this.hudEntityName.get();
+	}
+
+	@Override
+	public boolean hudBossesEnabled() {
+		return this.hudBossesEnabled.get();
 	}
 
 	@Override

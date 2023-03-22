@@ -48,6 +48,11 @@ public interface TESConfig {
 	boolean hudEntityName();
 
 	/**
+	 * Whether the TES HUD Should render for boss-type entities
+	 */
+	boolean hudBossesEnabled();
+
+	/**
 	 * Whether the TES HUD should render the entity's armour & toughness
 	 */
 	boolean hudArmour();

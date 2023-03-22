@@ -54,6 +54,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "HUD Entity Name")
 	public static boolean hudEntityName = true;
 
+	@Comment public static final String hudBossesEnabledComment = "Whether the TES HUD should render for boss-type enemies (they usually have their own boss bar)";
+	@Entry(name = "HUD Bosses Enabled")
+	public static boolean hudBossesEnabled = true;
+
 	@Comment public static final String hudArmourComment = "Whether the TES HUD should render the entity's armour and toughness";
 	@Entry(name = "HUD Entity Armour")
 	public static boolean hudArmour = true;
@@ -204,6 +208,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean hudEntityName() {
 		return hudEntityName;
+	}
+
+	@Override
+	public boolean hudBossesEnabled() {
+		return hudBossesEnabled;
 	}
 
 	@Override
