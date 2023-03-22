@@ -10,6 +10,7 @@
   "config.tes.hud.entityDamageTint": "HUD Entity Damage Tint",
   "config.tes.hud.entityRender": "HUD Entity Render",
   "config.tes.hud.entityName": "HUD Entity Name",
+  "config.tes.hud.bossesEnabled": "HUD Bosses Enabled",
   "config.tes.hud.armour": "HUD Entity Armour",
   "config.tes.hud.entityIcons": "HUD Entity Icons",
   "config.tes.hud.potionIcons": "HUD Entity Effects Icons",
