@@ -1,13 +1,18 @@
 package net.tslat.tes.api;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.tslat.tes.core.hud.TESHud;
 import net.tslat.tes.core.particle.TESParticleClaimant;
 import net.tslat.tes.core.particle.TESParticleManager;
+import net.tslat.tes.core.particle.type.ComponentParticle;
+import net.tslat.tes.core.particle.type.NumericParticle;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -18,8 +23,7 @@ import javax.annotation.Nullable;
 public final class TESAPI {
 	/**
 	 * Add a {@link TESParticle} to the TES Particle manager.<br>
-	 * TES handles damage and healing natively, so this method should only really be necessary
-	 * for custom-typed particles.<br>
+	 * This method should only be called <u><b>client-side</b></u><br>
 	 * The particle itself is responsible for rendering and its own validity/lifespan.
 	 * @param particle The particle to add
 	 */
@@ -102,6 +106,72 @@ public final class TESAPI {
 		}
 		else {
 			TESParticleManager.addParticleClaim(targetEntity.getId(), id, additionalData);
+		}
+	}
+
+	/**
+	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position
+	 * @param level The level the particle is in
+	 * @param position The position the particle should appear at
+	 * @param contents The contents of the particle. If using a numeric value, use one of the double-based methods
+	 */
+	public static void addTESParticle(Level level, Vector3f position, Component contents) {
+		if (TESConstants.IS_SERVER_SIDE) {
+			TESConstants.NETWORKING.sendParticle(level, position, contents);
+		}
+		else {
+			TESParticleManager.addParticle(new ComponentParticle(null, position, contents));
+		}
+	}
+
+	/**
+	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity
+	 * @param targetedEntity The entity the particle should appear on
+	 * @param contents The contents of the particle. If using a numeric value, use one of the double-based methods
+	 */
+	public static void addTESParticle(LivingEntity targetedEntity, Component contents) {
+		if (TESConstants.IS_SERVER_SIDE) {
+			TESConstants.NETWORKING.sendParticle(targetedEntity, contents);
+		}
+		else {
+			EntityState entityState = getTESDataForEntity(targetedEntity);
+
+			if (entityState != null)
+				TESParticleManager.addParticle(new ComponentParticle(entityState, targetedEntity.getEyePosition().toVector3f(), contents));
+		}
+	}
+
+	/**
+	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position
+	 * @param level The level the particle is in
+	 * @param position The position the particle should appear at
+	 * @param value    The value of the particle
+	 * @param colour   The text colour of the particle
+	 */
+	public static void sendParticle(Level level, Vector3f position, double value, int colour) {
+		if (TESConstants.IS_SERVER_SIDE) {
+			TESConstants.NETWORKING.sendParticle(level, position, value, colour);
+		}
+		else {
+			TESParticleManager.addParticle(new NumericParticle(null, position, value).withColour(colour));
+		}
+	}
+
+	/**
+	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity
+	 * @param targetedEntity The entity the particle should appear on
+	 * @param value The value of the particle
+	 * @param colour The text colour of the particle
+	 */
+	public static void sendParticle(LivingEntity targetedEntity, double value, int colour) {
+		if (TESConstants.IS_SERVER_SIDE) {
+			TESConstants.NETWORKING.sendParticle(targetedEntity, value, colour);
+		}
+		else {
+			EntityState entityState = getTESDataForEntity(targetedEntity);
+
+			if (entityState != null)
+				TESParticleManager.addParticle(new NumericParticle(entityState, targetedEntity.getEyePosition().toVector3f(), value).withColour(colour));
 		}
 	}
 }

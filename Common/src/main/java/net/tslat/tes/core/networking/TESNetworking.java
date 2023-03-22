@@ -1,9 +1,12 @@
 package net.tslat.tes.core.networking;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -40,7 +43,44 @@ public interface TESNetworking {
 	void sendEffectsSync(LivingEntity targetedEntity, Set<ResourceLocation> toAdd, Set<ResourceLocation> toRemove);
 
 	/**
-	 * Submit a particle claim for the next/upcoming tick
+	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position<br>
+	 * Network direction: SERVER -> CLIENT
+	 * @param level The level the particle is in
+	 * @param position The position the particle should appear at
+	 * @param contents The contents of the particle. If sending a numeric value, use one of the double-based methods
+	 */
+	void sendParticle(Level level, Vector3f position, Component contents);
+
+	/**
+	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity<br>
+	 * Network direction: SERVER -> CLIENT
+	 * @param targetedEntity The entity the particle should appear on
+	 * @param contents The contents of the particle. If sending a numeric value, use one of the double-based methods
+	 */
+	void sendParticle(LivingEntity targetedEntity, Component contents);
+
+	/**
+	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position<br>
+	 * Network direction: SERVER -> CLIENT
+	 * @param level The level the particle is in
+	 * @param position The position the particle should appear at
+	 * @param value    The value of the particle
+	 * @param colour   The text colour of the particle
+	 */
+	void sendParticle(Level level, Vector3f position, double value, int colour);
+
+	/**
+	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity<br>
+	 * Network direction: SERVER -> CLIENT
+	 * @param targetedEntity The entity the particle should appear on
+	 * @param value The value of the particle
+	 * @param colour The text colour of the particle
+	 */
+	void sendParticle(LivingEntity targetedEntity, double value, int colour);
+
+	/**
+	 * Submit a particle claim for the next/upcoming tick<br>
+	 * Network direction: SERVER -> CLIENT
 	 * @param claimantId The id of the {@link net.tslat.tes.core.particle.TESParticleClaimant claimant} to handle the claim
 	 * @param targetedEntity The entity for the claim
 	 * @param additionalData Optional additional data for the claim
