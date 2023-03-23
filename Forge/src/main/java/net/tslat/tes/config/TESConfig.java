@@ -21,6 +21,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.IntValue hudHealthBarLength;
 	private final ForgeConfigSpec.BooleanValue hudEntityDamageTint;
 	private final ForgeConfigSpec.BooleanValue hudEntityName;
+	private final ForgeConfigSpec.BooleanValue hudBossesEnabled;
 	private final ForgeConfigSpec.BooleanValue hudArmour;
 	private final ForgeConfigSpec.BooleanValue hudEntityIcons;
 	private final ForgeConfigSpec.BooleanValue hudPotionIcons;
@@ -28,6 +29,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.DoubleValue hudBarFontBackingOpacity;
 
 	private final ForgeConfigSpec.BooleanValue inWorldBarsEnabled;
+	private final ForgeConfigSpec.BooleanValue inWorldHudForSelf;
 	private final ForgeConfigSpec.EnumValue<TESHUDActivation> inWorldHUDActivation;
 	private final ForgeConfigSpec.DoubleValue inWorldHudOpacity;
 	private final ForgeConfigSpec.EnumValue<TESHud.BarRenderType> inWorldBarsRenderType;
@@ -113,6 +115,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.translation("config.tes.hud.entityName")
 				.define("hudEntityName", true);
 
+		this.hudBossesEnabled = config
+				.comment("Whether the TES HUD should render if the entity is a boss (they usually have their own boss bars)")
+				.translation("config.tes.hud.bossesEnabled")
+				.define("hudBossesEnabled", true);
+
 		this.hudArmour = config
 				.comment("Whether the TES HUD should render the entity's armour and toughness")
 				.translation("config.tes.hud.armour")
@@ -145,6 +152,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Whether TES should do in-world entity status bars")
 				.translation("config.tes.inWorldHud.enabled")
 				.define("inWorldBarsEnabled", true);
+
+		this.inWorldHudForSelf = config
+				.comment("Whether the TES in-world HUD should be enabled for the player or not")
+				.translation("config.tes.hud.self")
+				.define("inWorldHudForSelf", false);
 
 		this.inWorldHUDActivation = config
 				.comment("When the TES in-world status bars should render",
@@ -294,6 +306,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	}
 
 	@Override
+	public boolean hudBossesEnabled() {
+		return this.hudBossesEnabled.get();
+	}
+
+	@Override
 	public boolean hudArmour() {
 		return hudArmour.get();
 	}
@@ -336,6 +353,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public boolean inWorldBarsEnabled() {
 		return this.inWorldBarsEnabled.get();
+	}
+
+	@Override
+	public boolean inWorldHudForSelf() {
+		return this.inWorldHudForSelf.get();
 	}
 
 	@Override

@@ -1,9 +1,16 @@
 package net.tslat.tes.api;
 
+import com.mojang.math.Vector3f;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.tslat.tes.core.hud.TESHud;
+import net.tslat.tes.core.particle.TESParticleClaimant;
 import net.tslat.tes.core.particle.TESParticleManager;
+import net.tslat.tes.core.particle.type.ComponentParticle;
+import net.tslat.tes.core.particle.type.NumericParticle;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
 
@@ -16,8 +23,7 @@ import javax.annotation.Nullable;
 public final class TESAPI {
 	/**
 	 * Add a {@link TESParticle} to the TES Particle manager.<br>
-	 * TES handles damage and healing natively, so this method should only really be necessary
-	 * for custom-typed particles.<br>
+	 * This method should only be called <u><b>client-side</b></u><br>
 	 * The particle itself is responsible for rendering and its own validity/lifespan.
 	 * @param particle The particle to add
 	 */
@@ -44,6 +50,16 @@ public final class TESAPI {
 	 */
 	public static boolean removeTESHudElement(ResourceLocation id) {
 		return TESHud.removeHudElement(id.toString());
+	}
+
+	/**
+	 * Register a {@link TESParticleClaimant} with TES for handling custom claims.<br>
+	 * This allows for overriding damage particles dynamically or doing other similar things
+	 * @param id The id of the claimant to register
+	 * @param claimant The claimant instance
+	 */
+	public static void registerParticleClaimant(ResourceLocation id, TESParticleClaimant claimant) {
+		TESParticleManager.registerParticleClaimant(id, claimant);
 	}
 
 	/**
@@ -75,5 +91,87 @@ public final class TESAPI {
 	@Nullable
 	public static EntityState getTESDataForEntity(int entityId) {
 		return TESEntityTracking.getStateForEntityId(entityId);
+	}
+
+	/**
+	 * Submit a particle claim to the particle manager for the next/upcoming tick.<br>
+	 * If the target entity has a health change next tick, your claimant will be called with the relevant info
+	 * @param id The id of the claimant responsible for handling the claim
+	 * @param targetEntity The entity the claim is for
+	 * @param additionalData Optional additional data passed back to the claimant at the time of the claim
+	 */
+	public static void submitParticleClaim(ResourceLocation id, LivingEntity targetEntity, @Nullable CompoundTag additionalData) {
+		if (TESConstants.IS_SERVER_SIDE) {
+			TESConstants.NETWORKING.sendParticleClaim(id, targetEntity, additionalData);
+		}
+		else {
+			TESParticleManager.addParticleClaim(targetEntity.getId(), id, additionalData);
+		}
+	}
+
+	/**
+	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position
+	 * @param level The level the particle is in
+	 * @param position The position the particle should appear at
+	 * @param contents The contents of the particle. If using a numeric value, use one of the double-based methods
+	 */
+	public static void addTESParticle(Level level, Vector3f position, Component contents) {
+		if (TESConstants.IS_SERVER_SIDE) {
+			TESConstants.NETWORKING.sendParticle(level, position, contents);
+		}
+		else {
+			TESParticleManager.addParticle(new ComponentParticle(null, position, contents));
+		}
+	}
+
+	/**
+	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity
+	 * @param targetedEntity The entity the particle should appear on
+	 * @param contents The contents of the particle. If using a numeric value, use one of the double-based methods
+	 */
+	public static void addTESParticle(LivingEntity targetedEntity, Component contents) {
+		if (TESConstants.IS_SERVER_SIDE) {
+			TESConstants.NETWORKING.sendParticle(targetedEntity, contents);
+		}
+		else {
+			EntityState entityState = getTESDataForEntity(targetedEntity);
+
+			if (entityState != null)
+				TESParticleManager.addParticle(new ComponentParticle(entityState, new Vector3f(targetedEntity.getEyePosition()), contents));
+		}
+	}
+
+	/**
+	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position
+	 * @param level The level the particle is in
+	 * @param position The position the particle should appear at
+	 * @param value    The value of the particle
+	 * @param colour   The text colour of the particle
+	 */
+	public static void sendParticle(Level level, Vector3f position, double value, int colour) {
+		if (TESConstants.IS_SERVER_SIDE) {
+			TESConstants.NETWORKING.sendParticle(level, position, value, colour);
+		}
+		else {
+			TESParticleManager.addParticle(new NumericParticle(null, position, value).withColour(colour));
+		}
+	}
+
+	/**
+	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity
+	 * @param targetedEntity The entity the particle should appear on
+	 * @param value The value of the particle
+	 * @param colour The text colour of the particle
+	 */
+	public static void sendParticle(LivingEntity targetedEntity, double value, int colour) {
+		if (TESConstants.IS_SERVER_SIDE) {
+			TESConstants.NETWORKING.sendParticle(targetedEntity, value, colour);
+		}
+		else {
+			EntityState entityState = getTESDataForEntity(targetedEntity);
+
+			if (entityState != null)
+				TESParticleManager.addParticle(new NumericParticle(entityState, new Vector3f(targetedEntity.getEyePosition()), value).withColour(colour));
+		}
 	}
 }

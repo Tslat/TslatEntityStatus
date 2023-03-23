@@ -13,6 +13,7 @@ public class TES implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		MidnightConfig.init(TESConstants.MOD_ID, TESConfig.class);
 		TESConstants.setConfig(new TESConfig());
+
 		ServerPlayNetworking.registerGlobalReceiver(RequestEffectsPacket.ID, (server, player, handler, buf, responseSender) -> RequestEffectsPacket.decode(buf).handleMessage(player, server::submit));
 	}
 }

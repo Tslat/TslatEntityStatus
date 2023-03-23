@@ -16,6 +16,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
+import net.tslat.tes.api.TESEntityType;
 import net.tslat.tes.api.TESHudElement;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.api.util.TESUtil;
@@ -95,7 +96,7 @@ public class TESHud {
 			return;
 		}
 
-		if (!TESAPI.getConfig().hudEnabled())
+		if (!TESAPI.getConfig().hudEnabled() || (!TESAPI.getConfig().hudBossesEnabled() && TESConstants.UTILS.getEntityType(TARGET_ENTITY) == TESEntityType.BOSS))
 			return;
 
 		float hudOpacity = TESAPI.getConfig().hudOpacity();
@@ -124,7 +125,7 @@ public class TESHud {
 	}
 
 	public static void renderInWorld(PoseStack poseStack, LivingEntity entity, float partialTick) {
-		if (!TESAPI.getConfig().inWorldBarsEnabled() || entity.isDeadOrDying())
+		if (!TESAPI.getConfig().inWorldBarsEnabled() || entity.isDeadOrDying() || (entity == Minecraft.getInstance().player && !TESAPI.getConfig().inWorldHudForSelf()))
 			return;
 
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
