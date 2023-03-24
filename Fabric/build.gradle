@@ -102,7 +102,7 @@ curseforge {
         releaseType = 'release'
         addGameVersion minecraft_version
 
-        mainArtifact(jar) {
+        mainArtifact(remapJar) {
             it.displayName = "${project.mod_name} Fabric ${project.minecraft_version}-${project.version}"
         }
     }
