@@ -1,5 +1,6 @@
 plugins {
     id 'org.quiltmc.loom' version '0.12+'
+    id 'io.github.CDAGaming.cursegradle' version '1.6.0'
 }
 
 archivesBaseName = "${mod_name}-quilt-${minecraft_version}"
@@ -93,8 +94,22 @@ publishing {
     publications {
         maven(MavenPublication) {
             artifactId = archivesBaseName
-            artifact jar
-            artifact sourcesJar
+            from components.java
+        }
+    }
+}
+
+curseforge {
+    apiKey = System.getenv("CURSEFORGE_TOKEN")
+
+    project {
+        id = curseforge_id
+        changelog = 'https://github.com/Tslat/TslatEntityStatus/commits/1.18.2'
+        releaseType = 'release'
+        addGameVersion minecraft_version
+
+        mainArtifact(jar) {
+            it.displayName = "${project.mod_name} Quilt ${project.minecraft_version}-${project.version}"
         }
     }
 }
