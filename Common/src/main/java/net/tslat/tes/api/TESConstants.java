@@ -20,7 +20,13 @@ public final class TESConstants {
 	public static TESUtil UTILS = ServiceLoader.load(TESUtil.class).findFirst().get();
 	public static TESNetworking NETWORKING = ServiceLoader.load(TESNetworking.class).findFirst().get();
 
+	public static boolean IS_SERVER_SIDE = true;
+
 	public static void setConfig(TESConfig config) {
 		CONFIG = config;
+	}
+
+	public static void setIsClient() {
+		IS_SERVER_SIDE = false;
 	}
 }

@@ -36,11 +36,11 @@ subprojects {
 	publishing {
 		repositories {
 			maven {
-				name = "Repsy"
-				url 'https://repo.repsy.io/mvn/tslat/tslatentitystatus'
+				name = "Cloudsmith"
+				url 'https://maven.cloudsmith.io/tslat/tes/'
 				credentials {
-					username project.findProperty("repsy.user") ?: System.getenv("REPSY_USERNAME")
-					password project.findProperty("repsy.password") ?: System.getenv("REPSY_PASSWORD")
+					username System.getenv("CLOUDSMITH_USERNAME")
+					password System.getenv("CLOUDSMITH_API_KEY")
 				}
 			}
 		}

@@ -20,6 +20,6 @@ public class HealParticle extends NumericParticle {
 	public HealParticle(EntityState entityState, Vector3f position, Animation animation, double amount, int lifespan) {
 		super(entityState, position, animation, amount, lifespan);
 
-		setColour(TESAPI.getConfig().getHealParticleColour());
+		withColour(TESAPI.getConfig().getHealParticleColour());
 	}
 }

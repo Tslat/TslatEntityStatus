@@ -20,6 +20,6 @@ public class DamageParticle extends NumericParticle {
 	public DamageParticle(EntityState entityState, Vector3f position, Animation animation, double amount, int lifespan) {
 		super(entityState, position, animation, amount, lifespan);
 
-		setColour(TESAPI.getConfig().getDamageParticleColour());
+		withColour(TESAPI.getConfig().getDamageParticleColour());
 	}
 }

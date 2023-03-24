@@ -48,6 +48,11 @@ public interface TESConfig {
 	boolean hudEntityName();
 
 	/**
+	 * Whether the TES HUD Should render for boss-type entities
+	 */
+	boolean hudBossesEnabled();
+
+	/**
 	 * Whether the TES HUD should render the entity's armour & toughness
 	 */
 	boolean hudArmour();
@@ -99,6 +104,11 @@ public interface TESConfig {
 	 * Whether the TES in-world entity status GUIs are enabled
 	 */
 	boolean inWorldBarsEnabled();
+
+	/**
+	 * Whether the TES HUD should be rendered for the player or not
+	 */
+	boolean inWorldHudForSelf();
 
 	/**
 	 * When the TES in-world entity status bars should render
