@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.tslat.tes.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "tslatentitystatus.refmap.json",
+  "mixins": [
+    "common.LivingEntityMixin"
+  ],
+  "client": [
+    "client.EntityRenderDispatcherMixin",
+    "client.EntityRendererMixin",
+    "client.GameRendererMixin",
+    "client.LevelRendererMixin",
+    "client.MinecraftMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
