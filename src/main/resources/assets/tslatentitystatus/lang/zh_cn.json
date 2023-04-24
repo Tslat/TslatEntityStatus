@@ -35,6 +35,6 @@
   "config.tes.particle.verbal": "语言生命粒子",
   "config.tes.particle.damageParticleColour": "伤害粒子颜色",
   "config.tes.particle.healParticleColour": "治愈粒子颜色",
-  "config.tes.particle.verbal.instakill": "INSTAKILL!",
-  "config.tes.particle.verbal.fullHeal": "Full Heal!"
+  "config.tes.particle.verbal.instakill": "西内！",
+  "config.tes.particle.verbal.fullHeal": "痊愈！"
 }
