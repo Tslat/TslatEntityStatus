@@ -32,7 +32,7 @@
   "config.tes.particle.enabled": "启用粒子效果",
   "config.tes.particle.decimalPoints": "粒子小数点位数",
   "config.tes.particle.scale": "粒子渲染大小倍率",
-  "config.tes.particle.verbal": "语言生命粒子",
+  "config.tes.particle.verbal": "文本生命粒子",
   "config.tes.particle.damageParticleColour": "伤害粒子颜色",
   "config.tes.particle.healParticleColour": "治愈粒子颜色",
   "config.tes.particle.verbal.instakill": "西内！",
