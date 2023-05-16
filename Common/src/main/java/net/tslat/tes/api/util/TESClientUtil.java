@@ -22,7 +22,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.tes.api.TESAPI;
-import net.tslat.tes.mixin.common.WalkAnimationStateAccess;
 
 /**
  * Various helper methods for client-side functions
@@ -99,7 +98,6 @@ public final class TESClientUtil {
 
 		poseStack.pushPose();
 
-
 		if (includeFrame) {
 			TESClientUtil.prepRenderForTexture(TESClientUtil.CREATIVE_INVENTORY_TEXTURE);
 			RenderSystem.enableBlend();
@@ -119,9 +117,9 @@ public final class TESClientUtil {
 		float yHeadRotOldPrev = entity.yHeadRotO;
 		float yHeadRotPrev = entity.yHeadRot;
 		int hurtTicks = entity.hurtTime;
-		float walkPositionPrev = entity.walkAnimation.position();
-		float walkSpeedPrev = entity.walkAnimation.speed();
-		float walkSpeedOldPrev = ((WalkAnimationStateAccess)entity.walkAnimation).getSpeedOld();
+		//float walkPositionPrev = entity.walkAnimation.position();
+		//float walkSpeedPrev = entity.walkAnimation.speed();
+		//float walkSpeedOldPrev = ((WalkAnimationStateAccess)entity.walkAnimation).getSpeedOld();
 		float attackTimePrev = entity.attackAnim;
 		float attackTimeOldPrev = entity.oAttackAnim;
 
@@ -133,13 +131,11 @@ public final class TESClientUtil {
 		entity.yHeadRotO = entity.getYRot();
 
 		entity.hurtTime = TESAPI.getConfig().hudEntityDamageOverlay() ? entity.hurtTime : 0;
-		((WalkAnimationStateAccess)entity.walkAnimation).setPosition(0);
-		((WalkAnimationStateAccess)entity.walkAnimation).setSpeed(0);
-		((WalkAnimationStateAccess)entity.walkAnimation).setSpeedOld(0);
+		//((WalkAnimationStateAccess)entity.walkAnimation).setPosition(0);
+		//((WalkAnimationStateAccess)entity.walkAnimation).setSpeed(0);
+		//((WalkAnimationStateAccess)entity.walkAnimation).setSpeedOld(0);
 		entity.attackAnim = 0;
 		entity.oAttackAnim = 0;
-		//entity.animationSpeed = 0;
-		//entity.animationSpeedOld = 0;
 
 		Lighting.setupForEntityInInventory();
 
@@ -156,9 +152,9 @@ public final class TESClientUtil {
 		entity.yHeadRotO = yHeadRotOldPrev;
 
 		entity.hurtTime = hurtTicks;
-		((WalkAnimationStateAccess)entity.walkAnimation).setPosition(walkPositionPrev);
-		((WalkAnimationStateAccess)entity.walkAnimation).setSpeedOld(walkSpeedOldPrev);
-		((WalkAnimationStateAccess)entity.walkAnimation).setSpeed(walkSpeedPrev);
+		//((WalkAnimationStateAccess)entity.walkAnimation).setPosition(walkPositionPrev);
+		//((WalkAnimationStateAccess)entity.walkAnimation).setSpeedOld(walkSpeedOldPrev);
+		//((WalkAnimationStateAccess)entity.walkAnimation).setSpeed(walkSpeedPrev);
 		entity.attackAnim = attackTimePrev;
 		entity.oAttackAnim = attackTimeOldPrev;
 
