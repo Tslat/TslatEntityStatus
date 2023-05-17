@@ -5,7 +5,7 @@ import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.core.state.EntityState;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**

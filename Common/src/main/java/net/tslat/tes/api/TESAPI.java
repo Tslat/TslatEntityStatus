@@ -14,7 +14,7 @@ import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Public-facing API class for TES.<br>

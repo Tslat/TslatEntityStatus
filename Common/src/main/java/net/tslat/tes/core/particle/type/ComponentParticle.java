@@ -8,7 +8,7 @@ import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.state.EntityState;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Generic class for {@link Component}-based TES Particles

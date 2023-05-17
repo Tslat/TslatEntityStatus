@@ -12,7 +12,7 @@ import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.core.state.EntityState;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;

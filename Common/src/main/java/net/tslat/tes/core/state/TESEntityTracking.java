@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.core.particle.TESParticleManager;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public final class TESEntityTracking {
