@@ -3,9 +3,8 @@ package net.tslat.tes.core.particle.type;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.util.TESUtil;
 import net.tslat.tes.core.state.EntityState;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
 
 /**
  * Generic class for numeric-based TES Particles.

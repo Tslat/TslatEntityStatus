@@ -14,9 +14,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.tslat.tes.TESClient;
 import net.tslat.tes.api.TESAPI;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.util.Set;
 
 public class TESNetworking implements net.tslat.tes.core.networking.TESNetworking {

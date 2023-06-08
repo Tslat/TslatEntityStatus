@@ -6,9 +6,8 @@ import net.minecraft.client.gui.Font;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.state.EntityState;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
 
 /**
  * Built-in class for text-based {@link TESParticle TES Particles}

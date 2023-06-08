@@ -12,9 +12,8 @@ import net.tslat.tes.core.particle.type.ComponentParticle;
 import net.tslat.tes.core.particle.type.NumericParticle;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
 
 /**
  * Public-facing API class for TES.<br>

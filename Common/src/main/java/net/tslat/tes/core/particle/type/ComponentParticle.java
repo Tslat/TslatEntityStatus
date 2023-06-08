@@ -6,9 +6,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.state.EntityState;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
 
 public class ComponentParticle extends GenericTESParticle<Component> {
 	protected Component contents;
