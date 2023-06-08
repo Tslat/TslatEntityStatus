@@ -31,7 +31,7 @@ public class RequestEffectsPacket {
 
 	public void handleMessage(Supplier<NetworkEvent.Context> context) {
 		context.get().enqueueWork(() -> {
-			Entity entity = context.get().getSender().getLevel().getEntity(this.entityId);
+			Entity entity = context.get().getSender().level().getEntity(this.entityId);
 
 			if (entity instanceof LivingEntity livingEntity) {
 				Collection<MobEffectInstance> effects = livingEntity.getActiveEffects();

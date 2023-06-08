@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -86,11 +87,11 @@ public class TESHud {
 		return removed.get();
 	}
 
-	public static void renderForHud(PoseStack poseStack, Minecraft mc, float partialTick) {
+	public static void renderForHud(GuiGraphics guiGraphics, Minecraft mc, float partialTick) {
 		if (TARGET_ENTITY == null)
 			return;
 
-		if (!TARGET_ENTITY.isAlive() || TARGET_ENTITY.level != mc.level || mc.level.getGameTime() > TARGET_EXPIRY_TIME) {
+		if (!TARGET_ENTITY.isAlive() || TARGET_ENTITY.level() != mc.level || mc.level.getGameTime() > TARGET_EXPIRY_TIME) {
 			TARGET_ENTITY = null;
 
 			return;
@@ -100,13 +101,14 @@ public class TESHud {
 			return;
 
 		float hudOpacity = TESAPI.getConfig().hudOpacity();
+		PoseStack poseStack = guiGraphics.pose();
 
 		poseStack.pushPose();
 		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
 
 		if (TESAPI.getConfig().hudEntityRender()) {
-			TESClientUtil.renderEntityIcon(poseStack, mc, partialTick, TARGET_ENTITY, hudOpacity, true);
+			TESClientUtil.renderEntityIcon(guiGraphics, mc, partialTick, TARGET_ENTITY, hudOpacity, true);
 
 			poseStack.translate(40, 0, 0);
 		}
@@ -114,7 +116,7 @@ public class TESHud {
 		poseStack.translate(0, 2, 0);
 
 		for (TESHudElement element : ELEMENTS.values()) {
-			int offset = element.render(poseStack, mc, partialTick, TARGET_ENTITY, hudOpacity, false);
+			int offset = element.render(guiGraphics, mc, partialTick, TARGET_ENTITY, hudOpacity, false);
 
 			if (offset > 0)
 				poseStack.translate(0, 2 + offset, 0);
@@ -138,6 +140,8 @@ public class TESHud {
 		Vec3 position = entity.getPosition(partialTick)
 				.subtract(mc.gameRenderer.getMainCamera().getPosition())
 				.add(mc.getEntityRenderDispatcher().getRenderer(entity).getRenderOffset(entity, partialTick));
+		GuiGraphics guiGraphics = TESClientUtil.createInlineGuiGraphics(poseStack, mc.renderBuffers().bufferSource());
+
 
 		poseStack.pushPose();
 		poseStack.translate(position.x, position.y, position.z);
@@ -152,7 +156,7 @@ public class TESHud {
 		RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
 
 		for (TESHudElement element : INVERSE_ELEMENTS) {
-			int offset = element.render(poseStack, mc, partialTick, entity, hudOpacity, true);
+			int offset = element.render(TESClientUtil.createInlineGuiGraphics(poseStack, Minecraft.getInstance().renderBuffers().bufferSource()), mc, partialTick, entity, hudOpacity, true);
 
 			if (offset > 0)
 				poseStack.translate(0, -(2 + offset), 0);
@@ -192,7 +196,7 @@ public class TESHud {
 			targetingRange = Math.sqrt(entityHitClipDistanceSqr);
 			rayEnd = cameraPos.add(cameraView.multiply(targetingRange, targetingRange, targetingRange));
 
-			HitResult blockHitResult = cameraEntity.level.clip(new ClipContext(cameraPos, rayEnd, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cameraEntity));
+			HitResult blockHitResult = cameraEntity.level().clip(new ClipContext(cameraPos, rayEnd, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cameraEntity));
 
 			if (blockHitResult == null || blockHitResult.getType() == HitResult.Type.MISS || blockHitResult.getLocation().distanceToSqr(cameraPos) > entityHitClipDistanceSqr)
 				TESHud.setTargetEntity(target);

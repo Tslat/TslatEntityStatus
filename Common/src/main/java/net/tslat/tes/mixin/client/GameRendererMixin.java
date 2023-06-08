@@ -1,7 +1,7 @@
 package net.tslat.tes.mixin.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.tslat.tes.core.hud.TESHud;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,8 +16,8 @@ public class GameRendererMixin {
 		TESHud.pickNewEntity(partialTick);
 	}
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;render(Lcom/mojang/blaze3d/vertex/PoseStack;F)V", shift = At.Shift.AFTER))
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;render(Lnet/minecraft/client/gui/GuiGraphics;F)V", shift = At.Shift.AFTER))
 	private void renderTESHud(float partialTick, long nanoTime, boolean renderLevel, CallbackInfo callback) {
-		TESHud.renderForHud(new PoseStack(), Minecraft.getInstance(), partialTick);
+		TESHud.renderForHud(new GuiGraphics(Minecraft.getInstance(), Minecraft.getInstance().renderBuffers().bufferSource()), Minecraft.getInstance(), partialTick);
 	}
 }

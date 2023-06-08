@@ -1,14 +1,13 @@
 package net.tslat.tes.core.particle.type;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.state.EntityState;
-import org.joml.Vector3f;
-
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 /**
  * Built-in class for text-based {@link TESParticle TES Particles}
@@ -55,7 +54,7 @@ public class TextParticle extends GenericTESParticle<String> {
 	}
 
 	@Override
-	public void render(PoseStack poseStack, Minecraft mc, Font fontRenderer, float partialTick) {
-		defaultedTextRender(mc, poseStack, this.prevPos, this.pos, partialTick, () -> TESClientUtil.renderCenteredText(this.text, poseStack, fontRenderer, 0, 0, getColour()));
+	public void render(GuiGraphics guiGraphics, Minecraft mc, Font fontRenderer, float partialTick) {
+		defaultedTextRender(mc, guiGraphics.pose(), this.prevPos, this.pos, partialTick, () -> TESClientUtil.renderCenteredText(guiGraphics, this.text, 0, 0, getColour()));
 	}
 }

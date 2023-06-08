@@ -32,7 +32,7 @@ public class RequestEffectsPacket {
 
 	public void handleMessage(ServerPlayer sender, Consumer<Runnable> queue) {
 		queue.accept(() -> {
-			Entity entity = sender.getLevel().getEntity(this.entityId);
+			Entity entity = sender.level().getEntity(this.entityId);
 
 			if (entity instanceof LivingEntity livingEntity) {
 				Collection<MobEffectInstance> effects = livingEntity.getActiveEffects();

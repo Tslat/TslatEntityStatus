@@ -18,9 +18,17 @@ subprojects {
 			url = 'https://maven.minecraftforge.net'
 		}
 
-		maven {
-			name = "MidnightLib"
-			url = "https://api.modrinth.com/maven"
+		exclusiveContent {
+			forRepository {
+				maven {
+					name = "Modrinth"
+					url = "https://api.modrinth.com/maven"
+				}
+			}
+
+			filter {
+				includeGroup "maven.modrinth"
+			}
 		}
 	}
 

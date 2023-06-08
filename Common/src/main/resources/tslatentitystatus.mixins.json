@@ -12,6 +12,7 @@
     "client.EntityRenderDispatcherMixin",
     "client.EntityRendererMixin",
     "client.GameRendererMixin",
+    "client.GuiGraphicsAccessor",
     "client.LevelRendererMixin",
     "client.MinecraftMixin"
   ],

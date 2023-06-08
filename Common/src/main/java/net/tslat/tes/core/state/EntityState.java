@@ -75,7 +75,7 @@ public class EntityState {
 	}
 	
 	public boolean isValid() {
-		return this.entity != null && this.entity.isAlive() && this.entity.level == Minecraft.getInstance().level;
+		return this.entity != null && this.entity.isAlive() && this.entity.level() == Minecraft.getInstance().level;
 	}
 
 	public void tick() {
@@ -86,7 +86,7 @@ public class EntityState {
 
 		this.lastHealth = currentHealth;
 
-		if (this.entity.level.getGameTime() - this.lastTransitionTime > 20) {
+		if (this.entity.level().getGameTime() - this.lastTransitionTime > 20) {
 			if (this.lastTransitionHealth > this.currentHealth) {
 				this.lastTransitionHealth -= this.entity.getMaxHealth() / 30f;
 			}
@@ -111,7 +111,7 @@ public class EntityState {
 			Vector3f particlePos = new Vector3f((float)this.entity.getX(), (float)this.entity.getEyeY(), (float)this.entity.getZ());
 
 			if (healthDelta < 0) {
-				this.lastTransitionTime = this.entity.level.getGameTime();
+				this.lastTransitionTime = this.entity.level().getGameTime();
 
 				if (this.lastTransitionHealth == 0)
 					this.lastTransitionHealth = this.lastHealth;

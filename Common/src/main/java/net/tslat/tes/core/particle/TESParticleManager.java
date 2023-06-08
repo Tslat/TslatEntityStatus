@@ -1,18 +1,18 @@
 package net.tslat.tes.core.particle;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.core.state.EntityState;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -96,10 +96,10 @@ public final class TESParticleManager {
 		NEW_CLAIMS.clear();
 	}
 
-	public static void render(PoseStack poseStack, float partialTick) {
+	public static void render(GuiGraphics guiGraphics, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		Font fontRenderer = mc.font;
 
-		PARTICLES.forEach(particle -> particle.render(poseStack, mc, fontRenderer, partialTick));
+		PARTICLES.forEach(particle -> particle.render(guiGraphics, mc, fontRenderer, partialTick));
 	}
 }
