@@ -55,30 +55,34 @@ public final class BuiltinHudElements {
 
 		TESConfig config = TESAPI.getConfig();
 		int barWidth = inWorldHud ? config.inWorldBarsLength() : config.hudHealthBarLength();
-		int uvY = TESConstants.UTILS.getEntityType(entity).getTextureYPos();
-		float percentTransitionHealth = entityState.getLastTransitionHealth() / entity.getMaxHealth();
-		float percentHealth = entityState.getHealth() / entity.getMaxHealth();
 		TESHud.BarRenderType renderType = inWorldHud ? config.inWorldBarsRenderType() : config.hudHealthRenderType();
-		boolean doSegments = inWorldHud ? config.inWorldBarsSegments() : config.hudHealthBarSegments();
 		PoseStack poseStack = guiGraphics.pose();
 
 		poseStack.pushPose();
 		poseStack.translate(0, inWorldHud ? 4 : 1, 0);
 
-		if (inWorldHud)
+		if (inWorldHud) {
 			poseStack.translate(barWidth * -0.5f, 0, 0);
+			poseStack.scale(1, 1, -1);
+		}
 
 		TESClientUtil.prepRenderForTexture(BARS_TEXTURE);
 		RenderSystem.setShaderColor(1, 1, 1, opacity);
+		RenderSystem.enableDepthTest();
 
 		if (renderType != TESHud.BarRenderType.NUMERIC) {
+			float percentHealth = entityState.getHealth() / entity.getMaxHealth();
+			float percentTransitionHealth = entityState.getLastTransitionHealth() / entity.getMaxHealth();
+			boolean doSegments = inWorldHud ? config.inWorldBarsSegments() : config.hudHealthBarSegments();
+			int uvY = TESConstants.UTILS.getEntityType(entity).getTextureYPos();
+
 			TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, 60, 1, false, opacity);
-			poseStack.translate(0, 0, -0.001f);
+			poseStack.translate(0, 0, 0.001f);
 
 			if (percentTransitionHealth > percentHealth)
 				TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, uvY, entityState.getLastTransitionHealth() / entity.getMaxHealth(), false, opacity);
 
-			poseStack.translate(0, 0, -0.001f);
+			poseStack.translate(0, 0, 0.001f);
 
 			RenderSystem.enableBlend();
 			TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, uvY + 5, percentHealth, doSegments, opacity);
@@ -91,9 +95,9 @@ public final class BuiltinHudElements {
 
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-			poseStack.translate(0, 0, -0.005f);
+			poseStack.translate(0, 0, 0.001f);
 			TESClientUtil.drawColouredSquare(guiGraphics, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 1, 9, 0x090909 | (int)(opacity * 255 * TESConstants.CONFIG.hudBarFontBackingOpacity()) << 24);
-			poseStack.translate(0, 0, -0.001f);
+			poseStack.translate(0, 0, 0.001f);
 			TESClientUtil.drawText(guiGraphics, mc.font, healthText, center - halfTextWidth, -1, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255));
 		}
 
