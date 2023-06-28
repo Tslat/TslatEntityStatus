@@ -1,14 +1,13 @@
 plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT' // Mixins
+    id 'org.spongepowered.mixin' version '0.7.+' // Mixins
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id 'io.github.CDAGaming.cursegradle' version '1.6.0'
+    id 'io.github.CDAGaming.cursegradle' version '1.6.1'
 }
 
 archivesBaseName = "${mod_name}-forge-${minecraft_version}"
 
 minecraft {
-    //mappings channel: mappings_channel, version: "${minecraft_version}-${mappings_version}" Temp disabled until parchment updates
     mappings channel: mappings_channel, version: "${mappings_version}-${minecraft_version}"
     //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -83,24 +82,23 @@ sourcesJar {
     from(project(":Common").sourceSets.main.allSource)
 }
 
-def replaceProperties = [
-        mod_id: mod_id,
-        mod_name: mod_name,
-        mod_version: version,
-        minecraft_version: minecraft_version,
-        minecraft_version_range: minecraft_version_range,
-        forge_version: forge_version,
-        forge_version_range: forge_version_range,
-        loader_version_range: forge_loader_version_range
-]
-
 processResources {
+    var replaceProperties = [
+            mod_id: mod_id,
+            mod_name: mod_name,
+            mod_version: version,
+            minecraft_version: minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version,
+            forge_version_range: forge_version_range,
+            loader_version_range: forge_loader_version_range
+    ]
+
     from project(":Common").sourceSets.main.resources
     inputs.properties replaceProperties
-    replaceProperties.put 'project', project
 
     filesMatching('META-INF/mods.toml') {
-        expand replaceProperties
+        expand replaceProperties + [project: project]
     }
 
     exclude '**/*.accesswidener'
@@ -122,9 +120,10 @@ jar {
                 "MixinConfigs": "${mod_id}.mixins.json"
         ])
     }
+
+    finalizedBy 'reobfJar'
 }
 
-jar.finalizedBy('reobfJar')
 publish.dependsOn('reobfJar')
 
 publishing {
