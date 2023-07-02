@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESParticle;
+import net.tslat.tes.core.particle.type.TESParticleSourceHandler;
 import net.tslat.tes.core.state.EntityState;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +27,7 @@ public final class TESParticleManager {
 	private static final ConcurrentLinkedQueue<TESParticle<?>> PARTICLES = new ConcurrentLinkedQueue<>();
 	private static final Object2ObjectOpenHashMap<ResourceLocation, TESParticleClaimant> CLAIMANTS = new Object2ObjectOpenHashMap<>();
 	private static final ConcurrentMap<Integer, List<Pair<ResourceLocation, CompoundTag>>> CLAIMS = new ConcurrentHashMap<>();
+	private static final ObjectArrayList<TESParticleSourceHandler> HANDLERS = new ObjectArrayList<>();
 	private static final ObjectArrayList<Runnable> NEW_CLAIMS = new ObjectArrayList<>();
 
 	/**
@@ -48,6 +50,15 @@ public final class TESParticleManager {
 	}
 
 	/**
+	 * Register a {@link TESParticleSourceHandler} with TES for handling custom {@link net.minecraft.world.damagesource.DamageSource DamageSource}-based particles
+	 */
+	public static void registerParticleSourceHandler(TESParticleSourceHandler handler) {
+		synchronized (HANDLERS) {
+			HANDLERS.add(handler);
+		}
+	}
+
+	/**
 	 * Add a particle claim for the next tick for custom particle handling.<br>
 	 * Must have a {@link TESParticleManager#registerParticleClaimant registered} {@link TESParticleClaimant} with the same ID to be able to receive the claim
 	 * @param entityId The id of the entity to claim particles for
@@ -63,12 +74,22 @@ public final class TESParticleManager {
 		}
 	}
 
-	public static float handleParticleClaims(EntityState entityState, float healthDelta, Consumer<TESParticle<?>> particleAdder) {
+	public static float handleParticleClaims(EntityState entityState, float healthDelta, Consumer<TESParticle<?>> particleAdder, boolean checkSourceHandlers) {
 		for (Pair<ResourceLocation, CompoundTag> pair : CLAIMS.getOrDefault(entityState.getEntity().getId(), List.of())) {
 			healthDelta = CLAIMANTS.getOrDefault(pair.getFirst(), (state, delta, data, adder) -> delta).checkClaim(entityState, healthDelta, pair.getSecond(), particleAdder);
 
 			if (healthDelta == 0)
 				break;
+		}
+
+		if (checkSourceHandlers && healthDelta < 0) {
+			for (TESParticleSourceHandler handler : HANDLERS) {
+				if (handler.checkIncomingDamage(entityState, healthDelta, entityState.getEntity().getLastDamageSource(), particleAdder)) {
+					healthDelta = 0;
+
+					break;
+				}
+			}
 		}
 
 		return healthDelta;

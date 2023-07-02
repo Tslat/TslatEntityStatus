@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
@@ -30,6 +31,7 @@ public class EntityState {
 	protected float lastHealth;
 	protected float lastTransitionHealth;
 	protected long lastTransitionTime;
+	protected DamageSource lastDamageSource;
 
 	public EntityState(LivingEntity entity) {
 		this.entity = entity;
@@ -84,6 +86,7 @@ public class EntityState {
 		if (this.currentHealth != this.lastHealth)
 			handleHealthChange();
 
+		this.lastDamageSource = this.entity.getLastDamageSource();
 		this.lastHealth = currentHealth;
 
 		if (this.entity.level().getGameTime() - this.lastTransitionTime > 20) {
@@ -99,11 +102,11 @@ public class EntityState {
 
 	protected void handleHealthChange() {
 		if (TESAPI.getConfig().particlesEnabled()) {
-			TESParticle particle;
+			TESParticle<?> particle;
 			float healthDelta = this.currentHealth - this.lastHealth;
 
 			if (healthDelta != 0)
-				healthDelta = TESParticleManager.handleParticleClaims(this, healthDelta, TESParticleManager::addParticle);
+				healthDelta = TESParticleManager.handleParticleClaims(this, healthDelta, TESParticleManager::addParticle, this.entity.getLastDamageSource() != null && this.lastDamageSource != this.entity.getLastDamageSource());
 
 			if (healthDelta == 0)
 				return;
@@ -120,7 +123,7 @@ public class EntityState {
 					particle = new ComponentParticle(this, particlePos, TESParticle.Animation.POP_OFF, Component.translatable("config.tes.particle.verbal.instakill").setStyle(Style.EMPTY.withColor(TESAPI.getConfig().getDamageParticleColour())));
 				}
 				else {
-					particle = new DamageParticle(this, particlePos, healthDelta * -1);
+					particle = new DamageParticle(this, particlePos, -healthDelta);
 				}
 			}
 			else {
