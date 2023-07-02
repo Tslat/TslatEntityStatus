@@ -10,7 +10,7 @@ import net.tslat.tes.core.particle.TESParticleClaimant;
 import net.tslat.tes.core.particle.TESParticleManager;
 import net.tslat.tes.core.particle.type.ComponentParticle;
 import net.tslat.tes.core.particle.type.NumericParticle;
-import net.tslat.tes.core.particle.type.TESParticleSourceHandler;
+import net.tslat.tes.core.particle.TESParticleSourceHandler;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
 import org.jetbrains.annotations.Nullable;
@@ -63,7 +63,7 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Register a {@link net.tslat.tes.core.particle.type.TESParticleSourceHandler TESParticleSourceHandler} with TES for custom handling of damage-based {@link net.tslat.tes.api.TESParticle TESParticles} predicated by their {@link net.minecraft.world.damagesource.DamageSource}<br>
+	 * Register a {@link TESParticleSourceHandler TESParticleSourceHandler} with TES for custom handling of damage-based {@link net.tslat.tes.api.TESParticle TESParticles} predicated by their {@link net.minecraft.world.damagesource.DamageSource}<br>
 	 * This can be used to more reliably special-handle damage particles for specific DamageSources (such as freezing damage, fire damage, etc)
 	 */
 	public static void registerParticleSourceHandler(TESParticleSourceHandler handler) {
