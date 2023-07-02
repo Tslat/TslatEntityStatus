@@ -174,6 +174,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "Heal-Particle Colour")
 	public static int healParticleColour = 0xFF00FF00;
 
+	@Comment public static final String teamBasedDamageParticleColoursComment = "Whether TES should change the colour of damage particles to the colour of the team that dealt the damage (if applicable)";
+	@Entry(name = "Team Colour Damage Particles")
+	public static boolean teamBasedDamageParticleColours = false;
+
 	@Override
 	public double getEntityTrackingDistance() {
 		return entityTrackingDistance;
@@ -352,5 +356,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public int getHealParticleColour() {
 		return healParticleColour;
+	}
+
+	@Override
+	public boolean teamBasedDamageParticleColours() {
+		return teamBasedDamageParticleColours;
 	}
 }

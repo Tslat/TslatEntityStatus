@@ -104,9 +104,10 @@ public class EntityState {
 		if (TESAPI.getConfig().particlesEnabled()) {
 			TESParticle<?> particle;
 			float healthDelta = this.currentHealth - this.lastHealth;
+			boolean damageSourceAccurate = this.entity.getLastDamageSource() != null && this.lastDamageSource != this.entity.getLastDamageSource();
 
 			if (healthDelta != 0)
-				healthDelta = TESParticleManager.handleParticleClaims(this, healthDelta, TESParticleManager::addParticle, this.entity.getLastDamageSource() != null && this.lastDamageSource != this.entity.getLastDamageSource());
+				healthDelta = TESParticleManager.handleParticleClaims(this, healthDelta, TESParticleManager::addParticle, damageSourceAccurate);
 
 			if (healthDelta == 0)
 				return;
@@ -115,15 +116,25 @@ public class EntityState {
 
 			if (healthDelta < 0) {
 				this.lastTransitionTime = this.entity.level().getGameTime();
+				int colour = TESAPI.getConfig().getDamageParticleColour();
 
 				if (this.lastTransitionHealth == 0)
 					this.lastTransitionHealth = this.lastHealth;
 
+				if (damageSourceAccurate && TESAPI.getConfig().teamBasedDamageParticleColours()) {
+					if (this.entity.getLastDamageSource().getEntity() instanceof LivingEntity attacker) {
+						int teamColour = attacker.getTeamColor();
+
+						if (teamColour != 0xFFFFFF)
+							colour = teamColour;
+					}
+				}
+
 				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth <= 0 && this.lastHealth >= this.entity.getMaxHealth()) {
-					particle = new ComponentParticle(this, particlePos, TESParticle.Animation.POP_OFF, Component.translatable("config.tes.particle.verbal.instakill").setStyle(Style.EMPTY.withColor(TESAPI.getConfig().getDamageParticleColour())));
+					particle = new ComponentParticle(this, particlePos, TESParticle.Animation.POP_OFF, Component.translatable("config.tes.particle.verbal.instakill").setStyle(Style.EMPTY.withColor(colour)));
 				}
 				else {
-					particle = new DamageParticle(this, particlePos, -healthDelta);
+					particle = new DamageParticle(this, particlePos, -healthDelta).withColour(colour);
 				}
 			}
 			else {

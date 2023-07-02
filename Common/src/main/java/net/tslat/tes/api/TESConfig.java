@@ -203,4 +203,9 @@ public interface TESConfig {
 	 * Format is ARGB
 	 */
 	int getHealParticleColour();
+
+	/**
+	 * Whether TES should colour its damage particles based on the team that dealt the damage
+	 */
+	boolean teamBasedDamageParticleColours();
 }

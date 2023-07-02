@@ -36,5 +36,6 @@
   "config.tes.particle.damageParticleColour": "Damage-Particle Colour",
   "config.tes.particle.healParticleColour": "Heal-Particle Colour",
   "config.tes.particle.verbal.instakill": "INSTAKILL!",
-  "config.tes.particle.verbal.fullHeal": "Full Heal!"
+  "config.tes.particle.verbal.fullHeal": "Full Heal!",
+  "config.tes.particle.verbal.teamColours": "Team Colour Damage Particles"
 }

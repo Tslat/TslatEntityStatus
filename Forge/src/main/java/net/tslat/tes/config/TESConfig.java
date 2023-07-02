@@ -48,6 +48,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.BooleanValue verbalHealthParticles;
 	private final ForgeConfigSpec.IntValue damageParticleColour;
 	private final ForgeConfigSpec.IntValue healParticleColour;
+	private final ForgeConfigSpec.BooleanValue teamBasedDamageParticleColours;
 
 	public TESConfig(final ForgeConfigSpec.Builder config) {
 		config.push("General Settings");
@@ -262,6 +263,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.translation("config.tes.particle.healParticleColour")
 				.defineInRange("healParticleColour", 0xFF00FF00, Integer.MIN_VALUE, Integer.MAX_VALUE);
 
+		this.teamBasedDamageParticleColours = config
+				.comment("Whether TES should change the colour of damage particles to the colour of the team that dealt the damage (if applicable)")
+				.translation("config.tes.particle.teamColours")
+				.define("teamBasedDamageParticleColours", false);
+
 		config.pop();
 	}
 
@@ -443,6 +449,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public int getHealParticleColour() {
 		return this.healParticleColour.get();
+	}
+
+	@Override
+	public boolean teamBasedDamageParticleColours() {
+		return this.teamBasedDamageParticleColours.get();
 	}
 
 	public static void init() {
