@@ -84,7 +84,7 @@ public final class TESParticleManager {
 
 		if (checkSourceHandlers && healthDelta < 0) {
 			for (TESParticleSourceHandler handler : HANDLERS) {
-				if (handler.checkIncomingDamage(entityState, healthDelta, entityState.getEntity().getLastDamageSource(), particleAdder)) {
+				if (handler.checkIncomingDamage(entityState, -healthDelta, entityState.getEntity().getLastDamageSource(), particleAdder)) {
 					healthDelta = 0;
 
 					break;
