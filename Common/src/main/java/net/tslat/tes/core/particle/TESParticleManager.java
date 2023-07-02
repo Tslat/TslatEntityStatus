@@ -10,7 +10,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESParticle;
-import net.tslat.tes.core.particle.type.TESParticleSourceHandler;
 import net.tslat.tes.core.state.EntityState;
 import org.jetbrains.annotations.Nullable;
 

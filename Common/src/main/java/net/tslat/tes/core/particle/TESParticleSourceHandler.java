@@ -1,4 +1,4 @@
-package net.tslat.tes.core.particle.type;
+package net.tslat.tes.core.particle;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.tslat.tes.api.TESParticle;
