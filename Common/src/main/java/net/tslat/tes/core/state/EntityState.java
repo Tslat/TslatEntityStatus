@@ -83,10 +83,12 @@ public class EntityState {
 	public void tick() {
 		this.currentHealth = Math.min(this.entity.getHealth(), this.entity.getMaxHealth());
 
-		if (this.currentHealth != this.lastHealth)
+		if (this.currentHealth != this.lastHealth) {
 			handleHealthChange();
 
-		this.lastDamageSource = this.entity.getLastDamageSource();
+			this.lastDamageSource = this.entity.getLastDamageSource();
+		}
+
 		this.lastHealth = currentHealth;
 
 		if (this.entity.level().getGameTime() - this.lastTransitionTime > 20) {
