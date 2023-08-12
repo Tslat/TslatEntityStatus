@@ -17,7 +17,7 @@ View entity health and other statuses. Make smacking things fun again!
 [[dependencies.${mod_id}]]
 modId="forge"
 mandatory=true
-versionRange="${forge_version_range}"
+versionRange="${neoforge_version_range}"
 ordering="NONE"
 side="BOTH"
 
