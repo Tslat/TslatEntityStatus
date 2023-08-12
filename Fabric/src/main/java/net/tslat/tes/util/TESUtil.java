@@ -49,4 +49,9 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 			return TESEntityType.PASSIVE;
 		});
 	}
+
+	@Override
+	public final void clearDynamicCaches() {
+		entityTypeMap.entrySet().removeIf(classTESEntityTypeEntry -> classTESEntityTypeEntry.getValue() == TESEntityType.BOSS);
+	}
 }
