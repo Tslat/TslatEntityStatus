@@ -1,14 +1,13 @@
 plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT' // Mixins
+    id 'org.spongepowered.mixin' version '0.7.+' // Mixins
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id 'io.github.CDAGaming.cursegradle' version '1.6.0'
+    id 'io.github.CDAGaming.cursegradle' version '1.6.1'
 }
 
 archivesBaseName = "${mod_name}-forge-${minecraft_version}"
 
 minecraft {
-    //mappings channel: mappings_channel, version: "${minecraft_version}-${mappings_version}" Temp disabled until parchment updates
     mappings channel: mappings_channel, version: "${mappings_version}-${minecraft_version}"
     //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
