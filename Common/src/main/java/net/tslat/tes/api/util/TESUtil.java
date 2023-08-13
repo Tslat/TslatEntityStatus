@@ -103,6 +103,8 @@ public interface TESUtil {
 	 */
 	TESEntityType getEntityType(LivingEntity entity);
 
+	void clearDynamicCaches();
+
 	// Because vanilla isn't even remotely consistent
 	private static boolean isMeleeMobHardcoded(LivingEntity entity) {
 		return meleeMobs.computeIfAbsent(entity.getClass(), clazz -> {
