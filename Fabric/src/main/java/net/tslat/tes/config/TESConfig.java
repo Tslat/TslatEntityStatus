@@ -153,6 +153,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "Particles Enabled")
 	public static boolean particlesEnabled = true;
 
+	@Comment public static final String defaultParticleLifespanComment = "How long (in ticks) TES particles should display for";
+	@Entry(name = "Default Particles Lifespan")
+	public static int defaultParticleLifespan = 60;
+
 	@Comment public static final String particleDecimalPointsComment = "How many decimals the numeric TES Particles should round to";
 	@Comment public static final String particleDecimalPointsComment2 = "Or set to 0 to only use whole-numbers";
 	@Entry(name = "Particle Decimal Points", isSlider = true, min = 0, max = 8)
@@ -327,6 +331,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean particlesEnabled() {
 		return particlesEnabled;
+	}
+
+	@Override
+	public int defaultParticleLifespan() {
+		return defaultParticleLifespan;
 	}
 
 	@Override

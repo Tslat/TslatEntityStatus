@@ -87,6 +87,7 @@
   "tslatentitystatus.midnightconfig.inWorldHudNameOverrideComment": "Whether the in-world TES entity status HUD should override vanilla name rendering",
   "tslatentitystatus.midnightconfig.inWorldHudManualVerticalOffsetComment": "Set a manual vertical offset for the TES in-world HUD (in blocks) in the event of other mods doing overhead rendering",
   "tslatentitystatus.midnightconfig.particlesEnabledComment": "Whether TES should do particles for various status changes such as damage dealt or health healed",
+  "tslatentitystatus.midnightconfig.defaultParticleLifespanComment": "How long (in ticks) TES particles should display for",
   "tslatentitystatus.midnightconfig.particleDecimalPointsComment": "How many decimals the numeric TES Particles should round to",
   "tslatentitystatus.midnightconfig.particleDecimalPointsComment2": "Or set to 0 to only use whole-numbers",
   "tslatentitystatus.midnightconfig.particleScaleComment": "Scale modifier for TES-Particles. The higher the value, the larger the particles",
