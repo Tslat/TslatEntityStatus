@@ -177,6 +177,11 @@ public interface TESConfig {
 	boolean particlesEnabled();
 
 	/**
+	 * How long (in ticks) particles should survive for by default
+	 */
+	int defaultParticleLifespan();
+
+	/**
 	 * How many decimals the numeric TES Particles should round to
 	 */
 	int particleDecimalPoints();

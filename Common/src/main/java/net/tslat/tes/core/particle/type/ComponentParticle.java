@@ -4,11 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
+import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.state.EntityState;
-import org.joml.Vector3f;
-
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 /**
  * Generic class for {@link Component}-based TES Particles
@@ -21,7 +21,7 @@ public class ComponentParticle extends GenericTESParticle<Component> {
 	}
 
 	public ComponentParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, Component contents) {
-		this(entityState, position, animation, contents, DEFAULT_LIFESPAN);
+		this(entityState, position, animation, contents, TESConstants.CONFIG.defaultParticleLifespan());
 	}
 
 	public ComponentParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, Component contents, int lifespan) {

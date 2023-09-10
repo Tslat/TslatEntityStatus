@@ -3,12 +3,12 @@ package net.tslat.tes.core.particle.type;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.state.EntityState;
-import org.joml.Vector3f;
-
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 /**
  * Built-in class for text-based {@link TESParticle TES Particles}
@@ -22,7 +22,7 @@ public class TextParticle extends GenericTESParticle<String> {
 	}
 
 	public TextParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, String text) {
-		this(entityState, position, animation, text, DEFAULT_LIFESPAN);
+		this(entityState, position, animation, text, TESConstants.CONFIG.defaultParticleLifespan());
 	}
 
 	public TextParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, String text, int lifespan) {

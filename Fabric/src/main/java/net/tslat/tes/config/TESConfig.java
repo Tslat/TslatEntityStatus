@@ -86,7 +86,7 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 
 	@Comment public static final String inWorldHudForSelfComment = "Whether the TES In-World HUD should be enabled for the player or not";
 	@Entry(name = "In-World HUD For Self")
-	public static boolean inWorldHudForSelf = true;
+	public static boolean inWorldHudForSelf = false;
 
 	@Comment public static final String inWorldHUDActivationComment = "When the TES in-world status bars should render";
 	@Comment public static final String inWorldHUDActivationComment2 = "Options:";
@@ -152,6 +152,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Comment public static final String particlesEnabledComment = "Whether TES should do particles for various status changes such as damage dealt or health healed";
 	@Entry(name = "Particles Enabled")
 	public static boolean particlesEnabled = true;
+
+	@Comment public static final String defaultParticleLifespanComment = "How long (in ticks) TES particles should display for";
+	@Entry(name = "Default Particles Lifespan")
+	public static int defaultParticleLifespan = 60;
 
 	@Comment public static final String particleDecimalPointsComment = "How many decimals the numeric TES Particles should round to";
 	@Comment public static final String particleDecimalPointsComment2 = "Or set to 0 to only use whole-numbers";
@@ -327,6 +331,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean particlesEnabled() {
 		return particlesEnabled;
+	}
+
+	@Override
+	public int defaultParticleLifespan() {
+		return defaultParticleLifespan;
 	}
 
 	@Override
