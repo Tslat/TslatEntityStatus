@@ -5,8 +5,7 @@ import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.util.TESUtil;
 import net.tslat.tes.core.state.EntityState;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Generic class for numeric-based TES Particles.

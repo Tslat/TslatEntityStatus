@@ -12,8 +12,7 @@ import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.SwordItem;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESEntityType;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Helper class for TES.<br>

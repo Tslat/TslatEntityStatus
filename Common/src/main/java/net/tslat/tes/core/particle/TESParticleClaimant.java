@@ -3,8 +3,8 @@ package net.tslat.tes.core.particle;
 import net.minecraft.nbt.CompoundTag;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.core.state.EntityState;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
