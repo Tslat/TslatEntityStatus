@@ -29,7 +29,7 @@ public abstract class GenericTESParticle<D> implements TESParticle<D> {
 	}
 
 	protected GenericTESParticle(@Nullable EntityState entityState, Vector3f position, Animation animation) {
-		this(entityState, position, Animation.POP_OFF, TESConstants.CONFIG.defaultParticleLifespan());
+		this(entityState, position, animation, TESConstants.CONFIG.defaultParticleLifespan());
 	}
 
 	protected GenericTESParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, int lifespan) {
