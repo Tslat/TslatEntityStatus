@@ -79,7 +79,7 @@ public interface TESParticle<D> {
 		public static final Animation POP_OFF = new Animation() {
 			@Override
 			public Vector3f getInitialVelocity(TESParticle<?> particle, Vector3f position, Random random) {
-				return new Vector3f((float)random.nextGaussian() * 0.03f + 0.025f, random.nextFloat() * 0.045f + 0.43f, (float)random.nextGaussian() * 0.03f + 0.025f);
+				return new Vector3f((float)random.nextGaussian() * 0.03f + 0.025f, random.nextFloat() * 0.035f + 0.37f, (float)random.nextGaussian() * 0.03f + 0.025f);
 			}
 
 			@Override
@@ -91,7 +91,7 @@ public interface TESParticle<D> {
 		public static final Animation RISE = new Animation() {
 			@Override
 			public Vector3f getInitialVelocity(TESParticle<?> particle, Vector3f position, Random random) {
-				position.add((float)random.nextGaussian() * 0.05f, 0.5f, (float)random.nextGaussian() * 0.05f);
+				position.add((float)random.nextGaussian() * 0.05f, 0.4f, (float)random.nextGaussian() * 0.05f);
 
 				return new Vector3f(0, 0.2f, 0);
 			}
