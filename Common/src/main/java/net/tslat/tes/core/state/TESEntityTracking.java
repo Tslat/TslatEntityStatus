@@ -19,7 +19,7 @@ public final class TESEntityTracking {
 
 	public static void accountForEntity(LivingEntity entity) {
 		ENTITY_STATES.compute(entity.getId(), (key, value) -> {
-			if (entity == Minecraft.getInstance().player && !TESAPI.getConfig().inWorldHudForSelf())
+			if (entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf())
 				return null;
 
 			double trackingDist = TESAPI.getConfig().getEntityTrackingDistance();
