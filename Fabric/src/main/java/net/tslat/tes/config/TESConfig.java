@@ -86,7 +86,7 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 
 	@Comment public static final String inWorldHudForSelfComment = "Whether the TES In-World HUD should be enabled for the player or not";
 	@Entry(name = "In-World HUD For Self")
-	public static boolean inWorldHudForSelf = true;
+	public static boolean inWorldHudForSelf = false;
 
 	@Comment public static final String inWorldHUDActivationComment = "When the TES in-world status bars should render";
 	@Comment public static final String inWorldHUDActivationComment2 = "Options:";
