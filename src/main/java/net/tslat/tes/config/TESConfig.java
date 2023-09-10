@@ -48,6 +48,7 @@ public final class TESConfig {
 	private final ForgeConfigSpec.DoubleValue inWorldHudManualVerticalOffset;
 
 	private final ForgeConfigSpec.BooleanValue particlesEnabled;
+	private final ForgeConfigSpec.IntValue defaultParticleLifespan;
 	private final ForgeConfigSpec.IntValue particleDecimalPoints;
 	private final ForgeConfigSpec.DoubleValue particleScale;
 	private final ForgeConfigSpec.BooleanValue verbalHealthParticles;
@@ -240,6 +241,11 @@ public final class TESConfig {
 				.comment("Whether TES should do particles for various status changes such as damage dealt or health healed")
 				.translation("config.tes.particle.enabled")
 				.define("tesParticlesEnabled", true);
+
+		this.defaultParticleLifespan = config
+				.comment("How long (in ticks) TES particles should display for")
+				.translation("config.tes.particle.defaultLifespan")
+				.defineInRange("defaultParticleLifespan", 60, 5, 200);
 
 		this.particleDecimalPoints = config
 				.comment("How many decimals the numeric TES Particles should round to",
@@ -499,6 +505,13 @@ public final class TESConfig {
 	 */
 	public boolean particlesEnabled() {
 		return this.particlesEnabled.get();
+	}
+
+	/**
+	 * How long (in ticks) TES particles should display for
+	 */
+	public int defaultParticleLifespan() {
+		return this.defaultParticleLifespan.get();
 	}
 
 	/**

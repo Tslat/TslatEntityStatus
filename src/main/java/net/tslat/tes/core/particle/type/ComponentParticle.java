@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
+import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.state.EntityState;
 
@@ -18,7 +19,7 @@ public class ComponentParticle extends GenericTESParticle<ITextComponent> {
 	}
 
 	public ComponentParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, ITextComponent contents) {
-		this(entityState, position, animation, contents, DEFAULT_LIFESPAN);
+		this(entityState, position, animation, contents, TESConstants.CONFIG.defaultParticleLifespan());
 	}
 
 	public ComponentParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, ITextComponent contents, int lifespan) {

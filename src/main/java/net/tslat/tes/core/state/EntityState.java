@@ -83,7 +83,7 @@ public class EntityState {
 	public void tick() {
 		this.currentHealth = Math.min(this.entity.getHealth(), this.entity.getMaxHealth());
 
-		if (this.currentHealth != this.lastHealth)
+		if (this.currentHealth != this.lastHealth && this.entity.tickCount > 2)
 			handleHealthChange();
 
 		this.lastHealth = currentHealth;
