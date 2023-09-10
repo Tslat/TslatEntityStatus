@@ -1,6 +1,7 @@
 package net.tslat.tes.core.particle.type;
 
 import net.tslat.tes.api.TESAPI;
+import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.util.TESUtil;
 import net.tslat.tes.core.state.EntityState;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +16,7 @@ public class NumericParticle extends TextParticle {
 	}
 
 	public NumericParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, double value) {
-		this(entityState, position, animation, value, DEFAULT_LIFESPAN);
+		this(entityState, position, animation, value, TESConstants.CONFIG.defaultParticleLifespan());
 	}
 
 	public NumericParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, double value, int lifespan) {

@@ -125,7 +125,7 @@ public class TESHud {
 	}
 
 	public static void renderInWorld(PoseStack poseStack, LivingEntity entity, float partialTick) {
-		if (!TESAPI.getConfig().inWorldBarsEnabled() || entity.isDeadOrDying() || (entity == Minecraft.getInstance().player && !TESAPI.getConfig().inWorldHudForSelf()))
+		if (!TESAPI.getConfig().inWorldBarsEnabled() || entity.isDeadOrDying() || (entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf()))
 			return;
 
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
