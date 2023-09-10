@@ -43,6 +43,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.DoubleValue inWorldHudManualVerticalOffset;
 
 	private final ForgeConfigSpec.BooleanValue particlesEnabled;
+	private final ForgeConfigSpec.IntValue defaultParticleLifespan;
 	private final ForgeConfigSpec.IntValue particleDecimalPoints;
 	private final ForgeConfigSpec.DoubleValue particleScale;
 	private final ForgeConfigSpec.BooleanValue verbalHealthParticles;
@@ -237,6 +238,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.translation("config.tes.particle.enabled")
 				.define("tesParticlesEnabled", true);
 
+		this.defaultParticleLifespan = config
+				.comment("How long (in ticks) TES particles should display for")
+				.translation("config.tes.particle.defaultLifespan")
+				.defineInRange("defaultParticleLifespan", 60, 5, 200);
+
 		this.particleDecimalPoints = config
 				.comment("How many decimals the numeric TES Particles should round to",
 						"Or set to 0 to only use whole-numbers")
@@ -424,6 +430,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public boolean particlesEnabled() {
 		return this.particlesEnabled.get();
+	}
+
+	@Override
+	public int defaultParticleLifespan() {
+		return this.defaultParticleLifespan.get();
 	}
 
 	@Override

@@ -1,18 +1,20 @@
 package net.tslat.tes.core.particle.type;
 
 import net.minecraft.client.Minecraft;
+import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.core.state.EntityState;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Generic class for TES Particles, with default base handling common to most particle types
  */
 public abstract class GenericTESParticle<D> implements TESParticle<D> {
-	protected static final int DEFAULT_LIFESPAN = 10;
+	@Deprecated(forRemoval = true)
+	protected static final int DEFAULT_LIFESPAN = 60;
 
 	protected int lifetime;
 	protected final Vector3f pos;
@@ -27,7 +29,7 @@ public abstract class GenericTESParticle<D> implements TESParticle<D> {
 	}
 
 	protected GenericTESParticle(@Nullable EntityState entityState, Vector3f position, Animation animation) {
-		this(entityState, position, Animation.POP_OFF, DEFAULT_LIFESPAN);
+		this(entityState, position, animation, TESConstants.CONFIG.defaultParticleLifespan());
 	}
 
 	protected GenericTESParticle(@Nullable EntityState entityState, Vector3f position, Animation animation, int lifespan) {

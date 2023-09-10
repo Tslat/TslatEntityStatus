@@ -1,6 +1,7 @@
 package net.tslat.tes.core.particle.type;
 
 import net.tslat.tes.api.TESAPI;
+import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.core.state.EntityState;
 import org.joml.Vector3f;
@@ -14,7 +15,7 @@ public class HealParticle extends NumericParticle {
 	}
 
 	public HealParticle(EntityState entityState, Vector3f position, Animation animation, double amount) {
-		this(entityState, position, animation, amount, DEFAULT_LIFESPAN);
+		this(entityState, position, animation, amount, TESConstants.CONFIG.defaultParticleLifespan() / 2);
 	}
 
 	public HealParticle(EntityState entityState, Vector3f position, Animation animation, double amount, int lifespan) {
