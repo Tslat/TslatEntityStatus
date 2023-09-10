@@ -15,7 +15,7 @@ public class HealParticle extends NumericParticle {
 	}
 
 	public HealParticle(EntityState entityState, Vector3f position, Animation animation, double amount) {
-		this(entityState, position, animation, amount, TESConstants.CONFIG.defaultParticleLifespan());
+		this(entityState, position, animation, amount, TESConstants.CONFIG.defaultParticleLifespan() / 2);
 	}
 
 	public HealParticle(EntityState entityState, Vector3f position, Animation animation, double amount, int lifespan) {
