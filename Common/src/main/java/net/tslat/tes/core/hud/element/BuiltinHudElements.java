@@ -15,6 +15,7 @@ import net.minecraft.world.entity.MobType;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConfig;
 import net.tslat.tes.api.TESConstants;
+import net.tslat.tes.api.TESEntityType;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.api.util.TESUtil;
 import net.tslat.tes.core.hud.TESHud;
@@ -25,8 +26,6 @@ import net.tslat.tes.core.state.TESEntityTracking;
  * Built-in HUD handles for the default rendering capabilities for the mod
  */
 public final class BuiltinHudElements {
-	private static final ResourceLocation BARS_TEXTURE = new ResourceLocation("textures/gui/bars.png");
-	private static final ResourceLocation ICONS_TEXTURE = new ResourceLocation(TESConstants.MOD_ID, "textures/gui/tes_icons.png");
 
 	public static int renderEntityName(GuiGraphics guiGraphics, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
 		if (inWorldHud) {
@@ -66,7 +65,6 @@ public final class BuiltinHudElements {
 			poseStack.scale(1, 1, -1);
 		}
 
-		TESClientUtil.prepRenderForTexture(BARS_TEXTURE);
 		RenderSystem.setShaderColor(1, 1, 1, opacity);
 		RenderSystem.enableDepthTest();
 
@@ -74,18 +72,22 @@ public final class BuiltinHudElements {
 			float percentHealth = entityState.getHealth() / entity.getMaxHealth();
 			float percentTransitionHealth = entityState.getLastTransitionHealth() / entity.getMaxHealth();
 			boolean doSegments = inWorldHud ? config.inWorldBarsSegments() : config.hudHealthBarSegments();
-			int uvY = TESConstants.UTILS.getEntityType(entity).getTextureYPos();
+			TESEntityType entityType = TESConstants.UTILS.getEntityType(entity);
+			TextureAtlasSprite backgroundSprite = TESClientUtil.getAtlasSprite(entityType.getBackgroundTexture());
+			TextureAtlasSprite progressSprite = TESClientUtil.getAtlasSprite(entityType.getOverlayTexture());
+			TextureAtlasSprite emptyBarSprite = TESClientUtil.getAtlasSprite(new ResourceLocation("boss_bar/white_background"));
+			TESClientUtil.prepRenderForTexture(backgroundSprite.atlasLocation());
 
-			TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, 60, 1, false, opacity);
+			TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, emptyBarSprite, 1, false, opacity);
 			poseStack.translate(0, 0, 0.001f);
 
 			if (percentTransitionHealth > percentHealth)
-				TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, uvY, entityState.getLastTransitionHealth() / entity.getMaxHealth(), false, opacity);
+				TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, backgroundSprite, entityState.getLastTransitionHealth() / entity.getMaxHealth(), false, opacity);
 
 			poseStack.translate(0, 0, 0.001f);
 
 			RenderSystem.enableBlend();
-			TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, uvY + 5, percentHealth, doSegments, opacity);
+			TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, progressSprite, percentHealth, doSegments, opacity);
 		}
 
 		if (renderType != TESHud.BarRenderType.BAR) {
@@ -124,6 +126,8 @@ public final class BuiltinHudElements {
 		float toughness = TESUtil.getArmourToughness(entity);
 		int textColour = FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255);
 		PoseStack poseStack = guiGraphics.pose();
+		TextureAtlasSprite armourSprite = TESClientUtil.getAtlasSprite(TESClientUtil.ARMOUR_ICON_SPRITE);
+		TextureAtlasSprite toughnessSprite = TESClientUtil.getAtlasSprite(TESClientUtil.TOUGHNESS_ICON_SPRITE);
 
 		poseStack.pushPose();
 
@@ -133,13 +137,13 @@ public final class BuiltinHudElements {
 			poseStack.translate(totalWidth * -0.5f, 0, 0);
 		}
 
-		TESClientUtil.prepRenderForTexture(TESClientUtil.VANILLA_GUI_ICONS_LOCATION);
+		TESClientUtil.prepRenderForTexture(armourSprite.atlasLocation());
 		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(1, 1, 1, opacity);
-		TESClientUtil.drawSimpleTexture(guiGraphics, 0, 0, 9, 9, 34, 9, 256);
+		TESClientUtil.drawSprite(guiGraphics, armourSprite, 0, 0, 9, 9, 0, 0, 9, 9, 9, 9);
 
 		if (toughness > 0)
-			TESClientUtil.drawSimpleTexture(guiGraphics, 33, 0, 9, 9, 43, 18, 256);
+			TESClientUtil.drawSprite(guiGraphics, toughnessSprite, 33, 0, 9, 9, 0, 0, 9, 9, 9, 9);
 
 		TESClientUtil.drawText(guiGraphics, mc.font, "x" + armour, 9.5f, 1, textColour);
 
@@ -163,22 +167,22 @@ public final class BuiltinHudElements {
 
 		int x = 0;
 
-		TESClientUtil.prepRenderForTexture(ICONS_TEXTURE);
+		TESClientUtil.prepRenderForTexture(TESClientUtil.ICONS_ATLAS_LOCATION);
 
 		if (TESUtil.isFireImmune(entity)) {
-			TESClientUtil.drawSimpleTexture(guiGraphics, x, 0, 8, 8, 0, 0, 32);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_FIRE_IMMUNE_SPRITE), x, 0, 8, 0, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
 
 		if (TESUtil.isMeleeMob(entity)) {
-			TESClientUtil.drawSimpleTexture(guiGraphics, x, 0, 8, 8, 8, 0, 32);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_MELEE_SPRITE), x, 0, 8, 0, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
 
 		if (TESUtil.isRangedMob(entity)) {
-			TESClientUtil.drawSimpleTexture(guiGraphics, x, 0, 8, 8, 16, 0, 32);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_RANGED_SPRITE), x, 0, 8, 0, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
@@ -186,9 +190,11 @@ public final class BuiltinHudElements {
 		MobType mobType = entity.getMobType();
 
 		if (mobType != MobType.UNDEFINED) {
-			int mobTypeU = mobType == MobType.WATER ? 24 : (mobType == MobType.ILLAGER ? 16 : (mobType == MobType.ARTHROPOD ? 8 : 0));
+			ResourceLocation sprite = mobType == MobType.WATER ? TESClientUtil.ENTITY_WATER_SPRITE :
+					(mobType == MobType.ILLAGER ? TESClientUtil.ENTITY_ILLAGER_SPRITE :
+							(mobType == MobType.ARTHROPOD ? TESClientUtil.ENTITY_ARTHROPOD_SPRITE : TESClientUtil.ENTITY_UNDEAD_SPRITE));
 
-			TESClientUtil.drawSimpleTexture(guiGraphics, x, 0, 8, 8, mobTypeU, 8, 32);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(sprite), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}

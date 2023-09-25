@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +23,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.tes.api.TESAPI;
+import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.mixin.client.GuiGraphicsAccessor;
 import org.joml.Matrix4f;
 
@@ -29,8 +31,18 @@ import org.joml.Matrix4f;
  * Various helper methods for client-side functions
  */
 public final class TESClientUtil {
-	public static final ResourceLocation VANILLA_GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
 	public static final ResourceLocation CREATIVE_INVENTORY_TEXTURE = new ResourceLocation("textures/gui/container/creative_inventory/tab_inventory.png");
+	public static final ResourceLocation ICONS_ATLAS_LOCATION = new ResourceLocation("textures/atlas/gui.png");
+	public static final ResourceLocation NOTCH_OVERLAY_SPRITE = new ResourceLocation("boss_bar/notched_6_progress");
+	public static final ResourceLocation ARMOUR_ICON_SPRITE = new ResourceLocation("hud/armor_full");
+	public static final ResourceLocation TOUGHNESS_ICON_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/toughness_full");
+	public static final ResourceLocation ENTITY_FIRE_IMMUNE_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_fire_immune");
+	public static final ResourceLocation ENTITY_MELEE_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_melee");
+	public static final ResourceLocation ENTITY_RANGED_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_ranged");
+	public static final ResourceLocation ENTITY_ARTHROPOD_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_arthropod");
+	public static final ResourceLocation ENTITY_ILLAGER_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_illager");
+	public static final ResourceLocation ENTITY_UNDEAD_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_undead");
+	public static final ResourceLocation ENTITY_WATER_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_water");
 
 	/**
 	 * Draw some text on screen at a given position, offset for the text's height and width
@@ -67,28 +79,34 @@ public final class TESClientUtil {
 	 * @param x The x-position of the bar (use 0 and translate the {@link PoseStack} for in-world rendering
 	 * @param y The y-position of the bar (use 0 and translate the {@link PoseStack} for in-world rendering
 	 * @param width The width of the bar. This method reconstructs the bar accurately using the two ends and a stretched center to make an indefinitely-applicable width
-	 * @param v The v coordinate of the bar texture (from 'textures/gui/bars.png')
+	 * @param sprite The atlas sprite for the bar texture to render
 	 * @param percentComplete Percentage progress of the bar (use 1 for background or overlay pieces)
 	 * @param withBarOverlay Render the bar segments overlay
 	 * @param opacity The overall opacity of the bar
 	 */
-	public static void constructBarRender(GuiGraphics guiGraphics, int x, int y, int width, int v, float percentComplete, boolean withBarOverlay, float opacity) {
+	public static void constructBarRender(GuiGraphics guiGraphics, int x, int y, int width, TextureAtlasSprite sprite, float percentComplete, boolean withBarOverlay, float opacity) {
 		int percentPixels = Math.round(percentComplete * width);
 		int midBarWidth = width - 10;
 
-		drawSimpleTexture(guiGraphics, x, y, Math.min(5, percentPixels), 5, 0, v, 256);
+		RenderSystem.setShaderTexture(0, sprite.atlasLocation());
+
+		drawSprite(guiGraphics, sprite, x, y, Math.min(5, percentPixels), 5, 0, 0, Math.min(5, percentPixels), 5, 182, 5);
 
 		if (percentPixels > 5) {
 			if (midBarWidth > 0)
-				drawSimpleTexture(guiGraphics, x + 5, y, Math.min(midBarWidth, percentPixels - 5), 5, 5, v, 256);
+				drawSprite(guiGraphics, sprite, x + 5, y, Math.min(midBarWidth, percentPixels - 5), 5, 5, 0, Math.min(midBarWidth, percentPixels - 5), 5, 182, 5);
 
 			if (percentPixels > width - 5)
-				drawSimpleTexture(guiGraphics, x + 5 + midBarWidth, y, Math.min(5, percentPixels - 5), 5, 177, v, 256);
+				drawSprite(guiGraphics, sprite, x + 5 + midBarWidth, y, Math.min(5, percentPixels - 5), 5, 177, 0, Math.min(5, percentPixels - 5), 5, 182, 5);
 		}
 
 		if (withBarOverlay && width > 10) {
 			RenderSystem.setShaderColor(1, 1, 1, 0.75f * opacity);
-			drawSimpleTexture(guiGraphics, x, y, width, 5, 0, 80, 182, 5, 256, 256);
+
+			TextureAtlasSprite overlaySprite = getAtlasSprite(NOTCH_OVERLAY_SPRITE);
+
+			RenderSystem.setShaderTexture(0, overlaySprite.atlasLocation());
+			drawSprite(guiGraphics, overlaySprite, x, y, width, 5, 0, 0, 182, 5, 182, 5);
 		}
 	}
 
@@ -121,9 +139,6 @@ public final class TESClientUtil {
 		float yHeadRotOldPrev = entity.yHeadRotO;
 		float yHeadRotPrev = entity.yHeadRot;
 		int hurtTicks = entity.hurtTime;
-		//float walkPositionPrev = entity.walkAnimation.position();
-		//float walkSpeedPrev = entity.walkAnimation.speed();
-		//float walkSpeedOldPrev = ((WalkAnimationStateAccess)entity.walkAnimation).getSpeedOld();
 		float attackTimePrev = entity.attackAnim;
 		float attackTimeOldPrev = entity.oAttackAnim;
 
@@ -135,9 +150,6 @@ public final class TESClientUtil {
 		entity.yHeadRotO = entity.getYRot();
 
 		entity.hurtTime = TESAPI.getConfig().hudEntityDamageOverlay() ? entity.hurtTime : 0;
-		//((WalkAnimationStateAccess)entity.walkAnimation).setPosition(0);
-		//((WalkAnimationStateAccess)entity.walkAnimation).setSpeed(0);
-		//((WalkAnimationStateAccess)entity.walkAnimation).setSpeedOld(0);
 		entity.attackAnim = 0;
 		entity.oAttackAnim = 0;
 
@@ -156,9 +168,6 @@ public final class TESClientUtil {
 		entity.yHeadRotO = yHeadRotOldPrev;
 
 		entity.hurtTime = hurtTicks;
-		//((WalkAnimationStateAccess)entity.walkAnimation).setPosition(walkPositionPrev);
-		//((WalkAnimationStateAccess)entity.walkAnimation).setSpeedOld(walkSpeedOldPrev);
-		//((WalkAnimationStateAccess)entity.walkAnimation).setSpeed(walkSpeedPrev);
 		entity.attackAnim = attackTimePrev;
 		entity.oAttackAnim = attackTimeOldPrev;
 
@@ -206,7 +215,23 @@ public final class TESClientUtil {
 	 * @param pngSize The pixel-size of the png file (only for square png files)
 	 */
 	public static void drawSimpleTexture(GuiGraphics guiGraphics, int posX, int posY, int width, int height, float u, float v, int pngSize) {
-		drawSimpleTexture(guiGraphics, posX, posY, width, height, u, v, width, height, pngSize, pngSize);
+		drawSimpleTexture(guiGraphics, posX, posY, width, height, u, v, pngSize, pngSize);
+	}
+
+	/**
+	 * Wrapper for {@link GuiGraphics#blit} to make it easier to use
+	 * @param guiGraphics The GuiGraphics instance for the current render state
+	 * @param posX The x position on the screen to render at
+	 * @param posY The y position on the screen to render at
+	 * @param width The width of the image
+	 * @param height The height of the image
+	 * @param u The x position on the texture image to render from
+	 * @param v The y position on the texture image to render from
+	 * @param pngWidth The pixel-width of the png file
+	 * @param pngHeight The pixel-height of the png file
+	 */
+	public static void drawSimpleTexture(GuiGraphics guiGraphics, int posX, int posY, int width, int height, float u, float v, int pngWidth, int pngHeight) {
+		drawSimpleTexture(guiGraphics, posX, posY, width, height, u, v, width, height, pngWidth, pngHeight);
 	}
 
 	/**
@@ -224,17 +249,34 @@ public final class TESClientUtil {
 	 * @param pngHeight The height of the entire png file
 	 */
 	public static void drawSimpleTexture(GuiGraphics guiGraphics, int posX, int posY, int width, int height, float u, float v, int uWidth, int vHeight, int pngWidth, int pngHeight) {
-		RenderSystem.enableBlend();
-		Matrix4f pose = guiGraphics.pose().last().pose();
-		BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-		float widthRatio = 1.0F / pngWidth;
-		float heightRatio = 1.0F / pngHeight;
+		final Matrix4f pose = guiGraphics.pose().last().pose();
+		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		final float widthRatio = 1.0F / pngWidth;
+		final float heightRatio = 1.0F / pngHeight;
 
+		RenderSystem.enableBlend();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 		buffer.vertex(pose, (float)posX, (float)posY, 0).uv(u * widthRatio, v * heightRatio).endVertex();
 		buffer.vertex(pose, (float)posX, (float)posY + height, 0).uv(u * widthRatio, (v + vHeight) * heightRatio).endVertex();
 		buffer.vertex(pose, (float)posX + width, (float)posY + height, 0).uv((u + uWidth) * widthRatio, (v + vHeight) * heightRatio).endVertex();
 		buffer.vertex(pose, (float)posX + width, (float)posY, 0).uv((u + uWidth) * widthRatio, v * heightRatio).endVertex();
+		BufferUploader.drawWithShader(buffer.end());
+	}
+
+	public static void drawSprite(GuiGraphics guiGraphics, TextureAtlasSprite sprite, int posX, int posY, int width, int height, int u, int v, int uWidth, int vHeight, int pngWidth, int pngHeight) {
+		final Matrix4f pose = guiGraphics.pose().last().pose();
+		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		final float uMin = sprite.getU(u / (float)pngWidth);
+		final float uMax = sprite.getU((u + uWidth) / (float)pngWidth);
+		final float vMin = sprite.getV(v / (float)pngHeight);
+		final float vMax = sprite.getV((v + vHeight) / (float)pngHeight);
+
+		RenderSystem.enableBlend();
+		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		buffer.vertex(pose, (float)posX, (float)posY, 0).uv(uMin, vMin).endVertex();
+		buffer.vertex(pose, (float)posX, (float)posY + height, 0).uv(uMin, vMax).endVertex();
+		buffer.vertex(pose, (float)posX + width, (float)posY + height, 0).uv(uMax, vMax).endVertex();
+		buffer.vertex(pose, (float)posX + width, (float)posY, 0).uv(uMax, vMin).endVertex();
 		BufferUploader.drawWithShader(buffer.end());
 	}
 
@@ -326,5 +368,12 @@ public final class TESClientUtil {
 		guiGraphics.pose().mulPoseMatrix(poseStack.last().pose());
 
 		return guiGraphics;
+	}
+
+	/**
+	 * Get the TextureAtlasSprite instance for the given texture location
+	 */
+	public static TextureAtlasSprite getAtlasSprite(ResourceLocation texture) {
+		return Minecraft.getInstance().getGuiSprites().getSprite(texture);
 	}
 }

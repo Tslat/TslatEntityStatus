@@ -3,9 +3,11 @@ package net.tslat.tes.networking;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.network.NetworkEvent;
 import net.tslat.tes.core.particle.TESParticleManager;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public class ParticleClaimPacket {
 	private final int entityId;
@@ -29,7 +31,8 @@ public class ParticleClaimPacket {
 		return new ParticleClaimPacket(buf.readVarInt(), buf.readResourceLocation(), buf.readNbt());
 	}
 
-	public void handleMessage(CustomPayloadEvent.Context context) {
-		TESParticleManager.addParticleClaim(this.entityId, this.claimantId, this.data);
+	public void handleMessage(Supplier<NetworkEvent.Context> context) {
+		context.get().enqueueWork(() -> TESParticleManager.addParticleClaim(this.entityId, this.claimantId, this.data));
+		context.get().setPacketHandled(true);
 	}
 }

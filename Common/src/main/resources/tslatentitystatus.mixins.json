@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "tslatentitystatus.refmap.json",
   "mixins": [
-    "common.LivingEntityMixin",
-    "common.WalkAnimationStateAccess"
+    "common.LivingEntityMixin"
   ],
   "client": [
     "client.EntityRenderDispatcherMixin",
