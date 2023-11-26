@@ -160,7 +160,4 @@ modrinth {
     uploadFile = jar
     gameVersions = ["${project.minecraft_version}"]
     loaders = ["forge"]
-    dependencies {
-        required.project "fabric-api"
-    }
 }
