@@ -43,7 +43,7 @@ loom {
         defaultRefmapName.convention("${mod_id}.refmap.json")
     }
 
-    //accessWidenerPath = file("${project(':Common').projectDir.path}/src/main/resources/tslatentitystatus.accesswidener")
+    accessWidenerPath = file("${project(':Common').projectDir.path}/src/main/resources/tslatentitystatus.accesswidener")
 }
 
 processResources {

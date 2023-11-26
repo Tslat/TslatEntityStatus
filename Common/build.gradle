@@ -8,7 +8,7 @@ archivesBaseName = "${mod_name}-common-${minecraft_version}"
 minecraft {
     version(minecraft_version)
 
-   // accessWideners(project(":Common").file("src/main/resources/tslatentitystatus.accesswidener"))
+    accessWideners(project(":Common").file("src/main/resources/tslatentitystatus.accesswidener"))
 }
 
 dependencies {

@@ -3,10 +3,12 @@ package net.tslat.tes.core.particle.type;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.TESParticle;
-import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.state.EntityState;
+import net.tslat.tes.mixin.client.GuiGraphicsAccessor;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -56,6 +58,7 @@ public class TextParticle extends GenericTESParticle<String> {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, Minecraft mc, Font fontRenderer, float partialTick) {
-		defaultedTextRender(mc, guiGraphics.pose(), this.prevPos, this.pos, partialTick, () -> TESClientUtil.renderCenteredText(guiGraphics, this.text, 0, 0, getColour()));
+		defaultedTextRender(mc, guiGraphics.pose(), this.prevPos, this.pos, partialTick, () -> TESAPI.getConfig().particleFontStyle().render(fontRenderer, guiGraphics.pose(), Component.literal(this.text), -fontRenderer.width(Component.literal(this.text)) / 2f, 4, getColour(), guiGraphics.bufferSource()));
+		((GuiGraphicsAccessor)guiGraphics).callFlushIfUnmanaged();
 	}
 }

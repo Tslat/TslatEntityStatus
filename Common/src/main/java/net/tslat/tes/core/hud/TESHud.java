@@ -105,9 +105,9 @@ public class TESHud {
 
 		poseStack.pushPose();
 		RenderSystem.enableBlend();
-		RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
 
 		if (TESAPI.getConfig().hudEntityRender()) {
+			RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
 			TESClientUtil.renderEntityIcon(guiGraphics, mc, partialTick, TARGET_ENTITY, hudOpacity, true);
 
 			poseStack.translate(40, 0, 0);
@@ -116,6 +116,7 @@ public class TESHud {
 		poseStack.translate(0, 2, 0);
 
 		for (TESHudElement element : ELEMENTS.values()) {
+			RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
 			int offset = element.render(guiGraphics, mc, partialTick, TARGET_ENTITY, hudOpacity, false);
 
 			if (offset > 0)

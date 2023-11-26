@@ -68,6 +68,7 @@ public interface TESParticle<D> {
 
 		renderCallback.run();
 
+		RenderSystem.setShaderColor(1, 1, 1, 1);
 		RenderSystem.disableBlend();
 		poseStack.popPose();
 	}

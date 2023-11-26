@@ -2,6 +2,7 @@ package net.tslat.tes.config;
 
 import eu.midnightdust.lib.config.MidnightConfig;
 import net.tslat.tes.api.TESHUDActivation;
+import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.hud.TESHud;
 
 public final class TESConfig extends MidnightConfig implements net.tslat.tes.api.TESConfig {
@@ -38,6 +39,15 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "HUD Health Render Type")
 	public static TESHud.BarRenderType hudBarRenderType = TESHud.BarRenderType.COMBINED;
 
+	@Comment public static final String hudHealthFontStyleComment = "What style TES font should render in for entity health in the HUD (if applicable)";
+	@Comment public static final String hudHealthFontStyleComment2 = "Options:";
+	@Comment public static final String hudHealthFontStyleComment3 = "NORMAL - Only the text with no additional stylings";
+	@Comment public static final String hudHealthFontStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
+	@Comment public static final String hudHealthFontStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
+	@Comment public static final String hudHealthFontStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
+	@Entry(name = "HUD Health Font Style")
+	public static TESClientUtil.TextRenderType hudHealthFontStyle = TESClientUtil.TextRenderType.NORMAL;
+
 	@Comment public static final String hudHealthBarSegmentsComment = "Set whether the TES HUD health bar should render bar-segments";
 	@Entry(name = "HUD Health Bar Segments")
 	public static boolean hudHealthBarSegments = true;
@@ -54,6 +64,15 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "HUD Entity Name")
 	public static boolean hudEntityName = true;
 
+	@Comment public static final String hudEntityNameFontRenderStyleComment = "What style TES font should render in for entity names in the HUD";
+	@Comment public static final String hudEntityNameFontRenderStyleComment2 = "Options:";
+	@Comment public static final String hudEntityNameFontRenderStyleComment3 = "NORMAL - Only the text with no additional stylings";
+	@Comment public static final String hudEntityNameFontRenderStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
+	@Comment public static final String hudEntityNameFontRenderStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
+	@Comment public static final String hudEntityNameFontRenderStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
+	@Entry(name = "HUD Entity Name Font Style")
+	public static TESClientUtil.TextRenderType hudEntityNameFontStyle = TESClientUtil.TextRenderType.DROP_SHADOW;
+
 	@Comment public static final String hudBossesEnabledComment = "Whether the TES HUD should render for boss-type enemies (they usually have their own boss bar)";
 	@Entry(name = "HUD Bosses Enabled")
 	public static boolean hudBossesEnabled = true;
@@ -61,6 +80,15 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Comment public static final String hudArmourComment = "Whether the TES HUD should render the entity's armour and toughness";
 	@Entry(name = "HUD Entity Armour")
 	public static boolean hudArmour = true;
+
+	@Comment public static final String hudArmourFontStyleComment = "What style TES font should render in for entity armour values in the HUD";
+	@Comment public static final String hudArmourFontStyleComment2 = "Options:";
+	@Comment public static final String hudArmourFontStyleComment3 = "NORMAL - Only the text with no additional stylings";
+	@Comment public static final String hudArmourFontStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
+	@Comment public static final String hudArmourFontStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
+	@Comment public static final String hudArmourFontStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
+	@Entry(name = "HUD Armour Font Style")
+	public static TESClientUtil.TextRenderType hudArmourFontStyle = TESClientUtil.TextRenderType.DROP_SHADOW;
 
 	@Comment public static final String hudEntityIconsComment = "Whether the TES HUD should render the entity's alignment icons";
 	@Entry(name = "HUD Entity Icons")
@@ -115,6 +143,15 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "In-World HUD Bars Render Type")
 	public static TESHud.BarRenderType inWorldBarsRenderType = TESHud.BarRenderType.BAR;
 
+	@Comment public static final String inWorldHudHealthFontStyleComment = "What style TES font should render in for entity health in the in-world HUD (if applicable)";
+	@Comment public static final String inWorldHudHealthFontStyleComment2 = "Options:";
+	@Comment public static final String inWorldHudHealthFontStyleComment3 = "NORMAL - Only the text with no additional stylings";
+	@Comment public static final String inWorldHudHealthFontStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
+	@Comment public static final String inWorldHudHealthFontStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
+	@Comment public static final String inWorldHudHealthFontStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
+	@Entry(name = "In-World HUD Health Font Style")
+	public static TESClientUtil.TextRenderType inWorldHudHealthFontStyle = TESClientUtil.TextRenderType.NORMAL;
+
 	@Comment public static final String inWorldBarsLengthComment = "Set how long the TES in-world entity status bars should be";
 	@Entry(name = "In-World Bars Length", min = 10, max = Integer.MAX_VALUE)
 	public static int inWorldBarsLength = 50;
@@ -127,9 +164,27 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "In-World HUD Entity Name")
 	public static boolean inWorldHudEntityName = false;
 
+	@Comment public static final String inWorldHudEntityNameFontStyleComment = "What style TES font should render in for entity names in the in-world HUD";
+	@Comment public static final String inWorldHudEntityNameFontStyleComment2 = "Options:";
+	@Comment public static final String inWorldHudEntityNameFontStyleComment3 = "NORMAL - Only the text with no additional stylings";
+	@Comment public static final String inWorldHudEntityNameFontStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
+	@Comment public static final String inWorldHudEntityNameFontStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
+	@Comment public static final String inWorldHudEntityNameFontStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
+	@Entry(name = "In-World HUD Entity Name Font Style")
+	public static TESClientUtil.TextRenderType inWorldHudEntityNameFontStyle = TESClientUtil.TextRenderType.DROP_SHADOW;
+
 	@Comment public static final String inWorldHudArmourComment = "Whether the in-world entity status HUD should render the entity's armour values";
 	@Entry(name = "In-World HUD Armour")
 	public static boolean inWorldHudArmour = false;
+
+	@Comment public static final String inWorldHudArmourFontStyleComment = "What style TES font should render in for entity armour values in the in-world HUD";
+	@Comment public static final String inWorldHudArmourFontStyleComment2 = "Options:";
+	@Comment public static final String inWorldHudArmourFontStyleComment3 = "NORMAL - Only the text with no additional stylings";
+	@Comment public static final String inWorldHudArmourFontStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
+	@Comment public static final String inWorldHudArmourFontStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
+	@Comment public static final String inWorldHudArmourFontStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
+	@Entry(name = "In-World HUD Armour Font Style")
+	public static TESClientUtil.TextRenderType inWorldHudArmourFontStyle = TESClientUtil.TextRenderType.DROP_SHADOW;
 
 	@Comment public static final String inWorldHudEntityIconsComment = "Whether the in-world entity status HUD should render the entity's alignment icons";
 	@Entry(name = "In-World HUD Icons")
@@ -152,6 +207,15 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Comment public static final String particlesEnabledComment = "Whether TES should do particles for various status changes such as damage dealt or health healed";
 	@Entry(name = "Particles Enabled")
 	public static boolean particlesEnabled = true;
+
+	@Comment public static final String particleFontStyleComment = "What style TES particles' font should render in";
+	@Comment public static final String particleFontStyleComment2 = "Options:";
+	@Comment public static final String particleFontStyleComment3 = "NORMAL - Only the text with no additional stylings";
+	@Comment public static final String particleFontStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
+	@Comment public static final String particleFontStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
+	@Comment public static final String particleFontStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
+	@Entry(name = "Particle Font Style")
+	public static TESClientUtil.TextRenderType particleFontStyle = TESClientUtil.TextRenderType.OUTLINED;
 
 	@Comment public static final String defaultParticleLifespanComment = "How long (in ticks) TES particles should display for";
 	@Entry(name = "Default Particles Lifespan")
@@ -223,6 +287,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	}
 
 	@Override
+	public TESClientUtil.TextRenderType hudEntityNameFontStyle() {
+		return hudEntityNameFontStyle;
+	}
+
+	@Override
 	public boolean hudBossesEnabled() {
 		return hudBossesEnabled;
 	}
@@ -230,6 +299,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean hudArmour() {
 		return hudArmour;
+	}
+
+	@Override
+	public TESClientUtil.TextRenderType hudArmourFontStyle() {
+		return hudArmourFontStyle;
 	}
 
 	@Override
@@ -255,6 +329,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public TESHud.BarRenderType hudHealthRenderType() {
 		return hudBarRenderType;
+	}
+
+	@Override
+	public TESClientUtil.TextRenderType hudHealthFontStyle() {
+		return hudHealthFontStyle;
 	}
 
 	@Override
@@ -293,6 +372,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	}
 
 	@Override
+	public TESClientUtil.TextRenderType inWorldHudHealthFontStyle() {
+		return inWorldHudHealthFontStyle;
+	}
+
+	@Override
 	public int inWorldBarsLength() {
 		return inWorldBarsLength;
 	}
@@ -308,8 +392,18 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	}
 
 	@Override
+	public TESClientUtil.TextRenderType inWorldHudEntityNameFontStyle() {
+		return inWorldHudEntityNameFontStyle;
+	}
+
+	@Override
 	public boolean inWorldHudArmour() {
 		return inWorldHudArmour;
+	}
+
+	@Override
+	public TESClientUtil.TextRenderType inWorldHudArmourFontStyle() {
+		return inWorldHudArmourFontStyle;
 	}
 
 	@Override
@@ -335,6 +429,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean particlesEnabled() {
 		return particlesEnabled;
+	}
+
+	@Override
+	public TESClientUtil.TextRenderType particleFontStyle() {
+		return particleFontStyle;
 	}
 
 	@Override

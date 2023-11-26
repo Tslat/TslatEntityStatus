@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,19 +27,18 @@ import net.tslat.tes.core.state.TESEntityTracking;
  * Built-in HUD handles for the default rendering capabilities for the mod
  */
 public final class BuiltinHudElements {
-
 	public static int renderEntityName(GuiGraphics guiGraphics, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
 		if (inWorldHud) {
 			if (!TESAPI.getConfig().inWorldHudEntityName() && (!TESConstants.CONFIG.inWorldHudNameOverride() || !entity.hasCustomName()))
 				return 0;
 
-			TESClientUtil.renderCenteredText(guiGraphics, entity.getDisplayName(), 0, 0, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255));
+			TESClientUtil.centerTextForRender(entity.getDisplayName(), 0, 0, (x, y) -> TESAPI.getConfig().inWorldHudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), x, y, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource()));
 		}
 		else {
 			if (!TESAPI.getConfig().hudEntityName())
 				return 0;
 
-			TESClientUtil.drawTextWithShadow(guiGraphics, mc.font, entity.getDisplayName(), 0, 0, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255));
+			TESAPI.getConfig().hudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), 0, 0, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource());
 		}
 
 		TESEntityTracking.markNameRendered(entity);
@@ -100,7 +100,8 @@ public final class BuiltinHudElements {
 			poseStack.translate(0, 0, 0.001f);
 			TESClientUtil.drawColouredSquare(guiGraphics, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 1, 9, 0x090909 | (int)(opacity * 255 * TESConstants.CONFIG.hudBarFontBackingOpacity()) << 24);
 			poseStack.translate(0, 0, 0.001f);
-			TESClientUtil.drawText(guiGraphics, mc.font, healthText, center - halfTextWidth, -1, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255));
+
+			(inWorldHud ? TESAPI.getConfig().inWorldHudHealthFontStyle() : TESAPI.getConfig().hudHealthFontStyle()).render(mc.font, guiGraphics.pose(), Component.literal(healthText), center - halfTextWidth, -1, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource());
 		}
 
 		poseStack.popPose();
@@ -145,10 +146,10 @@ public final class BuiltinHudElements {
 		if (toughness > 0)
 			TESClientUtil.drawSprite(guiGraphics, toughnessSprite, 33, 0, 9, 9, 0, 0, 9, 9, 9, 9);
 
-		TESClientUtil.drawText(guiGraphics, mc.font, "x" + armour, 9.5f, 1, textColour);
+		(inWorldHud ? TESAPI.getConfig().inWorldHudArmourFontStyle() : TESAPI.getConfig().hudArmourFontStyle()).render(mc.font, guiGraphics.pose(), Component.literal("x" + armour), 9.5f, 1, textColour, guiGraphics.bufferSource());
 
 		if (toughness > 0)
-			TESClientUtil.drawText(guiGraphics, mc.font, "x" + TESUtil.roundToDecimal(toughness, 1), 43, 1, textColour);
+			(inWorldHud ? TESAPI.getConfig().inWorldHudArmourFontStyle() : TESAPI.getConfig().hudArmourFontStyle()).render(mc.font, guiGraphics.pose(), Component.literal("x" + TESUtil.roundToDecimal(toughness, 1)), 43, 1, textColour, guiGraphics.bufferSource());
 
 		poseStack.popPose();
 

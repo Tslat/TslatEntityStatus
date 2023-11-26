@@ -1,5 +1,6 @@
 package net.tslat.tes.api;
 
+import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.hud.TESHud;
 
 /**
@@ -48,6 +49,11 @@ public interface TESConfig {
 	boolean hudEntityName();
 
 	/**
+	 * What style TES font should render in for entity names in the HUD
+	 */
+	TESClientUtil.TextRenderType hudEntityNameFontStyle();
+
+	/**
 	 * Whether the TES HUD Should render for boss-type entities
 	 */
 	boolean hudBossesEnabled();
@@ -56,6 +62,11 @@ public interface TESConfig {
 	 * Whether the TES HUD should render the entity's armour & toughness
 	 */
 	boolean hudArmour();
+
+	/**
+	 * What style TES font should render in for entity armour values in the HUD
+	 */
+	TESClientUtil.TextRenderType hudArmourFontStyle();
 
 	/**
 	 * Whether the TES HUD should render the entity's alignment icons
@@ -89,6 +100,11 @@ public interface TESConfig {
 	 * </ul>
 	 */
 	TESHud.BarRenderType hudHealthRenderType();
+
+	/**
+	 * What style TES font should render in for entity health in the HUD (if applicable)
+	 */
+	TESClientUtil.TextRenderType hudHealthFontStyle();
 
 	/**
 	 * Whether the health bar in the TES HUD should render with health bar segments
@@ -132,6 +148,11 @@ public interface TESConfig {
 	TESHud.BarRenderType inWorldBarsRenderType();
 
 	/**
+	 * What style TES font should render in for entity health in the in-world HUD (if applicable)
+	 */
+	TESClientUtil.TextRenderType inWorldHudHealthFontStyle();
+
+	/**
 	 * How long the TES in-world entity status health bars should be (in pixels)
 	 */
 	int inWorldBarsLength();
@@ -147,9 +168,19 @@ public interface TESConfig {
 	boolean inWorldHudEntityName();
 
 	/**
+	 * What style TES font should render in for entity names in the in-world HUD
+	 */
+	TESClientUtil.TextRenderType inWorldHudEntityNameFontStyle();
+
+	/**
 	 * Whether the in-world TES entity status HUD should include the entity's armour values
 	 */
 	boolean inWorldHudArmour();
+
+	/**
+	 * What style TES font should render in for entity armour values in the in-world HUD
+	 */
+	TESClientUtil.TextRenderType inWorldHudArmourFontStyle();
 
 	/**
 	 * Whether the in-world TES entity status HUD should include the entity's alignment icons
@@ -175,6 +206,11 @@ public interface TESConfig {
 	 * Whether TES should do particles for various status changes such as damage dealt or health healed
 	 */
 	boolean particlesEnabled();
+
+	/**
+	 * What style TES particles' font should render in
+	 */
+	TESClientUtil.TextRenderType particleFontStyle();
 
 	/**
 	 * How long (in ticks) particles should survive for by default

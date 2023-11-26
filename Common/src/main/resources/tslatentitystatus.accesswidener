@@ -1,0 +1,7 @@
+accessWidener v1 named
+
+accessible class net/minecraft/client/gui/Font$StringRenderOutput
+accessible field net/minecraft/client/gui/Font filterFishyGlyphs Z
+accessible method net/minecraft/client/gui/Font getFontSet (Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/gui/font/FontSet;
+accessible field net/minecraft/client/gui/Font$StringRenderOutput x F
+accessible field net/minecraft/client/gui/Font$StringRenderOutput y F

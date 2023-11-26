@@ -1,8 +1,10 @@
 package net.tslat.tes.api.util;
 
+import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -18,6 +20,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor.ARGB32;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +31,8 @@ import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.mixin.client.GuiGraphicsAccessor;
 import org.joml.Matrix4f;
+
+import java.util.function.BiConsumer;
 
 /**
  * Various helper methods for client-side functions
@@ -46,16 +53,27 @@ public final class TESClientUtil {
 
 	/**
 	 * Draw some text on screen at a given position, offset for the text's height and width
+	 * @deprecated Use {@link TESClientUtil#centerTextForRender} and the various render style methods instead
 	 */
+	@Deprecated(forRemoval = true)
 	public static void renderCenteredText(GuiGraphics guiGraphics, String text, float x, float y, int colour) {
 		renderCenteredText(guiGraphics, Component.literal(text), x, y, colour);
 	}
 
 	/**
 	 * Draw some text on screen at a given position, offset for the text's height and width
+	 * @deprecated Use {@link TESClientUtil#centerTextForRender} and the various render style methods instead
 	 */
+	@Deprecated(forRemoval = true)
 	public static void renderCenteredText(GuiGraphics guiGraphics, Component text, float x, float y, int colour) {
 		drawText(guiGraphics, Minecraft.getInstance().font, text, x - Minecraft.getInstance().font.width(text) / 2f, y + 4f, colour);
+	}
+
+	/**
+	 * Draw some text on screen at a given position, offset for the text's height and width
+	 */
+	public static void centerTextForRender(Component text, float x, float y, BiConsumer<Float, Float> renderRunnable) {
+		renderRunnable.accept(x - Minecraft.getInstance().font.width(text) / 2f, y + (Minecraft.getInstance().font.lineHeight - 1) / 2f);
 	}
 
 	/**
@@ -303,8 +321,15 @@ public final class TESClientUtil {
 	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
 	 */
 	public static void drawText(GuiGraphics guiGraphics, Font font, Component text, float x, float y, int colour) {
-		font.drawInBatch(text, x, y, colour, false, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT);
+		renderDefaultStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.NORMAL.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource());
 		((GuiGraphicsAccessor)guiGraphics).callFlushIfUnmanaged();
+	}
+
+	/**
+	 * Render text with no additional styling
+	 */
+	public static void renderDefaultStyleText(final Font fontRenderer, final Matrix4f pose, final FormattedCharSequence text, float x, float y, int colour, int outlineColour, int packedLight, final MultiBufferSource.BufferSource bufferSource) {
+		fontRenderer.drawInBatch(text, x, y, colour, false, pose, bufferSource, Font.DisplayMode.NORMAL, outlineColour, packedLight);
 	}
 
 	/**
@@ -317,7 +342,7 @@ public final class TESClientUtil {
 	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
 	 */
 	public static void drawTextWithShadow(GuiGraphics guiGraphics, Font font, String text, float x, float y, int colour) {
-		drawText(guiGraphics, font, Component.literal(text), x, y, colour);
+		drawTextWithShadow(guiGraphics, font, Component.literal(text), x, y, colour);
 	}
 
 	/**
@@ -329,7 +354,122 @@ public final class TESClientUtil {
 	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
 	 */
 	public static void drawTextWithShadow(GuiGraphics guiGraphics, Font font, Component text, float x, float y, int colour) {
-		font.drawInBatch(text, x, y, colour, true, guiGraphics.pose().last().pose(), guiGraphics.bufferSource(), Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT);
+		renderDropShadowStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.DROP_SHADOW.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource());
+		((GuiGraphicsAccessor)guiGraphics).callFlushIfUnmanaged();
+	}
+
+	/**
+	 * Render text with an 'drop-shadow' style - The text has a shadow of itself offset to the bottom right a handful of pixels
+	 */
+	public static void renderDropShadowStyleText(final Font fontRenderer, final Matrix4f pose, final FormattedCharSequence text, float x, float y, int colour, int outlineColour, int packedLight, final MultiBufferSource.BufferSource bufferSource) {
+		final int borderColour = (outlineColour & -67108864) == 0 ? outlineColour | -16777216 : outlineColour;
+		final Font.StringRenderOutput outlineOutput = fontRenderer.new StringRenderOutput(bufferSource, 0, 0, borderColour, false, pose, Font.DisplayMode.NORMAL, packedLight);
+		final float[] newX = new float[] {x};
+
+		text.accept((currentPosition, style, codePoint) -> {
+			GlyphInfo glyphInfo = fontRenderer.getFontSet(style.getFont()).getGlyphInfo(codePoint, fontRenderer.filterFishyGlyphs);
+			outlineOutput.x = newX[0] + glyphInfo.getShadowOffset();
+			outlineOutput.y = y + glyphInfo.getShadowOffset();
+			newX[0] += glyphInfo.getAdvance(style.isBold());
+
+			return outlineOutput.accept(currentPosition, style.withColor(borderColour), codePoint);
+		});
+
+		Font.StringRenderOutput output = fontRenderer.new StringRenderOutput(bufferSource, x, y, (colour & -67108864) == 0 ? colour | -16777216 : colour, false, pose, Font.DisplayMode.POLYGON_OFFSET, packedLight);
+
+		text.accept(output);
+		output.finish(0, x);
+	}
+
+	/**
+	 * Wrapper for {@link GuiGraphics#drawString} to make it easier/more consistent to use
+	 * @param guiGraphics The GuiGraphics instance for the current render state
+	 * @param font The font instance to use for rendering the text
+	 * @param text The text to draw
+	 * @param x The x position on the screen to render at
+	 * @param y The y position on the screen to render at
+	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 */
+	public static void drawTextWithGlow(GuiGraphics guiGraphics, Font font, String text, float x, float y, int colour) {
+		drawTextWithGlow(guiGraphics, font, Component.literal(text), x, y, colour);
+	}
+
+	/**
+	 * Wrapper for {@link GuiGraphics#drawString} to make it easier/more consistent to use, with a glowing/full outline
+	 * @param guiGraphics The GuiGraphics instance for the current render state
+	 * @param text The text to draw
+	 * @param x The x position on the screen to render at
+	 * @param y The y position on the screen to render at
+	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 */
+	public static void drawTextWithGlow(GuiGraphics guiGraphics, Font font, Component text, float x, float y, int colour) {
+		renderGlowingStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.GLOWING.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource());
+		((GuiGraphicsAccessor)guiGraphics).callFlushIfUnmanaged();
+	}
+
+	/**
+	 * Render text with a 'glowing' style - The text is surrounded on all sides by a thick border with maximum brightness
+	 */
+	public static void renderGlowingStyleText(final Font fontRenderer, final Matrix4f pose, final FormattedCharSequence text, float x, float y, int colour, int outlineColour, int packedLight, final MultiBufferSource.BufferSource bufferSource) {
+		fontRenderer.drawInBatch8xOutline(text, x, y, colour, outlineColour, pose, bufferSource, packedLight);
+	}
+
+	/**
+	 * Wrapper for {@link GuiGraphics#drawString} to make it easier/more consistent to use
+	 * @param guiGraphics The GuiGraphics instance for the current render state
+	 * @param font The font instance to use for rendering the text
+	 * @param text The text to draw
+	 * @param x The x position on the screen to render at
+	 * @param y The y position on the screen to render at
+	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 */
+	public static void drawTextWithOutline(GuiGraphics guiGraphics, Font font, String text, float x, float y, int colour) {
+		drawTextWithOutline(guiGraphics, font, Component.literal(text), x, y, colour);
+	}
+
+	/**
+	 * Wrapper for {@link GuiGraphics#drawString} to make it easier/more consistent to use, with a thin outline
+	 * @param guiGraphics The GuiGraphics instance for the current render state
+	 * @param text The text to draw
+	 * @param x The x position on the screen to render at
+	 * @param y The y position on the screen to render at
+	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 */
+	public static void drawTextWithOutline(GuiGraphics guiGraphics, Font font, Component text, float x, float y, int colour) {
+		renderOutlineStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.OUTLINED.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource());
+		((GuiGraphicsAccessor)guiGraphics).callFlushIfUnmanaged();
+	}
+
+	/**
+	 * Render text with an 'outlined' style - The text is surrounded on all sides by a thin border
+	 */
+	public static void renderOutlineStyleText(final Font fontRenderer, final Matrix4f pose, final FormattedCharSequence text, float x, float y, int colour, int outlineColour, int packedLight, final MultiBufferSource.BufferSource bufferSource) {
+		final int borderColour = (outlineColour & -67108864) == 0 ? outlineColour | -16777216 : outlineColour;
+		final Font.StringRenderOutput outlineOutput = fontRenderer.new StringRenderOutput(bufferSource, 0, 0, borderColour, false, pose, Font.DisplayMode.NORMAL, packedLight);
+
+		for (float deltaX = -1; deltaX <= 1; deltaX++) {
+			for (float deltaY = -1; deltaY <= 1; deltaY++) {
+				if (deltaX == 0 ^ deltaY == 0) {
+					final float[] newX = new float[] {x};
+					final float offsetX = deltaX;
+					final float offsetY = deltaY;
+
+					text.accept((currentPosition, style, codePoint) -> {
+						GlyphInfo glyphInfo = fontRenderer.getFontSet(style.getFont()).getGlyphInfo(codePoint, fontRenderer.filterFishyGlyphs);
+						outlineOutput.x = newX[0] + offsetX * glyphInfo.getShadowOffset() * 0.6f;
+						outlineOutput.y = y + offsetY * glyphInfo.getShadowOffset() * 0.6f;
+						newX[0] += glyphInfo.getAdvance(style.isBold());
+
+						return outlineOutput.accept(currentPosition, style.withColor(borderColour), codePoint);
+					});
+				}
+			}
+		}
+
+		Font.StringRenderOutput output = fontRenderer.new StringRenderOutput(bufferSource, x, y, (colour & -67108864) == 0 ? colour | -16777216 : colour, false, pose, Font.DisplayMode.POLYGON_OFFSET, packedLight);
+
+		text.accept(output);
+		output.finish(0, x);
 	}
 
 	/**
@@ -375,5 +515,50 @@ public final class TESClientUtil {
 	 */
 	public static TextureAtlasSprite getAtlasSprite(ResourceLocation texture) {
 		return Minecraft.getInstance().getGuiSprites().getSprite(texture);
+	}
+
+	/**
+	 * Brighten/darken an ARGB-format colour packed integer by a given percentage
+	 */
+	public static int multiplyARGBColour(int colour, float multiplier) {
+		return ARGB32.color(colour >>> 24,
+				Mth.floor((colour >> 16 & 255) * multiplier) & 255,
+				Mth.floor((colour >> 8 & 255) * multiplier) & 255,
+				Mth.floor((colour & 255) * multiplier) & 255);
+	}
+
+	@FunctionalInterface
+	public interface StyledTextRenderer {
+		void render(final Font fontRenderer, final Matrix4f pose, final FormattedCharSequence text, float x, float y, int colour, int outlineColour, int packedLight, final MultiBufferSource.BufferSource bufferSource);
+	}
+
+	/**
+	 * Text render types for rendering text in different styles
+	 */
+	public enum TextRenderType {
+		NORMAL(TESClientUtil::renderDefaultStyleText, colour -> 0),
+		DROP_SHADOW(TESClientUtil::renderDropShadowStyleText, colour -> TESClientUtil.multiplyARGBColour(colour, 0.25f)),
+		GLOWING(TESClientUtil::renderGlowingStyleText, colour -> TESClientUtil.multiplyARGBColour(colour, 0.25f)),
+		OUTLINED(TESClientUtil::renderOutlineStyleText, colour -> 0);
+
+		private final StyledTextRenderer style;
+		private final Int2IntFunction outlineColourGenerator;
+
+		TextRenderType(StyledTextRenderer style, Int2IntFunction outlineColourGenerator) {
+			this.style = style;
+			this.outlineColourGenerator = outlineColourGenerator;
+		}
+
+		public void render(final Font fontRenderer, final PoseStack poseStack, final Component component, float x, float y, int colour, MultiBufferSource.BufferSource bufferSource) {
+			render(fontRenderer, poseStack.last().pose(), component.getVisualOrderText(), x, y, colour, this.outlineColourGenerator.applyAsInt(colour), LightTexture.FULL_BRIGHT, bufferSource);
+		}
+
+		public void render(final Font fontRenderer, final Matrix4f pose, final FormattedCharSequence text, float x, float y, int colour, int outlineColour, int packedLight, final MultiBufferSource.BufferSource bufferSource) {
+			this.style.render(fontRenderer, pose, text, x, y, colour, outlineColour, packedLight, bufferSource);
+		}
+
+		public int getOutlineColour(int colour) {
+			return this.outlineColourGenerator.applyAsInt(colour);
+		}
 	}
 }
