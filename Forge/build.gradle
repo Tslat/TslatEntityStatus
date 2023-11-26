@@ -3,6 +3,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+' // Mixins
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'io.github.CDAGaming.cursegradle' version '1.6.1'
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 archivesBaseName = "${mod_name}-forge-${minecraft_version}"
@@ -148,5 +149,18 @@ curseforge {
         mainArtifact(jar) {
             it.displayName = "${project.mod_name} Forge ${project.minecraft_version}-${project.version}"
         }
+    }
+}
+
+modrinth {
+    token = System.getenv("modrinthKey")
+    projectId = mod_id
+    versionNumber = project.version
+    versionType = "release"
+    uploadFile = jar
+    gameVersions = ["${project.minecraft_version}"]
+    loaders = ["forge"]
+    dependencies {
+        required.project "fabric-api"
     }
 }
