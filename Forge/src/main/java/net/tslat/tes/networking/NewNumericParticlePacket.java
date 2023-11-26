@@ -1,10 +1,12 @@
 package net.tslat.tes.networking;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.network.NetworkEvent;
 import net.tslat.tes.core.particle.TESParticleManager;
 import net.tslat.tes.core.particle.type.NumericParticle;
 import org.joml.Vector3f;
+
+import java.util.function.Supplier;
 
 public class NewNumericParticlePacket {
 	private final double value;
@@ -27,7 +29,10 @@ public class NewNumericParticlePacket {
 		return new NewNumericParticlePacket(buf.readDouble(), buf.readVector3f(), buf.readVarInt());
 	}
 
-	public void handleMessage(CustomPayloadEvent.Context context) {
-		TESParticleManager.addParticle(new NumericParticle(null, this.position, this.value).withColour(this.colour));
+	public void handleMessage(Supplier<NetworkEvent.Context> context) {
+		context.get().enqueueWork(() -> {
+			TESParticleManager.addParticle(new NumericParticle(null, this.position, this.value).withColour(this.colour));
+		});
+		context.get().setPacketHandled(true);
 	}
 }

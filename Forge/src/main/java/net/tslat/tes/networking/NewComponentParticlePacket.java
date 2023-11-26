@@ -3,12 +3,14 @@ package net.tslat.tes.networking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.network.NetworkEvent;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.core.particle.TESParticleManager;
 import net.tslat.tes.core.particle.type.ComponentParticle;
 import net.tslat.tes.core.state.EntityState;
 import org.joml.Vector3f;
+
+import java.util.function.Supplier;
 
 public class NewComponentParticlePacket {
 	private final int entityId;
@@ -47,15 +49,18 @@ public class NewComponentParticlePacket {
 		return entityId == -1 ? new NewComponentParticlePacket(position, contents) : new NewComponentParticlePacket(entityId, contents, position);
 	}
 
-	public void handleMessage(CustomPayloadEvent.Context context) {
-		if (this.entityId == -1) {
-			TESParticleManager.addParticle(new ComponentParticle(null, this.position, this.contents));
-		}
-		else {
-			EntityState entityState = TESAPI.getTESDataForEntity(this.entityId);
+	public void handleMessage(Supplier<NetworkEvent.Context> context) {
+		context.get().enqueueWork(() -> {
+			if (this.entityId == -1) {
+				TESParticleManager.addParticle(new ComponentParticle(null, this.position, this.contents));
+			}
+			else {
+				EntityState entityState = TESAPI.getTESDataForEntity(this.entityId);
 
-			if (entityState != null)
-				TESParticleManager.addParticle(new ComponentParticle(entityState, this.position, this.contents));
-		}
+				if (entityState != null)
+					TESParticleManager.addParticle(new ComponentParticle(entityState, this.position, this.contents));
+			}
+		});
+		context.get().setPacketHandled(true);
 	}
 }

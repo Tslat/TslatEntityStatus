@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.*;
+import net.minecraftforge.network.simple.SimpleChannel;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import org.jetbrains.annotations.Nullable;
@@ -16,28 +17,48 @@ import java.util.Set;
 
 public final class TESNetworking implements net.tslat.tes.core.networking.TESNetworking {
 	private static final String REV = "1";
-	private static final Channel.VersionTest CAPTURE_STATUS_AND_ACCEPT = (status, version) -> {
-		if (status == Channel.VersionTest.Status.MISSING) {
+	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(TESConstants.MOD_ID, "tes_packets"), () -> REV, rev -> {
+		if (rev.equals(NetworkRegistry.ABSENT)) {
 			EFFECTS_SYNCING_ENABLED = false;
-		}
-		else {
-			EFFECTS_SYNCING_ENABLED = TESAPI.getConfig().hudPotionIcons() || TESAPI.getConfig().inWorldHudPotionIcons();
+
+			return true;
 		}
 
-		return true;
-	};
-	public static final SimpleChannel INSTANCE = ChannelBuilder.named(new ResourceLocation(TESConstants.MOD_ID, "tes_packets")).clientAcceptedVersions(CAPTURE_STATUS_AND_ACCEPT).simpleChannel();
+		if (rev.equals(REV)) {
+			EFFECTS_SYNCING_ENABLED = TESAPI.getConfig().hudPotionIcons() || TESAPI.getConfig().inWorldHudPotionIcons();
+
+			return true;
+		}
+
+		return false;
+	}, rev -> {
+		if (rev.equals(NetworkRegistry.ABSENT)) {
+			EFFECTS_SYNCING_ENABLED = false;
+
+			return true;
+		}
+
+		if (rev.equals(REV)) {
+			EFFECTS_SYNCING_ENABLED = TESAPI.getConfig().hudPotionIcons() || TESAPI.getConfig().inWorldHudPotionIcons();
+
+			return true;
+		}
+
+		return false;
+	});
 
 	private static boolean EFFECTS_SYNCING_ENABLED = true;
 
 	public TESNetworking() {}
 
 	public static void init() {
-		INSTANCE.messageBuilder(RequestEffectsPacket.class, NetworkDirection.PLAY_TO_SERVER).encoder(RequestEffectsPacket::encode).decoder(RequestEffectsPacket::decode).consumerMainThread(RequestEffectsPacket::handleMessage).add();
-		INSTANCE.messageBuilder(SyncEffectsPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(SyncEffectsPacket::encode).decoder(SyncEffectsPacket::decode).consumerMainThread(SyncEffectsPacket::handleMessage).add();
-		INSTANCE.messageBuilder(ParticleClaimPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(ParticleClaimPacket::encode).decoder(ParticleClaimPacket::decode).consumerMainThread(ParticleClaimPacket::handleMessage).add();
-		INSTANCE.messageBuilder(NewComponentParticlePacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(NewComponentParticlePacket::encode).decoder(NewComponentParticlePacket::decode).consumerMainThread(NewComponentParticlePacket::handleMessage).add();
-		INSTANCE.messageBuilder(NewNumericParticlePacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(NewNumericParticlePacket::encode).decoder(NewNumericParticlePacket::decode).consumerMainThread(NewNumericParticlePacket::handleMessage).add();
+		int id = 0;
+
+		INSTANCE.registerMessage(id++, RequestEffectsPacket.class, RequestEffectsPacket::encode, RequestEffectsPacket::decode, RequestEffectsPacket::handleMessage);
+		INSTANCE.registerMessage(id++, SyncEffectsPacket.class, SyncEffectsPacket::encode, SyncEffectsPacket::decode, SyncEffectsPacket::handleMessage);
+		INSTANCE.registerMessage(id++, ParticleClaimPacket.class, ParticleClaimPacket::encode, ParticleClaimPacket::decode, ParticleClaimPacket::handleMessage);
+		INSTANCE.registerMessage(id++, NewComponentParticlePacket.class, NewComponentParticlePacket::encode, NewComponentParticlePacket::decode, NewComponentParticlePacket::handleMessage);
+		INSTANCE.registerMessage(id++, NewNumericParticlePacket.class, NewNumericParticlePacket::encode, NewNumericParticlePacket::decode, NewNumericParticlePacket::handleMessage);
 	}
 
 	public static boolean isSyncingEffects() {
@@ -49,7 +70,7 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 		if (!isSyncingEffects())
 			return;
 
-		INSTANCE.send(new RequestEffectsPacket(entityId), PacketDistributor.SERVER.noArg());
+		INSTANCE.sendToServer(new RequestEffectsPacket(entityId));
 	}
 
 	@Override
@@ -57,7 +78,7 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 		if (!isSyncingEffects())
 			return;
 
-		INSTANCE.send(new SyncEffectsPacket(entityId, toAdd, toRemove), PacketDistributor.PLAYER.with(player));
+		INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncEffectsPacket(entityId, toAdd, toRemove));
 	}
 
 	@Override
@@ -65,31 +86,31 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 		if (!isSyncingEffects())
 			return;
 
-		INSTANCE.send(new SyncEffectsPacket(targetedEntity.getId(), toAdd, toRemove), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
+		INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> targetedEntity), new SyncEffectsPacket(targetedEntity.getId(), toAdd, toRemove));
 	}
 
 	@Override
 	public void sendParticle(Level level, Vector3f position, Component contents) {
-		INSTANCE.send(new NewComponentParticlePacket(position, contents), PacketDistributor.NEAR.with(new PacketDistributor.TargetPoint(position.x, position.y, position.z, 200, level.dimension())));
+		INSTANCE.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(position.x, position.y, position.z, 200, level.dimension())), new NewComponentParticlePacket(position, contents));
 	}
 
 	@Override
 	public void sendParticle(LivingEntity targetedEntity, Component contents) {
-		INSTANCE.send(new NewComponentParticlePacket(targetedEntity, contents), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
+		INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> targetedEntity), new NewComponentParticlePacket(targetedEntity, contents));
 	}
 
 	@Override
 	public void sendParticle(Level level, Vector3f position, double value, int colour) {
-		INSTANCE.send(new NewNumericParticlePacket(value, position, colour), PacketDistributor.NEAR.with(new PacketDistributor.TargetPoint(position.x, position.y, position.z, 200, level.dimension())));
+		INSTANCE.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(position.x, position.y, position.z, 200, level.dimension())), new NewNumericParticlePacket(value, position, colour));
 	}
 
 	@Override
 	public void sendParticle(LivingEntity targetedEntity, double value, int colour) {
-		INSTANCE.send(new NewNumericParticlePacket(value, new Vector3f((float)targetedEntity.getX(), (float)targetedEntity.getEyeY(), (float)targetedEntity.getZ()), colour), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
+		INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> targetedEntity), new NewNumericParticlePacket(value, new Vector3f((float)targetedEntity.getX(), (float)targetedEntity.getEyeY(), (float)targetedEntity.getZ()), colour));
 	}
 
 	@Override
 	public void sendParticleClaim(ResourceLocation claimantId, LivingEntity targetedEntity, @Nullable CompoundTag additionalData) {
-		INSTANCE.send(new ParticleClaimPacket(targetedEntity.getId(), claimantId, additionalData), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
+		INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> targetedEntity), new ParticleClaimPacket(targetedEntity.getId(), claimantId, additionalData));
 	}
 }

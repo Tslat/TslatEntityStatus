@@ -28,7 +28,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.tes.api.TESAPI;
-import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.mixin.client.GuiGraphicsAccessor;
 import org.joml.Matrix4f;
 
@@ -38,18 +37,8 @@ import java.util.function.BiConsumer;
  * Various helper methods for client-side functions
  */
 public final class TESClientUtil {
+	public static final ResourceLocation VANILLA_GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
 	public static final ResourceLocation CREATIVE_INVENTORY_TEXTURE = new ResourceLocation("textures/gui/container/creative_inventory/tab_inventory.png");
-	public static final ResourceLocation ICONS_ATLAS_LOCATION = new ResourceLocation("textures/atlas/gui.png");
-	public static final ResourceLocation NOTCH_OVERLAY_SPRITE = new ResourceLocation("boss_bar/notched_6_progress");
-	public static final ResourceLocation ARMOUR_ICON_SPRITE = new ResourceLocation("hud/armor_full");
-	public static final ResourceLocation TOUGHNESS_ICON_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/toughness_full");
-	public static final ResourceLocation ENTITY_FIRE_IMMUNE_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_fire_immune");
-	public static final ResourceLocation ENTITY_MELEE_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_melee");
-	public static final ResourceLocation ENTITY_RANGED_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_ranged");
-	public static final ResourceLocation ENTITY_ARTHROPOD_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_arthropod");
-	public static final ResourceLocation ENTITY_ILLAGER_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_illager");
-	public static final ResourceLocation ENTITY_UNDEAD_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_undead");
-	public static final ResourceLocation ENTITY_WATER_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_water");
 
 	/**
 	 * Draw some text on screen at a given position, offset for the text's height and width
@@ -97,34 +86,28 @@ public final class TESClientUtil {
 	 * @param x The x-position of the bar (use 0 and translate the {@link PoseStack} for in-world rendering
 	 * @param y The y-position of the bar (use 0 and translate the {@link PoseStack} for in-world rendering
 	 * @param width The width of the bar. This method reconstructs the bar accurately using the two ends and a stretched center to make an indefinitely-applicable width
-	 * @param sprite The atlas sprite for the bar texture to render
+	 * @param v The v coordinate of the bar texture (from 'textures/gui/bars.png')
 	 * @param percentComplete Percentage progress of the bar (use 1 for background or overlay pieces)
 	 * @param withBarOverlay Render the bar segments overlay
 	 * @param opacity The overall opacity of the bar
 	 */
-	public static void constructBarRender(GuiGraphics guiGraphics, int x, int y, int width, TextureAtlasSprite sprite, float percentComplete, boolean withBarOverlay, float opacity) {
+	public static void constructBarRender(GuiGraphics guiGraphics, int x, int y, int width, int v, float percentComplete, boolean withBarOverlay, float opacity) {
 		int percentPixels = Math.round(percentComplete * width);
 		int midBarWidth = width - 10;
 
-		RenderSystem.setShaderTexture(0, sprite.atlasLocation());
-
-		drawSprite(guiGraphics, sprite, x, y, Math.min(5, percentPixels), 5, 0, 0, Math.min(5, percentPixels), 5, 182, 5);
+		drawSimpleTexture(guiGraphics, x, y, Math.min(5, percentPixels), 5, 0, v, 256);
 
 		if (percentPixels > 5) {
 			if (midBarWidth > 0)
-				drawSprite(guiGraphics, sprite, x + 5, y, Math.min(midBarWidth, percentPixels - 5), 5, 5, 0, Math.min(midBarWidth, percentPixels - 5), 5, 182, 5);
+				drawSimpleTexture(guiGraphics, x + 5, y, Math.min(midBarWidth, percentPixels - 5), 5, 5, v, 256);
 
 			if (percentPixels > width - 5)
-				drawSprite(guiGraphics, sprite, x + 5 + midBarWidth, y, Math.min(5, percentPixels - 5), 5, 177, 0, Math.min(5, percentPixels - 5), 5, 182, 5);
+				drawSimpleTexture(guiGraphics, x + 5 + midBarWidth, y, Math.min(5, percentPixels - 5), 5, 177, v, 256);
 		}
 
 		if (withBarOverlay && width > 10) {
 			RenderSystem.setShaderColor(1, 1, 1, 0.75f * opacity);
-
-			TextureAtlasSprite overlaySprite = getAtlasSprite(NOTCH_OVERLAY_SPRITE);
-
-			RenderSystem.setShaderTexture(0, overlaySprite.atlasLocation());
-			drawSprite(guiGraphics, overlaySprite, x, y, width, 5, 0, 0, 182, 5, 182, 5);
+			drawSimpleTexture(guiGraphics, x, y, width, 5, 0, 80, 182, 5, 256, 256);
 		}
 	}
 
@@ -508,13 +491,6 @@ public final class TESClientUtil {
 		guiGraphics.pose().mulPoseMatrix(poseStack.last().pose());
 
 		return guiGraphics;
-	}
-
-	/**
-	 * Get the TextureAtlasSprite instance for the given texture location
-	 */
-	public static TextureAtlasSprite getAtlasSprite(ResourceLocation texture) {
-		return Minecraft.getInstance().getGuiSprites().getSprite(texture);
 	}
 
 	/**
