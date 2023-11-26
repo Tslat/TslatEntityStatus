@@ -4,6 +4,7 @@ import eu.midnightdust.lib.config.MidnightConfig;
 import net.tslat.tes.api.TESHUDActivation;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.hud.TESHud;
+import net.tslat.tes.core.hud.TESHudPosition;
 
 public final class TESConfig extends MidnightConfig implements net.tslat.tes.api.TESConfig {
 	@Comment public static final String entityTrackingDistanceComment = "How close (in blocks) entities should be before TES starts tracking them";
@@ -17,6 +18,18 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Comment public static final String hudEnabledComment = "Whether the TES HUD should be enabled or not";
 	@Entry(name = "HUD Enabled")
 	public static boolean hudEnabled = true;
+
+	@Comment public static final String hudRenderPositionComment = "What position the TES HUD should render in";
+	@Entry(name = "HUD Render Position")
+	public static TESHudPosition hudRenderPosition = TESHudPosition.TOP_LEFT;
+
+	@Comment public static final String hudLeftOffsetComment = "Manually adjust the left-offset rendering position of the TES HUD";
+	@Entry(name = "HUD Position Left Offset", min = -100000, max = 100000)
+	public static int hudLeftOffset = 0;
+
+	@Comment public static final String hudTopOffsetComment = "Manually adjust the top-offset rendering position of the TES HUD";
+	@Entry(name = "HUD Position Top Offset", min = -100000, max = 100000)
+	public static int hudTopOffset = 0;
 
 	@Comment public static final String hudTargetDistanceComment = "How close (in blocks) the player has to be to render a HUD for an entity under the crosshairs";
 	@Comment public static final String hudTargetDistanceComment2 = "Larger values may cost more performance";
@@ -259,6 +272,21 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean hudEnabled() {
 		return hudEnabled;
+	}
+
+	@Override
+	public TESHudPosition hudRenderPosition() {
+		return hudRenderPosition;
+	}
+
+	@Override
+	public int hudPositionLeftAdjust() {
+		return hudLeftOffset;
+	}
+
+	@Override
+	public int hudPositionTopAdjust() {
+		return hudTopOffset;
 	}
 
 	@Override

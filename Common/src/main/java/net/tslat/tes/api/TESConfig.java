@@ -2,6 +2,7 @@ package net.tslat.tes.api;
 
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.hud.TESHud;
+import net.tslat.tes.core.hud.TESHudPosition;
 
 /**
  * Common configuration interface for TES' configurable settings.
@@ -22,6 +23,21 @@ public interface TESConfig {
 	 * Whether the TES HUD should be rendered or not
 	 */
 	boolean hudEnabled();
+
+	/**
+	 * What position the TES HUD should render in
+	 */
+	TESHudPosition hudRenderPosition();
+
+	/**
+	 * Manually adjust the left-offset rendering position of the TES HUD
+	 */
+	int hudPositionLeftAdjust();
+
+	/**
+	 * Manually adjust the top-offset rendering position of the TES HUD
+	 */
+	int hudPositionTopAdjust();
 
 	/**
 	 * How far away a targeted entity can be before TES stops rendering a HUD for it

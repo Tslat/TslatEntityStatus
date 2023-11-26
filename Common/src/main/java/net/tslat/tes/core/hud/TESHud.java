@@ -104,6 +104,7 @@ public class TESHud {
 		PoseStack poseStack = guiGraphics.pose();
 
 		poseStack.pushPose();
+		TESAPI.getConfig().hudRenderPosition().adjustRenderForHudPosition(guiGraphics);
 		RenderSystem.enableBlend();
 
 		if (TESAPI.getConfig().hudEntityRender()) {

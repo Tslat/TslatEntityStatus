@@ -7,6 +7,7 @@ import net.tslat.tes.api.TESHUDActivation;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.hud.TESHud;
+import net.tslat.tes.core.hud.TESHudPosition;
 import org.apache.commons.lang3.tuple.Pair;
 
 public final class TESConfig implements net.tslat.tes.api.TESConfig {
@@ -14,6 +15,9 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.IntValue cacheCleanFrequency;
 
 	private final ForgeConfigSpec.BooleanValue hudEnabled;
+	private final ForgeConfigSpec.EnumValue<TESHudPosition> hudRenderPosition;
+	private final ForgeConfigSpec.IntValue hudPositionLeftAdjust;
+	private final ForgeConfigSpec.IntValue hudPositionTopAdjust;
 	private final ForgeConfigSpec.DoubleValue hudTargetDistance;
 	private final ForgeConfigSpec.IntValue hudTargetGracePeriod;
 	private final ForgeConfigSpec.BooleanValue hudEntityRender;
@@ -79,6 +83,21 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Whether the TES HUD should be enabled or not")
 				.translation("config.tes.hud.enabled")
 				.define("hudEnabled", true);
+
+		this.hudRenderPosition = config
+				.comment("What position the TES HUD should render in")
+				.translation("config.tes.hud.renderPosition")
+				.defineEnum("hudRenderPosition", TESHudPosition.TOP_LEFT);
+
+		this.hudPositionLeftAdjust = config
+				.comment("Manually adjust the left-offset rendering position of the TES HUD")
+				.translation("config.tes.hud.leftOffset")
+				.defineInRange("hudPositionLeftAdjust", 0, -100000, 100000);
+
+		this.hudPositionTopAdjust = config
+				.comment("Manually adjust the top-offset rendering position of the TES HUD")
+				.translation("config.tes.hud.topOffset")
+				.defineInRange("hudPositionTopAdjust", 0, -100000, 100000);
 
 		this.hudTargetDistance = config
 				.comment("How close (in blocks) the player has to be to render a HUD for an entity under the crosshairs",
@@ -333,6 +352,21 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public boolean hudEnabled() {
 		return this.hudEnabled.get();
+	}
+
+	@Override
+	public TESHudPosition hudRenderPosition() {
+		return this.hudRenderPosition.get();
+	}
+
+	@Override
+	public int hudPositionLeftAdjust() {
+		return this.hudPositionLeftAdjust.get();
+	}
+
+	@Override
+	public int hudPositionTopAdjust() {
+		return this.hudPositionTopAdjust.get();
 	}
 
 	@Override
