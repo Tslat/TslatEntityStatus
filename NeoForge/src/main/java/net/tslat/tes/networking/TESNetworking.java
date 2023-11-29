@@ -18,37 +18,7 @@ import java.util.Set;
 
 public final class TESNetworking implements net.tslat.tes.core.networking.TESNetworking {
 	private static final String REV = "1";
-	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(TESConstants.MOD_ID, "tes_packets"), () -> REV, rev -> {
-		if (rev.equals(NetworkRegistry.ABSENT)) {
-			EFFECTS_SYNCING_ENABLED = false;
-
-			return true;
-		}
-
-		if (rev.equals(REV)) {
-			EFFECTS_SYNCING_ENABLED = TESAPI.getConfig().hudPotionIcons() || TESAPI.getConfig().inWorldHudPotionIcons();
-
-			return true;
-		}
-
-		return false;
-	}, rev -> {
-		if (rev.equals(NetworkRegistry.ABSENT)) {
-			EFFECTS_SYNCING_ENABLED = false;
-
-			return true;
-		}
-
-		if (rev.equals(REV)) {
-			EFFECTS_SYNCING_ENABLED = TESAPI.getConfig().hudPotionIcons() || TESAPI.getConfig().inWorldHudPotionIcons();
-
-			return true;
-		}
-
-		return false;
-	});
-
-	private static boolean EFFECTS_SYNCING_ENABLED = true;
+	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(TESConstants.MOD_ID, "tes_packets"), () -> REV, REV::equals, REV::equals);
 
 	public TESNetworking() {}
 
@@ -62,13 +32,9 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 		INSTANCE.registerMessage(id++, NewNumericParticlePacket.class, NewNumericParticlePacket::encode, NewNumericParticlePacket::decode, NewNumericParticlePacket::handleMessage);
 	}
 
-	public static boolean isSyncingEffects() {
-		return EFFECTS_SYNCING_ENABLED;
-	}
-
 	@Override
 	public void requestEffectsSync(int entityId) {
-		if (!isSyncingEffects())
+		if (!TESAPI.getConfig().isSyncingEffects())
 			return;
 
 		INSTANCE.sendToServer(new RequestEffectsPacket(entityId));
@@ -76,17 +42,11 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 
 	@Override
 	public void sendEffectsSync(ServerPlayer player, int entityId, Set<ResourceLocation> toAdd, Set<ResourceLocation> toRemove) {
-		if (!isSyncingEffects())
-			return;
-
 		INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncEffectsPacket(entityId, toAdd, toRemove));
 	}
 
 	@Override
 	public void sendEffectsSync(LivingEntity targetedEntity, Set<ResourceLocation> toAdd, Set<ResourceLocation> toRemove) {
-		if (!isSyncingEffects())
-			return;
-
 		INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> targetedEntity), new SyncEffectsPacket(targetedEntity.getId(), toAdd, toRemove));
 	}
 

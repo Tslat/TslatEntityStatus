@@ -20,13 +20,9 @@ import org.joml.Vector3f;
 import java.util.Set;
 
 public class TESNetworking implements net.tslat.tes.core.networking.TESNetworking {
-	public static boolean isSyncingEffects() {
-		return TESAPI.getConfig().hudPotionIcons() || TESAPI.getConfig().inWorldHudPotionIcons();
-	}
-
 	@Override
 	public void requestEffectsSync(int entityId) {
-		if (!isSyncingEffects())
+		if (!TESAPI.getConfig().isSyncingEffects())
 			return;
 
 		FriendlyByteBuf buffer = PacketByteBufs.create();
@@ -38,9 +34,6 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 
 	@Override
 	public void sendEffectsSync(ServerPlayer player, int entityId, Set<ResourceLocation> toAdd, Set<ResourceLocation> toRemove) {
-		if (!isSyncingEffects())
-			return;
-
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 
 		new SyncEffectsPacket(entityId, toAdd, toRemove).encode(buffer);
@@ -50,9 +43,6 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 
 	@Override
 	public void sendEffectsSync(LivingEntity targetedEntity, Set<ResourceLocation> toAdd, Set<ResourceLocation> toRemove) {
-		if (!isSyncingEffects())
-			return;
-
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 
 		new SyncEffectsPacket(targetedEntity.getId(), toAdd, toRemove).encode(buffer);

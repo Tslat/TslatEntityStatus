@@ -3,6 +3,7 @@ package net.tslat.tes.networking;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
@@ -37,11 +38,13 @@ public class SyncEffectsPacket {
 	}
 
 	public void handleMessage(Consumer<Runnable> queue) {
-		queue.accept(() -> {
-			EntityState state = TESEntityTracking.getStateForEntityId(this.entityId);
+		if (TESAPI.getConfig().isSyncingEffects()) {
+			queue.accept(() -> {
+				EntityState state = TESEntityTracking.getStateForEntityId(this.entityId);
 
-			if (state != null)
-				state.modifyEffects(this.idsToAdd, this.idsToRemove);
-		});
+				if (state != null)
+					state.modifyEffects(this.idsToAdd, this.idsToRemove);
+			});
+		}
 	}
 }
