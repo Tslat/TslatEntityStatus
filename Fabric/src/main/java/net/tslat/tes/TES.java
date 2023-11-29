@@ -10,7 +10,6 @@ public class TES implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		MidnightConfig.init(TESConstants.MOD_ID, TESConfig.class);
-		TESConstants.setConfig(new TESConfig());
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> TESConstants.UTILS.clearDynamicCaches());
 	}
 }
