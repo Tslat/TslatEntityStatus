@@ -1,5 +1,6 @@
 package net.tslat.tes;
 
+import eu.midnightdust.lib.config.MidnightConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,6 +16,7 @@ public class TESClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		TESConstants.setIsClient();
+		MidnightConfig.init(TESConstants.MOD_ID, TESConfig.class);
 		TESConstants.setConfig(new TESConfig());
 
 		ClientPlayNetworking.registerGlobalReceiver(SyncEffectsPacket.ID, (client, handler, buf, responseSender) -> SyncEffectsPacket.decode(buf).handleMessage(client::submit));
