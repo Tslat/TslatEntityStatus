@@ -71,8 +71,10 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Get the current config for TES
+	 * Get the current config for TES.
+	 * <p>Config is only available on the client side</p>
 	 */
+	@Nullable
 	public static TESConfig getConfig() {
 		return TESConstants.CONFIG;
 	}
