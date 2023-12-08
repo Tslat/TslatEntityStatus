@@ -17,8 +17,14 @@ runs {
         modSource project(":Common").sourceSets.main
     }
 
-    client {}
-    server {}
+    client {
+        taskName 'Client'
+    }
+
+    server {
+        taskName 'Server'
+        args '--nogui'
+    }
 }
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
