@@ -582,7 +582,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	public static void init() {
 		Pair<TESConfig, ForgeConfigSpec> configSpec = new ForgeConfigSpec.Builder().configure(TESConfig::new);
 
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, configSpec.getRight());
+		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, configSpec.getRight());
 		TESConstants.setConfig(configSpec.getLeft());
 	}
 }
