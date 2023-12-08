@@ -1,15 +1,15 @@
 package net.tslat.tes.util;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.entity.PartEntity;
 import net.tslat.tes.api.TESEntityType;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +40,7 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 			if (entity.getType() == EntityType.PLAYER)
 				return TESEntityType.PLAYER;
 
-			if (ForgeRegistries.ENTITY_TYPES.tags().getTag(Tags.EntityTypes.BOSSES).contains(entity.getType()))
+			if (BuiltInRegistries.ENTITY_TYPE.getTag(Tags.EntityTypes.BOSSES).get().contains(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entity.getType())))
 				return TESEntityType.BOSS;
 
 			if (entity instanceof Enemy)

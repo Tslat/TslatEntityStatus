@@ -14,8 +14,11 @@ description='''
 View entity health and other statuses. Make smacking things fun again!
 '''
 
+[[mixins]]
+config = "${mod_id}.mixins.json"
+
 [[dependencies.${mod_id}]]
-modId="forge"
+modId="neoforge"
 mandatory=true
 versionRange="${neoforge_version_range}"
 ordering="NONE"

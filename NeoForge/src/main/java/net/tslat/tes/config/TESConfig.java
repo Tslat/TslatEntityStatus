@@ -1,69 +1,69 @@
 package net.tslat.tes.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
-import net.tslat.tes.api.TESHUDActivation;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.tslat.tes.api.TESConstants;
+import net.tslat.tes.api.TESHUDActivation;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.hud.TESHud;
 import net.tslat.tes.core.hud.TESHudPosition;
 import org.apache.commons.lang3.tuple.Pair;
 
 public final class TESConfig implements net.tslat.tes.api.TESConfig {
-	private final ForgeConfigSpec.DoubleValue entityTrackingDistance;
-	private final ForgeConfigSpec.IntValue cacheCleanFrequency;
+	private final ModConfigSpec.DoubleValue entityTrackingDistance;
+	private final ModConfigSpec.IntValue cacheCleanFrequency;
 
-	private final ForgeConfigSpec.BooleanValue hudEnabled;
-	private final ForgeConfigSpec.EnumValue<TESHudPosition> hudRenderPosition;
-	private final ForgeConfigSpec.IntValue hudPositionLeftAdjust;
-	private final ForgeConfigSpec.IntValue hudPositionTopAdjust;
-	private final ForgeConfigSpec.DoubleValue hudTargetDistance;
-	private final ForgeConfigSpec.IntValue hudTargetGracePeriod;
-	private final ForgeConfigSpec.BooleanValue hudEntityRender;
-	private final ForgeConfigSpec.EnumValue<TESHud.BarRenderType> hudHealthRenderType;
-	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudHealthFontStyle;
-	private final ForgeConfigSpec.BooleanValue hudHealthBarSegments;
-	private final ForgeConfigSpec.IntValue hudHealthBarLength;
-	private final ForgeConfigSpec.BooleanValue hudEntityDamageTint;
-	private final ForgeConfigSpec.BooleanValue hudEntityName;
-	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudEntityNameFontStyle;
-	private final ForgeConfigSpec.BooleanValue hudBossesEnabled;
-	private final ForgeConfigSpec.BooleanValue hudArmour;
-	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudArmourFontStyle;
-	private final ForgeConfigSpec.BooleanValue hudEntityIcons;
-	private final ForgeConfigSpec.BooleanValue hudPotionIcons;
-	private final ForgeConfigSpec.DoubleValue hudOpacity;
-	private final ForgeConfigSpec.DoubleValue hudBarFontBackingOpacity;
+	private final ModConfigSpec.BooleanValue hudEnabled;
+	private final ModConfigSpec.EnumValue<TESHudPosition> hudRenderPosition;
+	private final ModConfigSpec.IntValue hudPositionLeftAdjust;
+	private final ModConfigSpec.IntValue hudPositionTopAdjust;
+	private final ModConfigSpec.DoubleValue hudTargetDistance;
+	private final ModConfigSpec.IntValue hudTargetGracePeriod;
+	private final ModConfigSpec.BooleanValue hudEntityRender;
+	private final ModConfigSpec.EnumValue<TESHud.BarRenderType> hudHealthRenderType;
+	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudHealthFontStyle;
+	private final ModConfigSpec.BooleanValue hudHealthBarSegments;
+	private final ModConfigSpec.IntValue hudHealthBarLength;
+	private final ModConfigSpec.BooleanValue hudEntityDamageTint;
+	private final ModConfigSpec.BooleanValue hudEntityName;
+	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudEntityNameFontStyle;
+	private final ModConfigSpec.BooleanValue hudBossesEnabled;
+	private final ModConfigSpec.BooleanValue hudArmour;
+	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudArmourFontStyle;
+	private final ModConfigSpec.BooleanValue hudEntityIcons;
+	private final ModConfigSpec.BooleanValue hudPotionIcons;
+	private final ModConfigSpec.DoubleValue hudOpacity;
+	private final ModConfigSpec.DoubleValue hudBarFontBackingOpacity;
 
-	private final ForgeConfigSpec.BooleanValue inWorldBarsEnabled;
-	private final ForgeConfigSpec.BooleanValue inWorldHudForSelf;
-	private final ForgeConfigSpec.EnumValue<TESHUDActivation> inWorldHUDActivation;
-	private final ForgeConfigSpec.DoubleValue inWorldHudOpacity;
-	private final ForgeConfigSpec.EnumValue<TESHud.BarRenderType> inWorldBarsRenderType;
-	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudHealthFontStyle;
-	private final ForgeConfigSpec.IntValue inWorldBarsLength;
-	private final ForgeConfigSpec.BooleanValue inWorldBarsSegments;
-	private final ForgeConfigSpec.BooleanValue inWorldHudEntityName;
-	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudEntityNameFontStyle;
-	private final ForgeConfigSpec.BooleanValue inWorldHudArmour;
-	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudArmourFontStyle;
-	private final ForgeConfigSpec.BooleanValue inWorldHudEntityIcons;
-	private final ForgeConfigSpec.BooleanValue inWorldHudPotionIcons;
-	private final ForgeConfigSpec.BooleanValue inWorldHudNameOverride;
-	private final ForgeConfigSpec.DoubleValue inWorldHudManualVerticalOffset;
+	private final ModConfigSpec.BooleanValue inWorldBarsEnabled;
+	private final ModConfigSpec.BooleanValue inWorldHudForSelf;
+	private final ModConfigSpec.EnumValue<TESHUDActivation> inWorldHUDActivation;
+	private final ModConfigSpec.DoubleValue inWorldHudOpacity;
+	private final ModConfigSpec.EnumValue<TESHud.BarRenderType> inWorldBarsRenderType;
+	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudHealthFontStyle;
+	private final ModConfigSpec.IntValue inWorldBarsLength;
+	private final ModConfigSpec.BooleanValue inWorldBarsSegments;
+	private final ModConfigSpec.BooleanValue inWorldHudEntityName;
+	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudEntityNameFontStyle;
+	private final ModConfigSpec.BooleanValue inWorldHudArmour;
+	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudArmourFontStyle;
+	private final ModConfigSpec.BooleanValue inWorldHudEntityIcons;
+	private final ModConfigSpec.BooleanValue inWorldHudPotionIcons;
+	private final ModConfigSpec.BooleanValue inWorldHudNameOverride;
+	private final ModConfigSpec.DoubleValue inWorldHudManualVerticalOffset;
 
-	private final ForgeConfigSpec.BooleanValue particlesEnabled;
-	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> particleFontStyle;
-	private final ForgeConfigSpec.IntValue defaultParticleLifespan;
-	private final ForgeConfigSpec.IntValue particleDecimalPoints;
-	private final ForgeConfigSpec.DoubleValue particleScale;
-	private final ForgeConfigSpec.BooleanValue verbalHealthParticles;
-	private final ForgeConfigSpec.IntValue damageParticleColour;
-	private final ForgeConfigSpec.IntValue healParticleColour;
-	private final ForgeConfigSpec.BooleanValue teamBasedDamageParticleColours;
+	private final ModConfigSpec.BooleanValue particlesEnabled;
+	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> particleFontStyle;
+	private final ModConfigSpec.IntValue defaultParticleLifespan;
+	private final ModConfigSpec.IntValue particleDecimalPoints;
+	private final ModConfigSpec.DoubleValue particleScale;
+	private final ModConfigSpec.BooleanValue verbalHealthParticles;
+	private final ModConfigSpec.IntValue damageParticleColour;
+	private final ModConfigSpec.IntValue healParticleColour;
+	private final ModConfigSpec.BooleanValue teamBasedDamageParticleColours;
 
-	public TESConfig(final ForgeConfigSpec.Builder config) {
+	public TESConfig(final ModConfigSpec.Builder config) {
 		config.push("General Settings");
 
 		this.entityTrackingDistance = config
@@ -580,7 +580,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	}
 
 	public static void init() {
-		Pair<TESConfig, ForgeConfigSpec> configSpec = new ForgeConfigSpec.Builder().configure(TESConfig::new);
+		Pair<TESConfig, ModConfigSpec> configSpec = new ModConfigSpec.Builder().configure(TESConfig::new);
 
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, configSpec.getRight());
 		TESConstants.setConfig(configSpec.getLeft());
