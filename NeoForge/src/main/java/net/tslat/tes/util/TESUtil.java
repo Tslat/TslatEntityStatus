@@ -40,7 +40,7 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 			if (entity.getType() == EntityType.PLAYER)
 				return TESEntityType.PLAYER;
 
-			if (BuiltInRegistries.ENTITY_TYPE.getTag(Tags.EntityTypes.BOSSES).get().contains(BuiltInRegistries.ENTITY_TYPE.createIntrusiveHolder(entity.getType())))
+			if (BuiltInRegistries.ENTITY_TYPE.getTag(Tags.EntityTypes.BOSSES).get().contains(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entity.getType())))
 				return TESEntityType.BOSS;
 
 			if (entity instanceof Enemy)
