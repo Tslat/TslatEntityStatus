@@ -24,4 +24,3 @@ plugins {
 
 rootProject.name = 'TslatEntityStatus'
 include("Common", "Fabric", "Forge"/*, "NeoForge"*/)
-
