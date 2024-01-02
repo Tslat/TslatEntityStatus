@@ -8,6 +8,13 @@ archivesBaseName = "${mod_name}-neoforge-${minecraft_version}"
 
 minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
 
+subsystems {
+    parchment {
+        minecraftVersion = project.mappings_mc_version
+        mappingsVersion = project.parchment_version
+    }
+}
+
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     compileOnly project(":Common")

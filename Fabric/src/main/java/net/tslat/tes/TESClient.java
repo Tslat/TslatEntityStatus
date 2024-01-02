@@ -7,10 +7,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.config.TESConfig;
-import net.tslat.tes.networking.NewComponentParticlePacket;
-import net.tslat.tes.networking.NewNumericParticlePacket;
-import net.tslat.tes.networking.ParticleClaimPacket;
-import net.tslat.tes.networking.SyncEffectsPacket;
+import net.tslat.tes.core.networking.packet.*;
+import org.jetbrains.annotations.ApiStatus;
+
+import java.util.function.Function;
 
 public class TESClient implements ClientModInitializer {
 	@Override
@@ -18,14 +18,14 @@ public class TESClient implements ClientModInitializer {
 		TESConstants.setIsClient();
 		MidnightConfig.init(TESConstants.MOD_ID, TESConfig.class);
 		TESConstants.setConfig(new TESConfig());
-
-		ClientPlayNetworking.registerGlobalReceiver(SyncEffectsPacket.ID, (client, handler, buf, responseSender) -> SyncEffectsPacket.decode(buf).handleMessage(client::submit));
-		ClientPlayNetworking.registerGlobalReceiver(ParticleClaimPacket.ID, (client, handler, buf, responseSender) -> ParticleClaimPacket.decode(buf).handleMessage(client::submit));
-		ClientPlayNetworking.registerGlobalReceiver(NewComponentParticlePacket.ID, (client, handler, buf, responseSender) -> NewComponentParticlePacket.decode(buf).handleMessage(client::submit));
-		ClientPlayNetworking.registerGlobalReceiver(NewNumericParticlePacket.ID, (client, handler, buf, responseSender) -> NewNumericParticlePacket.decode(buf).handleMessage(client::submit));
 	}
 
 	public static void sendPacket(ResourceLocation packetId, FriendlyByteBuf buffer) {
 		ClientPlayNetworking.send(packetId, buffer);
+	}
+
+	@ApiStatus.Internal
+	public static <P extends MultiloaderPacket> void registerPacket(ResourceLocation id, Function<FriendlyByteBuf, P> decoder) {
+		ClientPlayNetworking.registerGlobalReceiver(id, (client, handler, buf, responseSender) -> decoder.apply(buf).receiveMessage(client.player, client::execute));
 	}
 }

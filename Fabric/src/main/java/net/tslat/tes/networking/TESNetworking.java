@@ -14,6 +14,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.tslat.tes.TESClient;
 import net.tslat.tes.api.TESAPI;
+import net.tslat.tes.core.networking.packet.*;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -21,13 +23,20 @@ import java.util.Set;
 
 public class TESNetworking implements net.tslat.tes.core.networking.TESNetworking {
 	@Override
+	@ApiStatus.Internal
+	public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
+		TESClient.registerPacket(id, decoder);
+		ServerPlayNetworking.registerGlobalReceiver(id, (server, player, packetListener, buffer, sender) -> decoder.apply(buffer).receiveMessage(player, server::execute));
+	}
+
+	@Override
 	public void requestEffectsSync(int entityId) {
 		if (!TESAPI.getConfig().isSyncingEffects())
 			return;
 
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 
-		new RequestEffectsPacket(entityId).encode(buffer);
+		new RequestEffectsPacket(entityId).write(buffer);
 
 		TESClient.sendPacket(RequestEffectsPacket.ID, buffer);
 	}
@@ -36,7 +45,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 	public void sendEffectsSync(ServerPlayer player, int entityId, Set<ResourceLocation> toAdd, Set<ResourceLocation> toRemove) {
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 
-		new SyncEffectsPacket(entityId, toAdd, toRemove).encode(buffer);
+		new SyncEffectsPacket(entityId, toAdd, toRemove).write(buffer);
 
 		ServerPlayNetworking.send(player, SyncEffectsPacket.ID, buffer);
 	}
@@ -45,7 +54,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 	public void sendEffectsSync(LivingEntity targetedEntity, Set<ResourceLocation> toAdd, Set<ResourceLocation> toRemove) {
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 
-		new SyncEffectsPacket(targetedEntity.getId(), toAdd, toRemove).encode(buffer);
+		new SyncEffectsPacket(targetedEntity.getId(), toAdd, toRemove).write(buffer);
 
 		for (ServerPlayer player : PlayerLookup.tracking(targetedEntity)) {
 			ServerPlayNetworking.send(player, SyncEffectsPacket.ID, buffer);
@@ -56,7 +65,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 	public void sendParticle(Level level, Vector3f position, Component contents) {
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 
-		new NewComponentParticlePacket(position, contents).encode(buffer);
+		new NewComponentParticlePacket(position, contents).write(buffer);
 
 		for (ServerPlayer player : PlayerLookup.tracking((ServerLevel)level, BlockPos.containing(position.x, position.y, position.z))) {
 			ServerPlayNetworking.send(player, NewComponentParticlePacket.ID, buffer);
@@ -67,7 +76,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 	public void sendParticle(LivingEntity targetedEntity, Component contents) {
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 
-		new NewComponentParticlePacket(targetedEntity, contents).encode(buffer);
+		new NewComponentParticlePacket(targetedEntity, contents).write(buffer);
 
 		for (ServerPlayer player : PlayerLookup.tracking(targetedEntity)) {
 			ServerPlayNetworking.send(player, NewComponentParticlePacket.ID, buffer);
@@ -78,7 +87,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 	public void sendParticle(Level level, Vector3f position, double value, int colour) {
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 
-		new NewNumericParticlePacket(value, position, colour).encode(buffer);
+		new NewNumericParticlePacket(value, position, colour).write(buffer);
 
 		for (ServerPlayer player : PlayerLookup.tracking((ServerLevel)level, BlockPos.containing(position.x, position.y, position.z))) {
 			ServerPlayNetworking.send(player, NewNumericParticlePacket.ID, buffer);
@@ -89,7 +98,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 	public void sendParticle(LivingEntity targetedEntity, double value, int colour) {
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 
-		new NewNumericParticlePacket(value, new Vector3f((float)targetedEntity.getX(), (float)targetedEntity.getEyeY(), (float)targetedEntity.getZ()), colour).encode(buffer);
+		new NewNumericParticlePacket(value, new Vector3f((float)targetedEntity.getX(), (float)targetedEntity.getEyeY(), (float)targetedEntity.getZ()), colour).write(buffer);
 
 		for (ServerPlayer player : PlayerLookup.tracking(targetedEntity)) {
 			ServerPlayNetworking.send(player, NewNumericParticlePacket.ID, buffer);
@@ -100,7 +109,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 	public void sendParticleClaim(ResourceLocation claimantId, LivingEntity targetedEntity, @Nullable CompoundTag additionalData) {
 		FriendlyByteBuf buffer = PacketByteBufs.create();
 
-		new ParticleClaimPacket(targetedEntity.getId(), claimantId, additionalData).encode(buffer);
+		new ParticleClaimPacket(targetedEntity.getId(), claimantId, additionalData).write(buffer);
 
 		for (ServerPlayer player : PlayerLookup.tracking(targetedEntity)) {
 			ServerPlayNetworking.send(player, ParticleClaimPacket.ID, buffer);

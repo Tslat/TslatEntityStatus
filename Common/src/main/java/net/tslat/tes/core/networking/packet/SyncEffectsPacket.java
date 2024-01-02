@@ -1,27 +1,26 @@
-package net.tslat.tes.networking;
+package net.tslat.tes.core.networking.packet;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.tslat.tes.api.TESAPI;
+import net.minecraft.world.entity.player.Player;
+import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
-public class SyncEffectsPacket {
-	private final int entityId;
-	private final Set<ResourceLocation> idsToAdd;
-	private final Set<ResourceLocation> idsToRemove;
+public record SyncEffectsPacket(int entityId, Set<ResourceLocation> idsToAdd, Set<ResourceLocation> idsToRemove) implements MultiloaderPacket {
+	public static final ResourceLocation ID = new ResourceLocation(TESConstants.MOD_ID, "sync_effects");
 
-	public SyncEffectsPacket(int entityId, Set<ResourceLocation> idsToAdd, Set<ResourceLocation> idsToRemove) {
-		this.entityId = entityId;
-		this.idsToAdd = idsToAdd;
-		this.idsToRemove = idsToRemove;
+	@Override
+	public ResourceLocation id() {
+		return ID;
 	}
 
-	public void encode(final FriendlyByteBuf buf) {
+	@Override
+	public void write(final FriendlyByteBuf buf) {
 		buf.writeVarInt(this.entityId);
 		buf.writeCollection(this.idsToAdd, FriendlyByteBuf::writeResourceLocation);
 		buf.writeCollection(this.idsToRemove, FriendlyByteBuf::writeResourceLocation);
@@ -34,12 +33,13 @@ public class SyncEffectsPacket {
 				buf.readCollection(ObjectOpenHashSet::new, FriendlyByteBuf::readResourceLocation));
 	}
 
-	public void handleMessage(CustomPayloadEvent.Context context) {
-		if (TESAPI.getConfig().isSyncingEffects()) {
+	@Override
+	public void receiveMessage(Player sender, Consumer<Runnable> workQueue) {
+		workQueue.accept(() -> {
 			EntityState state = TESEntityTracking.getStateForEntityId(this.entityId);
 
 			if (state != null)
 				state.modifyEffects(this.idsToAdd, this.idsToRemove);
-		}
+		});
 	}
 }

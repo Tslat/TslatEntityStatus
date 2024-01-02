@@ -1,14 +1,18 @@
 package net.tslat.tes.core.networking;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.tslat.tes.api.TESConstants;
+import net.tslat.tes.core.networking.packet.*;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 /**
@@ -17,6 +21,7 @@ import java.util.Set;
  * Access this from {@link net.tslat.tes.api.TESConstants#NETWORKING TESConstants.NETWORKING}
  */
 public interface TESNetworking {
+
 	/**
 	 * Request an update for {@link net.minecraft.world.effect.MobEffect MobEffects} for a given entity<br>
 	 * Network direction: (CLIENT -> SERVER)
@@ -86,4 +91,21 @@ public interface TESNetworking {
 	 * @param additionalData Optional additional data for the claim
 	 */
 	void sendParticleClaim(ResourceLocation claimantId, LivingEntity targetedEntity, @Nullable CompoundTag additionalData);
+
+	// <-- Internal methods --> //
+
+	static void init() {
+		registerPacket(NewComponentParticlePacket.ID, NewComponentParticlePacket.class, NewComponentParticlePacket::decode);
+		registerPacket(NewNumericParticlePacket.ID, NewNumericParticlePacket.class, NewNumericParticlePacket::decode);
+		registerPacket(ParticleClaimPacket.ID, ParticleClaimPacket.class, ParticleClaimPacket::decode);
+		registerPacket(RequestEffectsPacket.ID, RequestEffectsPacket.class, RequestEffectsPacket::decode);
+		registerPacket(SyncEffectsPacket.ID, SyncEffectsPacket.class, SyncEffectsPacket::decode);
+	}
+
+	static <P extends MultiloaderPacket> void registerPacket(ResourceLocation id, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
+		TESConstants.NETWORKING.registerPacketInternal(id, packetClass, decoder);
+	}
+
+	@ApiStatus.Internal
+	<P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder);
 }

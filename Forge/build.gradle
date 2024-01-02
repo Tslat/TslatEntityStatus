@@ -9,7 +9,7 @@ plugins {
 archivesBaseName = "${mod_name}-forge-${minecraft_version}"
 
 minecraft {
-    mappings channel: mappings_channel, version: "1.20.2-${mappings_version}-${minecraft_version}"
+    mappings channel: mappings_channel, version: "${mappings_mc_version}-${parchment_version}-${minecraft_version}"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     copyIdeResources = true
 

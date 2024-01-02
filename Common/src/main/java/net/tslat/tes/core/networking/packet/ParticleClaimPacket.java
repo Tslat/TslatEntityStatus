@@ -1,29 +1,25 @@
-package net.tslat.tes.networking;
+package net.tslat.tes.core.networking.packet;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.core.particle.TESParticleManager;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Consumer;
 
-public class ParticleClaimPacket {
+public record ParticleClaimPacket(int entityId, ResourceLocation claimantId, @Nullable CompoundTag data) implements MultiloaderPacket {
 	public static final ResourceLocation ID = new ResourceLocation(TESConstants.MOD_ID, "particle_claim");
 
-	private final int entityId;
-	private final ResourceLocation claimantId;
-	@Nullable
-	private final CompoundTag data;
-
-	public ParticleClaimPacket(final int entityId, final ResourceLocation claimantId, final @Nullable CompoundTag data) {
-		this.entityId = entityId;
-		this.claimantId = claimantId;
-		this.data = data;
+	@Override
+	public ResourceLocation id() {
+		return ID;
 	}
 
-	public void encode(final FriendlyByteBuf buf) {
+	@Override
+	public void write(final FriendlyByteBuf buf) {
 		buf.writeVarInt(this.entityId);
 		buf.writeResourceLocation(this.claimantId);
 		buf.writeNbt(this.data);
@@ -33,7 +29,8 @@ public class ParticleClaimPacket {
 		return new ParticleClaimPacket(buf.readVarInt(), buf.readResourceLocation(), buf.readNbt());
 	}
 
-	public void handleMessage(Consumer<Runnable> queue) {
-		queue.accept(() -> TESParticleManager.addParticleClaim(this.entityId, this.claimantId, this.data));
+	@Override
+	public void receiveMessage(Player sender, Consumer<Runnable> workQueue) {
+		workQueue.accept(() -> TESParticleManager.addParticleClaim(this.entityId, this.claimantId, this.data));
 	}
 }

@@ -1,14 +1,19 @@
 package net.tslat.tes.networking;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.*;
+import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.SimpleChannel;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
+import net.tslat.tes.api.util.TESClientUtil;
+import net.tslat.tes.core.networking.packet.*;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -19,12 +24,12 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 
 	public TESNetworking() {}
 
-	public static void init() {
-		INSTANCE.messageBuilder(RequestEffectsPacket.class, NetworkDirection.PLAY_TO_SERVER).encoder(RequestEffectsPacket::encode).decoder(RequestEffectsPacket::decode).consumerMainThread(RequestEffectsPacket::handleMessage).add();
-		INSTANCE.messageBuilder(SyncEffectsPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(SyncEffectsPacket::encode).decoder(SyncEffectsPacket::decode).consumerMainThread(SyncEffectsPacket::handleMessage).add();
-		INSTANCE.messageBuilder(ParticleClaimPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(ParticleClaimPacket::encode).decoder(ParticleClaimPacket::decode).consumerMainThread(ParticleClaimPacket::handleMessage).add();
-		INSTANCE.messageBuilder(NewComponentParticlePacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(NewComponentParticlePacket::encode).decoder(NewComponentParticlePacket::decode).consumerMainThread(NewComponentParticlePacket::handleMessage).add();
-		INSTANCE.messageBuilder(NewNumericParticlePacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(NewNumericParticlePacket::encode).decoder(NewNumericParticlePacket::decode).consumerMainThread(NewNumericParticlePacket::handleMessage).add();
+	@Override
+	public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
+		INSTANCE.messageBuilder(packetClass).encoder(MultiloaderPacket::write).decoder(decoder).consumerMainThread((packet, context) -> {
+			packet.receiveMessage(context.getSender() != null ? context.getSender() : TESClientUtil.getClientPlayer(), context::enqueueWork);
+			context.setPacketHandled(true);
+		}).add();
 	}
 
 	@Override
