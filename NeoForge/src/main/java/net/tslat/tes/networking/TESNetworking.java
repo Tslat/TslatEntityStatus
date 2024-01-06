@@ -15,10 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 public final class TESNetworking implements net.tslat.tes.core.networking.TESNetworking {
 	private static final String REV = "1";
-	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(TESConstants.MOD_ID, "tes_packets"), () -> REV, REV::equals, REV::equals);
+	private static final Predicate<String> ABSENT_OR_EQUAL = NetworkRegistry.acceptMissingOr(REV::equals);
+	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(TESConstants.MOD_ID, "tes_packets"), () -> REV, ABSENT_OR_EQUAL, ABSENT_OR_EQUAL);
 
 	public TESNetworking() {}
 
