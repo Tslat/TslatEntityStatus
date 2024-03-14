@@ -42,6 +42,7 @@ public final class BuiltinHudElements {
 		}
 
 		TESEntityTracking.markNameRendered(entity);
+		guiGraphics.bufferSource().endLastBatch();
 
 		return mc.font.lineHeight;
 	}
