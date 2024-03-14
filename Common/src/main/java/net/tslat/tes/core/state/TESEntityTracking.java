@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
+import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.core.particle.TESParticleManager;
 
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,9 @@ public final class TESEntityTracking {
 			double trackingDist = TESAPI.getConfig().getEntityTrackingDistance();
 
 			if (entity.distanceToSqr((Minecraft.getInstance().cameraEntity == null ? Minecraft.getInstance().player : Minecraft.getInstance().cameraEntity)) > trackingDist * trackingDist)
+				return null;
+
+			if (entity.getType().is(TESConstants.NO_TES_HANDLING))
 				return null;
 
 			return value == null ? new EntityState(entity) : value;

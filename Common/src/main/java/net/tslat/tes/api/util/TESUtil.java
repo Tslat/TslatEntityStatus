@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.SwordItem;
 import net.tslat.tes.api.TESAPI;
+import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.TESEntityType;
 
 import org.jetbrains.annotations.Nullable;
@@ -88,8 +89,12 @@ public interface TESUtil {
 		return isRangedMobHardcoded(entity);
 	}
 
-	static boolean isVisibleToPlayer(@Nullable LivingEntity entity, Player player) {
-		return entity != null && (!entity.isInvisibleTo(player) || entity.isCurrentlyGlowing());
+	static boolean isVisibleToPlayer(LivingEntity entity, Player player) {
+		return !entity.isInvisibleTo(player) || entity.isCurrentlyGlowing();
+	}
+
+	static boolean shouldTESHandleEntity(LivingEntity entity, Player player) {
+		return !entity.getType().is(TESConstants.NO_TES_HANDLING) && isVisibleToPlayer(entity, player);
 	}
 
 	/**

@@ -178,7 +178,7 @@ public class TESHud {
 		if (mc.crosshairPickEntity != null) {
 			LivingEntity target = TESConstants.UTILS.getLivingEntityIfPossible(mc.crosshairPickEntity);
 
-			if (TESUtil.isVisibleToPlayer(target, TESClientUtil.getClientPlayer()))
+			if (target != null && TESUtil.shouldTESHandleEntity(target, TESClientUtil.getClientPlayer()))
 				TESHud.setTargetEntity(target);
 		}
 		else {
@@ -195,7 +195,7 @@ public class TESHud {
 
 			LivingEntity target = TESConstants.UTILS.getLivingEntityIfPossible(hitResult.getEntity());
 
-			if (!TESUtil.isVisibleToPlayer(target, TESClientUtil.getClientPlayer()))
+			if (target == null || !TESUtil.shouldTESHandleEntity(target, TESClientUtil.getClientPlayer()))
 				return;
 
 			double entityHitClipDistanceSqr = hitResult.getLocation().distanceToSqr(cameraPos);
