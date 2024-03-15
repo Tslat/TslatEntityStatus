@@ -142,8 +142,6 @@ public class TESHud {
 		Vec3 position = entity.getPosition(partialTick)
 				.subtract(mc.gameRenderer.getMainCamera().getPosition())
 				.add(mc.getEntityRenderDispatcher().getRenderer(entity).getRenderOffset(entity, partialTick));
-		GuiGraphics guiGraphics = TESClientUtil.createInlineGuiGraphics(poseStack, mc.renderBuffers().bufferSource());
-
 
 		poseStack.pushPose();
 		poseStack.translate(position.x, position.y, position.z);
@@ -157,12 +155,19 @@ public class TESHud {
 		RenderSystem.enableDepthTest();
 		RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
 
+		GuiGraphics guiGraphics = TESClientUtil.createInlineGuiGraphics(poseStack, mc.renderBuffers().bufferSource());
+
+		guiGraphics.pose().pushPose();
+
 		for (TESHudElement element : INVERSE_ELEMENTS) {
-			int offset = element.render(TESClientUtil.createInlineGuiGraphics(poseStack, Minecraft.getInstance().renderBuffers().bufferSource()), mc, partialTick, entity, hudOpacity, true);
+			int offset = element.render(guiGraphics, mc, partialTick, entity, hudOpacity, true);
 
 			if (offset > 0)
-				poseStack.translate(0, -(2 + offset), 0);
+				guiGraphics.pose().translate(0, -(2 + offset), 0);
 		}
+
+		guiGraphics.flush();
+		guiGraphics.pose().popPose();
 
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		poseStack.popPose();
@@ -174,7 +179,7 @@ public class TESHud {
 		if (mc.crosshairPickEntity != null) {
 			LivingEntity target = TESConstants.UTILS.getLivingEntityIfPossible(mc.crosshairPickEntity);
 
-			if (TESUtil.isVisibleToPlayer(target, TESClientUtil.getClientPlayer()))
+			if (target != null && TESUtil.shouldTESHandleEntity(target, TESClientUtil.getClientPlayer()))
 				TESHud.setTargetEntity(target);
 		}
 		else {
@@ -191,7 +196,7 @@ public class TESHud {
 
 			LivingEntity target = TESConstants.UTILS.getLivingEntityIfPossible(hitResult.getEntity());
 
-			if (!TESUtil.isVisibleToPlayer(target, TESClientUtil.getClientPlayer()))
+			if (target == null || !TESUtil.shouldTESHandleEntity(target, TESClientUtil.getClientPlayer()))
 				return;
 
 			double entityHitClipDistanceSqr = hitResult.getLocation().distanceToSqr(cameraPos);

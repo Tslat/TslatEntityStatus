@@ -1,5 +1,9 @@
 package net.tslat.tes.api;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.tslat.tes.api.util.TESUtil;
 import net.tslat.tes.core.networking.TESNetworking;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +27,8 @@ public final class TESConstants {
 	public static TESNetworking NETWORKING = ServiceLoader.load(TESNetworking.class).findFirst().get();
 
 	public static boolean IS_SERVER_SIDE = true;
+
+	public static final TagKey<EntityType<?>> NO_TES_HANDLING = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MOD_ID, "no_tes_handling"));
 
 	public static void setConfig(TESConfig config) {
 		CONFIG = config;
