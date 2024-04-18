@@ -95,17 +95,17 @@ public interface TESNetworking {
 	// <-- Internal methods --> //
 
 	static void init() {
-		registerPacket(NewComponentParticlePacket.ID, NewComponentParticlePacket.class, NewComponentParticlePacket::decode);
-		registerPacket(NewNumericParticlePacket.ID, NewNumericParticlePacket.class, NewNumericParticlePacket::decode);
-		registerPacket(ParticleClaimPacket.ID, ParticleClaimPacket.class, ParticleClaimPacket::decode);
-		registerPacket(RequestEffectsPacket.ID, RequestEffectsPacket.class, RequestEffectsPacket::decode);
-		registerPacket(SyncEffectsPacket.ID, SyncEffectsPacket.class, SyncEffectsPacket::decode);
+		registerPacket(NewComponentParticlePacket.ID, true, NewComponentParticlePacket.class, NewComponentParticlePacket::decode);
+		registerPacket(NewNumericParticlePacket.ID, true, NewNumericParticlePacket.class, NewNumericParticlePacket::decode);
+		registerPacket(ParticleClaimPacket.ID, true, ParticleClaimPacket.class, ParticleClaimPacket::decode);
+		registerPacket(RequestEffectsPacket.ID, false, RequestEffectsPacket.class, RequestEffectsPacket::decode);
+		registerPacket(SyncEffectsPacket.ID, true, SyncEffectsPacket.class, SyncEffectsPacket::decode);
 	}
 
-	static <P extends MultiloaderPacket> void registerPacket(ResourceLocation id, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
-		TESConstants.NETWORKING.registerPacketInternal(id, packetClass, decoder);
+	static <P extends MultiloaderPacket> void registerPacket(ResourceLocation id, boolean isClientBound, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
+		TESConstants.NETWORKING.registerPacketInternal(id, isClientBound, packetClass, decoder);
 	}
 
 	@ApiStatus.Internal
-	<P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder);
+	<P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, boolean isClientBound, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder);
 }

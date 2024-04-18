@@ -1,8 +1,10 @@
 package net.tslat.tes.networking;
 
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -24,9 +26,14 @@ import java.util.Set;
 public class TESNetworking implements net.tslat.tes.core.networking.TESNetworking {
 	@Override
 	@ApiStatus.Internal
-	public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
-		TESClient.registerPacket(id, decoder);
-		ServerPlayNetworking.registerGlobalReceiver(id, (server, player, packetListener, buffer, sender) -> decoder.apply(buffer).receiveMessage(player, server::execute));
+	public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, boolean isClientBound, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
+		if (isClientBound) {
+			if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+				TESClient.registerPacket(id, decoder);
+		}
+		else {
+			ServerPlayNetworking.registerGlobalReceiver(id, (server, player, packetListener, buffer, sender) -> decoder.apply(buffer).receiveMessage(player, server::execute));
+		}
 	}
 
 	@Override

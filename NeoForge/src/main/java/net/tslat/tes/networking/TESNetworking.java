@@ -10,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tslat.tes.TES;
 import net.tslat.tes.api.TESAPI;
+import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.networking.packet.*;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -20,8 +21,8 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 	public TESNetworking() {}
 
 	@Override
-	public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
-		TES.packetRegistrar.play(id, decoder, (packet, context) -> packet.receiveMessage(context.player().get(), context.workHandler()::execute));
+	public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, boolean isClientBound, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
+		TES.packetRegistrar.play(id, decoder, (packet, context) -> packet.receiveMessage(context.player().orElseGet(TESClientUtil::getClientPlayer), context.workHandler()::execute));
 	}
 
 	@Override

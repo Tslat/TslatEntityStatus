@@ -25,7 +25,7 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 	public TESNetworking() {}
 
 	@Override
-	public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
+	public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, boolean isClientBound, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
 		INSTANCE.messageBuilder(packetClass).encoder(MultiloaderPacket::write).decoder(decoder).consumerMainThread((packet, context) -> {
 			packet.receiveMessage(context.getSender() != null ? context.getSender() : TESClientUtil.getClientPlayer(), context::enqueueWork);
 			context.setPacketHandled(true);
