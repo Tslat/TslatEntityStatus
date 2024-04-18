@@ -11,14 +11,14 @@ import net.tslat.tes.core.hud.TESHudPosition;
 import org.apache.commons.lang3.tuple.Pair;
 
 public final class TESConfig implements net.tslat.tes.api.TESConfig {
-	private final ForgeConfigSpec.DoubleValue entityTrackingDistance;
+	private final ForgeConfigSpec.FloatValue entityTrackingDistance;
 	private final ForgeConfigSpec.IntValue cacheCleanFrequency;
 
 	private final ForgeConfigSpec.BooleanValue hudEnabled;
 	private final ForgeConfigSpec.EnumValue<TESHudPosition> hudRenderPosition;
 	private final ForgeConfigSpec.IntValue hudPositionLeftAdjust;
 	private final ForgeConfigSpec.IntValue hudPositionTopAdjust;
-	private final ForgeConfigSpec.DoubleValue hudTargetDistance;
+	private final ForgeConfigSpec.FloatValue hudTargetDistance;
 	private final ForgeConfigSpec.IntValue hudTargetGracePeriod;
 	private final ForgeConfigSpec.BooleanValue hudEntityRender;
 	private final ForgeConfigSpec.EnumValue<TESHud.BarRenderType> hudHealthRenderType;
@@ -33,13 +33,13 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudArmourFontStyle;
 	private final ForgeConfigSpec.BooleanValue hudEntityIcons;
 	private final ForgeConfigSpec.BooleanValue hudPotionIcons;
-	private final ForgeConfigSpec.DoubleValue hudOpacity;
-	private final ForgeConfigSpec.DoubleValue hudBarFontBackingOpacity;
+	private final ForgeConfigSpec.FloatValue hudOpacity;
+	private final ForgeConfigSpec.FloatValue hudBarFontBackingOpacity;
 
 	private final ForgeConfigSpec.BooleanValue inWorldBarsEnabled;
 	private final ForgeConfigSpec.BooleanValue inWorldHudForSelf;
 	private final ForgeConfigSpec.EnumValue<TESHUDActivation> inWorldHUDActivation;
-	private final ForgeConfigSpec.DoubleValue inWorldHudOpacity;
+	private final ForgeConfigSpec.FloatValue inWorldHudOpacity;
 	private final ForgeConfigSpec.EnumValue<TESHud.BarRenderType> inWorldBarsRenderType;
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudHealthFontStyle;
 	private final ForgeConfigSpec.IntValue inWorldBarsLength;
@@ -51,13 +51,13 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.BooleanValue inWorldHudEntityIcons;
 	private final ForgeConfigSpec.BooleanValue inWorldHudPotionIcons;
 	private final ForgeConfigSpec.BooleanValue inWorldHudNameOverride;
-	private final ForgeConfigSpec.DoubleValue inWorldHudManualVerticalOffset;
+	private final ForgeConfigSpec.FloatValue inWorldHudManualVerticalOffset;
 
 	private final ForgeConfigSpec.BooleanValue particlesEnabled;
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> particleFontStyle;
 	private final ForgeConfigSpec.IntValue defaultParticleLifespan;
 	private final ForgeConfigSpec.IntValue particleDecimalPoints;
-	private final ForgeConfigSpec.DoubleValue particleScale;
+	private final ForgeConfigSpec.FloatValue particleScale;
 	private final ForgeConfigSpec.BooleanValue verbalHealthParticles;
 	private final ForgeConfigSpec.IntValue damageParticleColour;
 	private final ForgeConfigSpec.IntValue healParticleColour;
@@ -69,7 +69,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 		this.entityTrackingDistance = config
 				.comment("How close (in blocks) entities should be before TES starts tracking them")
 				.translation("config.tes.general.entityTrackingDistance")
-				.defineInRange("entityTrackingDistance", 64d, 8, 512);
+				.defineInRange("entityTrackingDistance", 64f, 8, 512);
 
 		this.cacheCleanFrequency = config
 				.comment("How frequently TES should clear out its tracking cache. Generally this should stay at default, but if you are noticing issues you can try adjusting it")
@@ -103,7 +103,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("How close (in blocks) the player has to be to render a HUD for an entity under the crosshairs",
 						"Larger values may cost more performance")
 				.translation("config.tes.hud.targetDistance")
-				.defineInRange("hudTargetDistance", 64d, 4d, 256d);
+				.defineInRange("hudTargetDistance", 64f, 4f, 256f);
 
 		this.hudTargetGracePeriod = config
 				.comment("How long (in ticks) after looking away from an entity before its HUD should stop rendering")
@@ -182,12 +182,12 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 		this.hudOpacity = config
 				.comment("Set how opaque the TES HUD should be, overall. The lower the value, the more transparent the HUD will be")
 				.translation("config.tes.hud.opacity")
-				.defineInRange("hudOpacity", 1d, 0d, 1d);
+				.defineInRange("hudOpacity", 1f, 0f, 1f);
 
 		this.hudBarFontBackingOpacity = config
 				.comment("Set how opaque the background behind the text on TES bars, if a render type is set that renders text")
 				.translation("config.tes.hud.barFontBackingOpacity")
-				.defineInRange("hudBarFontBackingOpacity", 0.5f, 0d, 1d);
+				.defineInRange("hudBarFontBackingOpacity", 0.5f, 0f, 1f);
 
 		config.pop();
 		config.push("In-World Bars Settings");
@@ -235,7 +235,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 		this.inWorldHudOpacity = config
 				.comment("How opaque the TES in-world entity HUD should be.")
 				.translation("config.tes.inWorldHud.opacity")
-				.defineInRange("inWorldHudOpacity", 1d, 0d, 1d);
+				.defineInRange("inWorldHudOpacity", 1f, 0f, 1f);
 
 		this.inWorldBarsLength = config
 				.comment("Set how long the TES in-world entity status bars should be")
@@ -314,7 +314,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 		this.particleScale = config
 				.comment("Scale modifier for TES-Particles. The higher the value, the larger the particles")
 				.translation("config.tes.particle.scale")
-				.defineInRange("particleScale", 1d, 0d, 10d);
+				.defineInRange("particleScale", 1f, 0f, 10f);
 
 		this.verbalHealthParticles = config
 				.comment("Whether TES should do verbal health-status particles (E.G. INSTAKILL) in certain situations")
