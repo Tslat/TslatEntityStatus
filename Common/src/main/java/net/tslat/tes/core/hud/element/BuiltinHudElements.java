@@ -7,12 +7,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.FastColor;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobType;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConfig;
 import net.tslat.tes.api.TESConstants;
@@ -189,14 +191,28 @@ public final class BuiltinHudElements {
 			x += 9;
 		}
 
-		MobType mobType = entity.getMobType();
+		final EntityType<?> entityType = entity.getType();
 
-		if (mobType != MobType.UNDEFINED) {
-			ResourceLocation sprite = mobType == MobType.WATER ? TESClientUtil.ENTITY_WATER_SPRITE :
-					(mobType == MobType.ILLAGER ? TESClientUtil.ENTITY_ILLAGER_SPRITE :
-							(mobType == MobType.ARTHROPOD ? TESClientUtil.ENTITY_ARTHROPOD_SPRITE : TESClientUtil.ENTITY_UNDEAD_SPRITE));
+		if (entityType.is(EntityTypeTags.AQUATIC)) {
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_WATER_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(sprite), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
+			x += 9;
+		}
+
+		if (entityType.is(EntityTypeTags.ILLAGER)) {
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_ILLAGER_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
+
+			x += 9;
+		}
+
+		if (entityType.is(EntityTypeTags.ARTHROPOD)) {
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_ARTHROPOD_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
+
+			x += 9;
+		}
+
+		if (entityType.is(EntityTypeTags.UNDEAD)) {
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_UNDEAD_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
@@ -238,8 +254,8 @@ public final class BuiltinHudElements {
 		if (inWorldHud)
 			poseStack.translate(0, Math.floor(effectsSize * 18 / maxX) * -18, 0);
 
-		for (ResourceLocation effectId : entityState.getEffects()) {
-			TextureAtlasSprite sprite = textureManager.get(BuiltInRegistries.MOB_EFFECT.get(effectId));
+		for (Holder<MobEffect> effect : entityState.getEffects()) {
+			TextureAtlasSprite sprite = textureManager.get(effect);
 
 			RenderSystem.setShaderTexture(0, sprite.atlasLocation());
 			guiGraphics.blit(i * 18 + x, y, 0, 18, 18, sprite);

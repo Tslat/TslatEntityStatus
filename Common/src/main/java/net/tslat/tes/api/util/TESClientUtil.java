@@ -505,7 +505,7 @@ public final class TESClientUtil {
 	public static GuiGraphics createInlineGuiGraphics(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource) {
 		GuiGraphics guiGraphics = new GuiGraphics(Minecraft.getInstance(), bufferSource);
 
-		guiGraphics.pose().mulPoseMatrix(poseStack.last().pose());
+		guiGraphics.pose().mulPose(poseStack.last().pose());
 
 		return guiGraphics;
 	}

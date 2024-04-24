@@ -3,18 +3,20 @@ package net.tslat.tes.api;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
 import net.tslat.tes.core.hud.TESHud;
 import net.tslat.tes.core.particle.TESParticleClaimant;
 import net.tslat.tes.core.particle.TESParticleManager;
+import net.tslat.tes.core.particle.TESParticleSourceHandler;
 import net.tslat.tes.core.particle.type.ComponentParticle;
 import net.tslat.tes.core.particle.type.NumericParticle;
-import net.tslat.tes.core.particle.TESParticleSourceHandler;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+
+import java.util.Optional;
 
 /**
  * Public-facing API class for TES.<br>
@@ -110,7 +112,7 @@ public final class TESAPI {
 	 * @param targetEntity The entity the claim is for
 	 * @param additionalData Optional additional data passed back to the claimant at the time of the claim
 	 */
-	public static void submitParticleClaim(ResourceLocation id, LivingEntity targetEntity, @Nullable CompoundTag additionalData) {
+	public static void submitParticleClaim(ResourceLocation id, LivingEntity targetEntity, Optional<CompoundTag> additionalData) {
 		if (TESConstants.IS_SERVER_SIDE) {
 			TESConstants.NETWORKING.sendParticleClaim(id, targetEntity, additionalData);
 		}
@@ -125,7 +127,7 @@ public final class TESAPI {
 	 * @param position The position the particle should appear at
 	 * @param contents The contents of the particle. If using a numeric value, use one of the double-based methods
 	 */
-	public static void addTESParticle(Level level, Vector3f position, Component contents) {
+	public static void addTESParticle(ServerLevel level, Vector3f position, Component contents) {
 		if (TESConstants.IS_SERVER_SIDE) {
 			TESConstants.NETWORKING.sendParticle(level, position, contents);
 		}
@@ -158,7 +160,7 @@ public final class TESAPI {
 	 * @param value    The value of the particle
 	 * @param colour   The text colour of the particle
 	 */
-	public static void sendParticle(Level level, Vector3f position, double value, int colour) {
+	public static void sendParticle(ServerLevel level, Vector3f position, double value, int colour) {
 		if (TESConstants.IS_SERVER_SIDE) {
 			TESConstants.NETWORKING.sendParticle(level, position, value, colour);
 		}

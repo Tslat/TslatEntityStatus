@@ -11,9 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.core.state.EntityState;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 public final class TESParticleManager {
 	private static final ConcurrentLinkedQueue<TESParticle<?>> PARTICLES = new ConcurrentLinkedQueue<>();
 	private static final Object2ObjectOpenHashMap<ResourceLocation, TESParticleClaimant> CLAIMANTS = new Object2ObjectOpenHashMap<>();
-	private static final ConcurrentMap<Integer, List<Pair<ResourceLocation, CompoundTag>>> CLAIMS = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<Integer, List<Pair<ResourceLocation, Optional<CompoundTag>>>> CLAIMS = new ConcurrentHashMap<>();
 	private static final ObjectArrayList<TESParticleSourceHandler> HANDLERS = new ObjectArrayList<>();
 	private static final ObjectArrayList<Runnable> NEW_CLAIMS = new ObjectArrayList<>();
 
@@ -64,7 +64,7 @@ public final class TESParticleManager {
 	 * @param claimantId The id of the claimant responsible for the claim
 	 * @param data Optional additional data relevant to the claim
 	 */
-	public static void addParticleClaim(int entityId, ResourceLocation claimantId, @Nullable CompoundTag data) {
+	public static void addParticleClaim(int entityId, ResourceLocation claimantId, Optional<CompoundTag> data) {
 		if (!TESAPI.getConfig().particlesEnabled())
 			return;
 
@@ -74,7 +74,7 @@ public final class TESParticleManager {
 	}
 
 	public static float handleParticleClaims(EntityState entityState, float healthDelta, Consumer<TESParticle<?>> particleAdder, boolean checkSourceHandlers) {
-		for (Pair<ResourceLocation, CompoundTag> pair : CLAIMS.getOrDefault(entityState.getEntity().getId(), List.of())) {
+		for (Pair<ResourceLocation, Optional<CompoundTag>> pair : CLAIMS.getOrDefault(entityState.getEntity().getId(), List.of())) {
 			healthDelta = CLAIMANTS.getOrDefault(pair.getFirst(), (state, delta, data, adder) -> delta).checkClaim(entityState, healthDelta, pair.getSecond(), particleAdder);
 
 			if (healthDelta == 0)

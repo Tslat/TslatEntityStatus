@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.core.state.EntityState;
 
-import org.jetbrains.annotations.Nullable;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -28,5 +28,5 @@ public interface TESParticleClaimant {
 	 * @param particleAdder Consumer for adding additional particles from your claim, for ease-of-use
 	 * @return The remaining healthDelta after your claim. E.G. If you are claiming 5 damage from the attack, you would return healthDelta + 5
 	 */
-	float checkClaim(EntityState entityState, float healthDelta, @Nullable CompoundTag data, Consumer<TESParticle<?>> particleAdder);
+	float checkClaim(EntityState entityState, float healthDelta, Optional<CompoundTag> data, Consumer<TESParticle<?>> particleAdder);
 }

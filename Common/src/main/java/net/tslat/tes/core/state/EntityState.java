@@ -2,10 +2,11 @@ package net.tslat.tes.core.state;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
@@ -25,7 +26,7 @@ import java.util.Set;
 public class EntityState {
 	protected final LivingEntity entity;
 
-	protected Set<ResourceLocation> effects;
+	protected Set<Holder<MobEffect>> effects;
 
 	protected float currentHealth;
 	protected float lastHealth;
@@ -61,11 +62,11 @@ public class EntityState {
 		return this.lastTransitionTime;
 	}
 
-	public Set<ResourceLocation> getEffects() {
+	public Set<Holder<MobEffect>> getEffects() {
 		return this.effects == null ? Set.of() : this.effects;
 	}
 
-	public void modifyEffects(Set<ResourceLocation> ids, Set<ResourceLocation> idsToRemove) {
+	public void modifyEffects(Set<Holder<MobEffect>> ids, Set<Holder<MobEffect>> idsToRemove) {
 		if (this.effects == null) {
 			this.effects = new ObjectOpenHashSet<>(ids);
 		}

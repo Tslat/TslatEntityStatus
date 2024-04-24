@@ -1,18 +1,22 @@
 package net.tslat.tes.core.networking;
 
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.core.networking.packet.*;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -36,7 +40,7 @@ public interface TESNetworking {
 	 * @param toAdd The effects to add to the entity's state on the client side (usually all of them)
 	 * @param toRemove The effects to remove from the entity's state on the client side (usually empty)
 	 */
-	void sendEffectsSync(ServerPlayer player, int entityId, Set<ResourceLocation> toAdd, Set<ResourceLocation> toRemove);
+	void sendEffectsSync(ServerPlayer player, int entityId, Set<Holder<MobEffect>> toAdd, Set<Holder<MobEffect>> toRemove);
 
 	/**
 	 * Send an update for {@link net.minecraft.world.effect.MobEffect MobEffects} to all players tracking the given entity. Usually as part of an effect being added/removed<br>
@@ -45,7 +49,7 @@ public interface TESNetworking {
 	 * @param toAdd The effects to add to the entity's state on the client side
 	 * @param toRemove The effects to remove from the entity's state on the client side
 	 */
-	void sendEffectsSync(LivingEntity targetedEntity, Set<ResourceLocation> toAdd, Set<ResourceLocation> toRemove);
+	void sendEffectsSync(LivingEntity targetedEntity, Set<Holder<MobEffect>> toAdd, Set<Holder<MobEffect>> toRemove);
 
 	/**
 	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position<br>
@@ -54,7 +58,7 @@ public interface TESNetworking {
 	 * @param position The position the particle should appear at
 	 * @param contents The contents of the particle. If sending a numeric value, use one of the double-based methods
 	 */
-	void sendParticle(Level level, Vector3f position, Component contents);
+	void sendParticle(ServerLevel level, Vector3f position, Component contents);
 
 	/**
 	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity<br>
@@ -72,7 +76,7 @@ public interface TESNetworking {
 	 * @param value    The value of the particle
 	 * @param colour   The text colour of the particle
 	 */
-	void sendParticle(Level level, Vector3f position, double value, int colour);
+	void sendParticle(ServerLevel level, Vector3f position, double value, int colour);
 
 	/**
 	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity<br>
@@ -90,22 +94,22 @@ public interface TESNetworking {
 	 * @param targetedEntity The entity for the claim
 	 * @param additionalData Optional additional data for the claim
 	 */
-	void sendParticleClaim(ResourceLocation claimantId, LivingEntity targetedEntity, @Nullable CompoundTag additionalData);
+	void sendParticleClaim(ResourceLocation claimantId, LivingEntity targetedEntity, Optional<CompoundTag> additionalData);
 
 	// <-- Internal methods --> //
 
 	static void init() {
-		registerPacket(NewComponentParticlePacket.ID, true, NewComponentParticlePacket.class, NewComponentParticlePacket::decode);
-		registerPacket(NewNumericParticlePacket.ID, true, NewNumericParticlePacket.class, NewNumericParticlePacket::decode);
-		registerPacket(ParticleClaimPacket.ID, true, ParticleClaimPacket.class, ParticleClaimPacket::decode);
-		registerPacket(RequestEffectsPacket.ID, false, RequestEffectsPacket.class, RequestEffectsPacket::decode);
-		registerPacket(SyncEffectsPacket.ID, true, SyncEffectsPacket.class, SyncEffectsPacket::decode);
+		registerPacket(NewComponentParticlePacket.TYPE, NewComponentParticlePacket.CODEC, true);
+		registerPacket(NewNumericParticlePacket.TYPE, NewNumericParticlePacket.CODEC, true);
+		registerPacket(ParticleClaimPacket.TYPE, ParticleClaimPacket.CODEC, true);
+		registerPacket(RequestEffectsPacket.TYPE, RequestEffectsPacket.CODEC, false);
+		registerPacket(SyncEffectsPacket.TYPE, SyncEffectsPacket.CODEC, true);
 	}
 
-	static <P extends MultiloaderPacket> void registerPacket(ResourceLocation id, boolean isClientBound, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder) {
-		TESConstants.NETWORKING.registerPacketInternal(id, isClientBound, packetClass, decoder);
+	static <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacket(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound) {
+		TESConstants.NETWORKING.registerPacketInternal(payloadType, codec, isClientBound);
 	}
 
 	@ApiStatus.Internal
-	<P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, boolean isClientBound, Class<P> packetClass, FriendlyByteBuf.Reader<P> decoder);
+	<B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound);
 }

@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EntityRenderer.class)
 public class EntityRendererMixin<T extends Entity> {
 	@Inject(method = "renderNameTag", at = @At("HEAD"), cancellable = true)
-	private void cancelNameTag(T entity, Component name, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo callback) {
+	private void cancelNameTag(T entity, Component name, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick, CallbackInfo callback) {
 		if (TESConstants.CONFIG.inWorldBarsEnabled() && TESConstants.CONFIG.inWorldHudNameOverride() && TESEntityTracking.wasNameRendered(entity.getId()))
 			callback.cancel();
 	}

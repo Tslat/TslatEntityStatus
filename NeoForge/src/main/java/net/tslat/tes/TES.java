@@ -7,15 +7,15 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.config.TESConfig;
 import net.tslat.tes.core.networking.TESNetworking;
 
 @Mod(TESConstants.MOD_ID)
 public class TES {
-	public static IPayloadRegistrar packetRegistrar = null;
+	public static PayloadRegistrar packetRegistrar = null;
 
 	public TES(IEventBus modBus) {
 		if (FMLEnvironment.dist == Dist.CLIENT)
@@ -30,7 +30,7 @@ public class TES {
 		TESConstants.setIsClient();
 	}
 
-	private static void networkingInit(final RegisterPayloadHandlerEvent ev) {
+	private static void networkingInit(final RegisterPayloadHandlersEvent ev) {
 		packetRegistrar = ev.registrar(TESConstants.MOD_ID);
 		TESNetworking.init();
 		packetRegistrar = null;

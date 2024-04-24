@@ -1,10 +1,14 @@
 package net.tslat.tes.core.networking.packet;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,20 +20,15 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public record RequestEffectsPacket(int entityId) implements MultiloaderPacket {
-    public static final ResourceLocation ID = new ResourceLocation(TESConstants.MOD_ID, "request_effects");
+    public static final CustomPacketPayload.Type<RequestEffectsPacket> TYPE = new Type<>(new ResourceLocation(TESConstants.MOD_ID, "request_effects"));
+    public static final StreamCodec<FriendlyByteBuf, RequestEffectsPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT,
+            RequestEffectsPacket::entityId,
+            RequestEffectsPacket::new);
 
     @Override
-    public ResourceLocation id() {
-        return ID;
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeVarInt(this.entityId);
-    }
-
-    public static RequestEffectsPacket decode(final FriendlyByteBuf buffer) {
-        return new RequestEffectsPacket(buffer.readVarInt());
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
     @Override
@@ -39,11 +38,11 @@ public record RequestEffectsPacket(int entityId) implements MultiloaderPacket {
 
             if (entity instanceof LivingEntity livingEntity) {
                 Collection<MobEffectInstance> effects = livingEntity.getActiveEffects();
-                Set<ResourceLocation> ids = new ObjectOpenHashSet<>(effects.size());
+                Set<Holder<MobEffect>> ids = new ObjectOpenHashSet<>(effects.size());
 
                 for (MobEffectInstance instance : effects) {
                     if (instance.isVisible() || instance.showIcon())
-                        ids.add(BuiltInRegistries.MOB_EFFECT.getKey(instance.getEffect()));
+                        ids.add(instance.getEffect());
                 }
 
                 TESConstants.NETWORKING.sendEffectsSync((ServerPlayer)sender, this.entityId, ids, Set.of());
