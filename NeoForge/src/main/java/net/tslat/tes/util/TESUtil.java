@@ -36,7 +36,7 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 
 	@Override
 	public TESEntityType getEntityType(LivingEntity entity) {
-		return entityTypeMap.computeIfAbsent(entity.getClass(), clazz -> {
+		return this.entityTypeMap.computeIfAbsent(entity.getClass(), clazz -> {
 			if (entity.getType() == EntityType.PLAYER)
 				return TESEntityType.PLAYER;
 
@@ -55,6 +55,6 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 
 	@Override
 	public final void clearDynamicCaches() {
-		entityTypeMap.entrySet().removeIf(classTESEntityTypeEntry -> classTESEntityTypeEntry.getValue() == TESEntityType.BOSS);
+		this.entityTypeMap.entrySet().removeIf(classTESEntityTypeEntry -> classTESEntityTypeEntry.getValue() == TESEntityType.BOSS);
 	}
 }

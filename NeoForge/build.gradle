@@ -98,7 +98,7 @@ publishing {
     }
 }
 
-task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+task publishToCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
     group = "publishing"
     apiToken = System.getenv("CURSEFORGE_TOKEN") ?: "Invalid/No API Token Found"
 

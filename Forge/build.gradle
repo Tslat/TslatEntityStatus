@@ -1,5 +1,5 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.spongepowered.mixin' version '0.7.+' // Mixins
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'net.darkhax.curseforgegradle' version '1.1.15'
@@ -12,6 +12,7 @@ minecraft {
     mappings channel: mappings_channel, version: "${mappings_mc_version}-${parchment_version}-${minecraft_version}"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     copyIdeResources = true
+    reobf = false
 
     runs {
         configureEach {
@@ -116,7 +117,7 @@ publishing {
     }
 }
 
-task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+task publishToCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
     group = "publishing"
     apiToken = System.getenv("CURSEFORGE_TOKEN") ?: "Invalid/No API Token Found"
 
