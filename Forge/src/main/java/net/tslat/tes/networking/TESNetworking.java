@@ -12,10 +12,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.network.Channel;
 import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.SimpleChannel;
+import net.minecraftforge.network.payload.PayloadProtocol;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.util.TESClientUtil;
@@ -26,23 +26,30 @@ import java.util.Optional;
 import java.util.Set;
 
 public final class TESNetworking implements net.tslat.tes.core.networking.TESNetworking {
-	public static final SimpleChannel INSTANCE = ChannelBuilder.named(new ResourceLocation(TESConstants.MOD_ID, "tes_packets")).clientAcceptedVersions((status, version) -> true).simpleChannel();
+	public static PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> NETWORK_CHANNEL_BUILDER = ChannelBuilder.named(new ResourceLocation(TESConstants.MOD_ID, "tes_packets")).optional().networkProtocolVersion(0).payloadChannel().play();
+	public static Channel<CustomPacketPayload> CHANNEL;
 
 	public TESNetworking() {}
+
+	public static void init() {
+		net.tslat.tes.core.networking.TESNetworking.init();
+
+		CHANNEL = NETWORK_CHANNEL_BUILDER.bidirectional().build();
+	}
 
 	@Override
 	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, boolean isClientBound) {
 		if (isClientBound) {
-			INSTANCE.messageBuilder(packetType, NetworkDirection.PLAY_TO_CLIENT).codec((StreamCodec<RegistryFriendlyByteBuf, P>)codec).consumerMainThread((packet, context) -> {
+			NETWORK_CHANNEL_BUILDER.clientbound().add(packetType, (StreamCodec<RegistryFriendlyByteBuf, P>)codec, (packet, context) -> {
 				packet.receiveMessage(context.getSender() != null ? context.getSender() : TESClientUtil.getClientPlayer(), context::enqueueWork);
 				context.setPacketHandled(true);
-			}).add();
+			});
 		}
 		else {
-			INSTANCE.messageBuilder(packetType, NetworkDirection.PLAY_TO_SERVER).codec((StreamCodec<RegistryFriendlyByteBuf, P>)codec).consumerMainThread((packet, context) -> {
+			NETWORK_CHANNEL_BUILDER.serverbound().add(packetType, (StreamCodec<RegistryFriendlyByteBuf, P>)codec, (packet, context) -> {
 				packet.receiveMessage(context.getSender() != null ? context.getSender() : TESClientUtil.getClientPlayer(), context::enqueueWork);
 				context.setPacketHandled(true);
-			}).add();
+			});
 		}
 	}
 
@@ -51,41 +58,41 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 		if (!TESAPI.getConfig().isSyncingEffects())
 			return;
 
-		INSTANCE.send(new RequestEffectsPacket(entityId), PacketDistributor.SERVER.noArg());
+		CHANNEL.send(new RequestEffectsPacket(entityId), PacketDistributor.SERVER.noArg());
 	}
 
 	@Override
 	public void sendEffectsSync(ServerPlayer player, int entityId, Set<Holder<MobEffect>> toAdd, Set<Holder<MobEffect>> toRemove) {
-		INSTANCE.send(new SyncEffectsPacket(entityId, toAdd, toRemove), PacketDistributor.PLAYER.with(player));
+		CHANNEL.send(new SyncEffectsPacket(entityId, toAdd, toRemove), PacketDistributor.PLAYER.with(player));
 	}
 
 	@Override
 	public void sendEffectsSync(LivingEntity targetedEntity, Set<Holder<MobEffect>> toAdd, Set<Holder<MobEffect>> toRemove) {
-		INSTANCE.send(new SyncEffectsPacket(targetedEntity.getId(), toAdd, toRemove), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
+		CHANNEL.send(new SyncEffectsPacket(targetedEntity.getId(), toAdd, toRemove), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
 	}
 
 	@Override
 	public void sendParticle(ServerLevel level, Vector3f position, Component contents) {
-		INSTANCE.send(new NewComponentParticlePacket(position, contents), PacketDistributor.NEAR.with(new PacketDistributor.TargetPoint(position.x, position.y, position.z, 200, level.dimension())));
+		CHANNEL.send(new NewComponentParticlePacket(position, contents), PacketDistributor.NEAR.with(new PacketDistributor.TargetPoint(position.x, position.y, position.z, 200, level.dimension())));
 	}
 
 	@Override
 	public void sendParticle(LivingEntity targetedEntity, Component contents) {
-		INSTANCE.send(new NewComponentParticlePacket(targetedEntity, contents), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
+		CHANNEL.send(new NewComponentParticlePacket(targetedEntity, contents), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
 	}
 
 	@Override
 	public void sendParticle(ServerLevel level, Vector3f position, double value, int colour) {
-		INSTANCE.send(new NewNumericParticlePacket(value, position, colour), PacketDistributor.NEAR.with(new PacketDistributor.TargetPoint(position.x, position.y, position.z, 200, level.dimension())));
+		CHANNEL.send(new NewNumericParticlePacket(value, position, colour), PacketDistributor.NEAR.with(new PacketDistributor.TargetPoint(position.x, position.y, position.z, 200, level.dimension())));
 	}
 
 	@Override
 	public void sendParticle(LivingEntity targetedEntity, double value, int colour) {
-		INSTANCE.send(new NewNumericParticlePacket(value, new Vector3f((float)targetedEntity.getX(), (float)targetedEntity.getEyeY(), (float)targetedEntity.getZ()), colour), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
+		CHANNEL.send(new NewNumericParticlePacket(value, new Vector3f((float)targetedEntity.getX(), (float)targetedEntity.getEyeY(), (float)targetedEntity.getZ()), colour), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
 	}
 
 	@Override
 	public void sendParticleClaim(ResourceLocation claimantId, LivingEntity targetedEntity, Optional<CompoundTag> additionalData) {
-		INSTANCE.send(new ParticleClaimPacket(targetedEntity.getId(), claimantId, additionalData), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
+		CHANNEL.send(new ParticleClaimPacket(targetedEntity.getId(), claimantId, additionalData), PacketDistributor.TRACKING_ENTITY.with(targetedEntity));
 	}
 }

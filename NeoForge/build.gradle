@@ -102,7 +102,7 @@ task publishToCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForg
     group = "publishing"
     apiToken = System.getenv("CURSEFORGE_TOKEN") ?: "Invalid/No API Token Found"
 
-    def mainFile = upload(830420, jar)
+    def mainFile = upload(curseforge_id, jar)
     mainFile.releaseType = "release"
     mainFile.addModLoader("NeoForge")
     mainFile.addGameVersion(minecraft_version)
