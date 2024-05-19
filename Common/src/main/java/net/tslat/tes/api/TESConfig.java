@@ -75,7 +75,7 @@ public interface TESConfig {
 	boolean hudBossesEnabled();
 
 	/**
-	 * Whether the TES HUD should render the entity's armour & toughness
+	 * Whether the TES HUD should render the entity's armour and toughness
 	 */
 	boolean hudArmour();
 
