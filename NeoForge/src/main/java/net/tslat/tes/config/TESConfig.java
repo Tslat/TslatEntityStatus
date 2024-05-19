@@ -1,6 +1,5 @@
 package net.tslat.tes.config;
 
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.tslat.tes.api.TESConstants;
@@ -9,6 +8,8 @@ import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.hud.TESHud;
 import net.tslat.tes.core.hud.TESHudPosition;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.function.BiConsumer;
 
 public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ModConfigSpec.DoubleValue entityTrackingDistance;
@@ -579,10 +580,10 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 		return this.teamBasedDamageParticleColours.get();
 	}
 
-	public static void init() {
+	public static void init(BiConsumer<ModConfig.Type, ModConfigSpec> registrar) {
 		Pair<TESConfig, ModConfigSpec> configSpec = new ModConfigSpec.Builder().configure(TESConfig::new);
 
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, configSpec.getRight());
+		registrar.accept(ModConfig.Type.CLIENT, configSpec.getRight());
 		TESConstants.setConfig(configSpec.getLeft());
 	}
 }

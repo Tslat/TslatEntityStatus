@@ -2,6 +2,7 @@ package net.tslat.tes;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -17,9 +18,9 @@ import net.tslat.tes.core.networking.TESNetworking;
 public class TES {
 	public static PayloadRegistrar packetRegistrar = null;
 
-	public TES(IEventBus modBus) {
+	public TES(ModContainer modContainer, IEventBus modBus) {
 		if (FMLEnvironment.dist == Dist.CLIENT)
-			TESConfig.init();
+			TESConfig.init(modContainer::registerConfig);
 
 		modBus.addListener(TES::clientInit);
 		modBus.addListener(TES::networkingInit);
