@@ -1,12 +1,14 @@
 plugins {
-    id 'net.neoforged.gradle.userdev' version '7.0.123+'
+    id 'ml-platform-config'
+    id 'net.neoforged.gradle.userdev' version '7.0.133+'
     id 'net.darkhax.curseforgegradle' version '1.1.15'
-    id 'com.modrinth.minotaur' version '2.8.3'
+    id "com.modrinth.minotaur" version "2.+"
 }
 
-archivesBaseName = "${mod_name}-neoforge-${minecraft_version}"
+def accessTransformersFile = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
+if (accessTransformersFile.exists())
+    minecraft.accessTransformers.file accessTransformersFile
 
 subsystems {
     parchment {
@@ -15,87 +17,37 @@ subsystems {
     }
 }
 
-dependencies {
-    implementation "net.neoforged:neoforge:${neoforge_version}"
-    compileOnly project(":Common")
-}
-
 runs {
     configureEach {
-        systemProperty 'forge.logging.console.level', 'debug'
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-
         modSource project.sourceSets.main
-        modSource project(":Common").sourceSets.main
     }
-
+	
     client {
-        //taskName 'Client'
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
-
+	
     server {
-        //taskName 'Server'
-        //args '--nogui'
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
-sourceSets.main.resources.srcDir 'src/generated/resources'
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-tasks.withType(JavaCompile).matching(it -> !it.name.startsWith("neo")).configureEach {
-    source(project(":Common").sourceSets.main.allSource)
-}
-
-sourcesJar {
-    from(project(":Common").sourceSets.main.allSource)
+dependencies {
+    implementation "net.neoforged:neoforge:${neoforge_version}"
 }
 
 processResources {
-    var replaceProperties = [
-            mod_id: mod_id,
-            mod_name: mod_name,
-            mod_version: version,
-            minecraft_version: minecraft_version,
-            minecraft_version_range: minecraft_version_range,
-            neoforge_version: neoforge_version,
-            neoforge_version_range: neoforge_version_range,
-            neoforge_loader_version_range: neoforge_loader_version_range
-    ]
-
-    from project(":Common").sourceSets.main.resources
-    inputs.properties replaceProperties
-
-    filesMatching('META-INF/neoforge.mods.toml') {
-        expand replaceProperties + [project: project]
-    }
-
-    exclude '**/*.accesswidener'
-}
-
-jar {
-    manifest {
-        attributes([
-                'Specification-Title'     : mod_name,
-                'Specification-Vendor'    : mod_author,
-                'Specification-Version'   : project.jar.archiveVersion,
-                'Implementation-Title'    : project.name,
-                'Implementation-Version'  : project.jar.archiveVersion,
-                'Implementation-Vendor'   : mod_author,
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'Timestamp'              : System.currentTimeMillis(),
-                'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
-                'Built-On-Minecraft'      : minecraft_version
-        ])
-    }
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifactId = archivesBaseName
-            artifact jar
-            artifact sourcesJar
-        }
-    }
+	exclude '**/*.accesswidener'
 }
 
 task publishToCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
@@ -106,9 +58,9 @@ task publishToCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForg
     mainFile.releaseType = "release"
     mainFile.addModLoader("NeoForge")
     mainFile.addGameVersion(minecraft_version)
-    mainFile.addJavaVersion("Java 21")
-    mainFile.changelog = "https://github.com/Tslat/TslatEntityStatus/commits/1.20.6"
-    mainFile.displayName = "${project.mod_name} NeoForge ${project.minecraft_version}-${project.version}"
+    mainFile.addJavaVersion("Java ${java_version}")
+    mainFile.changelog = "${changelog_url}"
+    mainFile.displayName = base.archivesName.get()
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
@@ -119,6 +71,6 @@ modrinth {
     versionNumber = project.version
     versionType = "release"
     uploadFile = jar
-    gameVersions = ["${project.minecraft_version}"]
+    gameVersions = ["${minecraft_version}"]
     loaders = ["neoforge"]
 }

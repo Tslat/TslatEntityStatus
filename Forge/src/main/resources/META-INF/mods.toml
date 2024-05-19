@@ -1,17 +1,17 @@
 modLoader="javafml"
 loaderVersion="${forge_loader_version_range}"
-license="MPL-2.0"
-issueTrackerURL="https://github.com/Tslat/TslatEntityStatus/issues"
+license="${license}"
+issueTrackerURL="${issues_url}"
 
 [[mods]]
 modId="${mod_id}"
-version="${mod_version}"
+version="${version}"
 displayName="${mod_name}"
 logoFile="logo.png"
-authors="Tslat"
+authors="${authors}"
 displayTest="IGNORE_SERVER_VERSION"
 description='''
-View entity health and other statuses. Make smacking things fun again!
+${description}
 '''
 
 [[dependencies.${mod_id}]]

@@ -1,19 +1,19 @@
 {
     "schemaVersion": 1,
-    "id": "tslatentitystatus",
+    "id": "${mod_id}",
     "version": "${version}",
   
     "name": "TES",
-    "description": "View entity health and other statuses. Make smacking things fun again!",
+    "description": "${description}",
     "authors": [
-      "Tslat"
+      "${authors}"
     ],
     "contact": {
-      "homepage": "",
-      "sources": "https://github.com/Tslat/TslatEntityStatus"
+      "homepage": "${homepage_url}",
+      "sources": "${sources_url}"
     },
   
-    "license": "MPL-2.0",
+    "license": "${license}",
     "icon": "logo.png",
   
     "environment": "*",
@@ -26,14 +26,14 @@
       ]
     },
     "mixins": [
-      "tslatentitystatus.mixins.json"
+      "${mod_id}.mixins.json"
     ],
-    "accessWidener" : "tslatentitystatus.accesswidener",
+    "accessWidener" : "${mod_id}.accesswidener",
     "depends": {
       "fabricloader": ">=0.15",
       "fabric-api": "*",
-      "minecraft": ">=1.20",
-      "java": ">=17"
+      "minecraft": ">=${minecraft_version}",
+      "java": ">=${java_version}"
     }
   }
   
