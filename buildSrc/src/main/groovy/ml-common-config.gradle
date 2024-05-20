@@ -67,6 +67,7 @@ dependencies {
     configurations."$variant".outgoing {
         capability("$group:$mod_id-${project.name}-${minecraft_version}:$version")
         capability("$group:$mod_id:$version")
+        capability("$group:${base.archivesName.get()}:$version")
     }
 	
     publishing.publications.configureEach {
