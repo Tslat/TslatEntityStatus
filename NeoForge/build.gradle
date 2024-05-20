@@ -60,7 +60,7 @@ task publishToCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForg
     mainFile.addGameVersion(minecraft_version)
     mainFile.addJavaVersion("Java ${java_version}")
     mainFile.changelog = "${changelog_url}"
-    mainFile.displayName = base.archivesName.get()
+    mainFile.displayName = "${mod_name} ${project.name[0].toUpperCase() + project.name[1..-1]} ${minecraft_version}-${project.version}"
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
