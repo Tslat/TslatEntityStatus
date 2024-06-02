@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class LevelRendererMixin {
 	@Inject(method = "renderLevel", require = 0, at = {
 			@At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleEngine;render(Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;F)V", shift = At.Shift.AFTER),
-			@At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleEngine;render(Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/culling/Frustum;)V", shift = At.Shift.AFTER)})
+			@At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleEngine;render(Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/culling/Frustum;Ljava/util/function/Predicate;)V", shift = At.Shift.AFTER)})
 	private void renderLevel(float partialTick, long nanoTime, boolean renderBlockOutlines, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f pose, Matrix4f effectModifiedPose, CallbackInfo callback) {
 		if (TESAPI.getConfig().particlesEnabled()) {
 			TESParticleManager.render(TESClientUtil.createInlineGuiGraphics(new PoseStack(), Minecraft.getInstance().renderBuffers().bufferSource()), partialTick);
