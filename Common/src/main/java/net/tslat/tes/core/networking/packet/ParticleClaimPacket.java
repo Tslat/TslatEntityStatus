@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public record ParticleClaimPacket(int entityId, ResourceLocation claimantId, Optional<CompoundTag> data) implements MultiloaderPacket {
-	public static final Type<ParticleClaimPacket> TYPE = new Type<>(new ResourceLocation(TESConstants.MOD_ID, "particle_claim"));
+	public static final Type<ParticleClaimPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "particle_claim"));
 	public static final StreamCodec<FriendlyByteBuf, ParticleClaimPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,
 			ParticleClaimPacket::entityId,

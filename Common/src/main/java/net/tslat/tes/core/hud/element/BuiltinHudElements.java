@@ -2,6 +2,7 @@ package net.tslat.tes.core.hud.element;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -29,7 +30,7 @@ import net.tslat.tes.core.state.TESEntityTracking;
  * Built-in HUD handles for the default rendering capabilities for the mod
  */
 public final class BuiltinHudElements {
-	public static int renderEntityName(GuiGraphics guiGraphics, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
+	public static int renderEntityName(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean inWorldHud) {
 		if (inWorldHud) {
 			if (!TESAPI.getConfig().inWorldHudEntityName() && (!TESConstants.CONFIG.inWorldHudNameOverride() || !entity.hasCustomName()))
 				return 0;
@@ -49,7 +50,7 @@ public final class BuiltinHudElements {
 		return mc.font.lineHeight;
 	}
 
-	public static int renderEntityHealth(GuiGraphics guiGraphics, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
+	public static int renderEntityHealth(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean inWorldHud) {
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
 
 		if (entityState == null)
@@ -78,7 +79,7 @@ public final class BuiltinHudElements {
 			TESEntityType entityType = TESConstants.UTILS.getEntityType(entity);
 			TextureAtlasSprite backgroundSprite = TESClientUtil.getAtlasSprite(entityType.getBackgroundTexture());
 			TextureAtlasSprite progressSprite = TESClientUtil.getAtlasSprite(entityType.getOverlayTexture());
-			TextureAtlasSprite emptyBarSprite = TESClientUtil.getAtlasSprite(new ResourceLocation("boss_bar/white_background"));
+			TextureAtlasSprite emptyBarSprite = TESClientUtil.getAtlasSprite(ResourceLocation.withDefaultNamespace("boss_bar/white_background"));
 			TESClientUtil.prepRenderForTexture(backgroundSprite.atlasLocation());
 
 			TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, emptyBarSprite, 1, false, opacity);
@@ -112,7 +113,7 @@ public final class BuiltinHudElements {
 		return mc.font.lineHeight;
 	}
 
-	public static int renderEntityArmour(GuiGraphics guiGraphics, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
+	public static int renderEntityArmour(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean inWorldHud) {
 		if (inWorldHud) {
 			if (!TESAPI.getConfig().inWorldHudArmour())
 				return 0;
@@ -159,7 +160,7 @@ public final class BuiltinHudElements {
 		return mc.font.lineHeight;
 	}
 
-	public static int renderEntityIcons(GuiGraphics guiGraphics, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
+	public static int renderEntityIcons(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean inWorldHud) {
 		if (inWorldHud) {
 			if (!TESAPI.getConfig().inWorldHudEntityIcons())
 				return 0;
@@ -174,19 +175,19 @@ public final class BuiltinHudElements {
 		TESClientUtil.prepRenderForTexture(TESClientUtil.ICONS_ATLAS_LOCATION);
 
 		if (TESUtil.isFireImmune(entity)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_FIRE_IMMUNE_SPRITE), x, 0, 8, 0, 0, 0, 8, 8, 8, 8);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_FIRE_IMMUNE_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
 
 		if (TESUtil.isMeleeMob(entity)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_MELEE_SPRITE), x, 0, 8, 0, 0, 0, 8, 8, 8, 8);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_MELEE_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
 
 		if (TESUtil.isRangedMob(entity)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_RANGED_SPRITE), x, 0, 8, 0, 0, 0, 8, 8, 8, 8);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_RANGED_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
@@ -220,7 +221,7 @@ public final class BuiltinHudElements {
 		return x == 0 ? 0 : 8;
 	}
 
-	public static int renderEntityEffects(GuiGraphics guiGraphics, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
+	public static int renderEntityEffects(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean inWorldHud) {
 		if (inWorldHud) {
 			if (!TESAPI.getConfig().inWorldHudPotionIcons())
 				return 0;

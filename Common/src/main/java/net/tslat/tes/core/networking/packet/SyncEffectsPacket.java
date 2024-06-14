@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public record SyncEffectsPacket(int entityId, Set<Holder<MobEffect>> idsToAdd, Set<Holder<MobEffect>> idsToRemove) implements MultiloaderPacket {
-	public static final CustomPacketPayload.Type<SyncEffectsPacket> TYPE = new Type<>(new ResourceLocation(TESConstants.MOD_ID, "sync_effects"));
+	public static final CustomPacketPayload.Type<SyncEffectsPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "sync_effects"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, SyncEffectsPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,
 			SyncEffectsPacket::entityId,

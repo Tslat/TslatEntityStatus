@@ -19,7 +19,7 @@ import org.joml.Vector3f;
 import java.util.function.Consumer;
 
 public record NewComponentParticlePacket(int entityId, Component contents, Vector3f position) implements MultiloaderPacket {
-	public static final CustomPacketPayload.Type<NewComponentParticlePacket> TYPE = new Type<>(new ResourceLocation(TESConstants.MOD_ID, "new_component_particle"));
+	public static final CustomPacketPayload.Type<NewComponentParticlePacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "new_component_particle"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, NewComponentParticlePacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,
 			NewComponentParticlePacket::entityId,

@@ -4,10 +4,12 @@ import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -38,18 +40,18 @@ import java.util.function.BiConsumer;
  * Various helper methods for client-side functions
  */
 public final class TESClientUtil {
-	public static final ResourceLocation CREATIVE_INVENTORY_TEXTURE = new ResourceLocation("textures/gui/container/creative_inventory/tab_inventory.png");
-	public static final ResourceLocation ICONS_ATLAS_LOCATION = new ResourceLocation("textures/atlas/gui.png");
-	public static final ResourceLocation NOTCH_OVERLAY_SPRITE = new ResourceLocation("boss_bar/notched_6_progress");
-	public static final ResourceLocation ARMOUR_ICON_SPRITE = new ResourceLocation("hud/armor_full");
-	public static final ResourceLocation TOUGHNESS_ICON_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/toughness_full");
-	public static final ResourceLocation ENTITY_FIRE_IMMUNE_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_fire_immune");
-	public static final ResourceLocation ENTITY_MELEE_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_melee");
-	public static final ResourceLocation ENTITY_RANGED_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_ranged");
-	public static final ResourceLocation ENTITY_ARTHROPOD_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_arthropod");
-	public static final ResourceLocation ENTITY_ILLAGER_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_illager");
-	public static final ResourceLocation ENTITY_UNDEAD_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_undead");
-	public static final ResourceLocation ENTITY_WATER_SPRITE = new ResourceLocation(TESConstants.MOD_ID, "hud/entity_type_water");
+	public static final ResourceLocation CREATIVE_INVENTORY_TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/container/creative_inventory/tab_inventory.png");
+	public static final ResourceLocation ICONS_ATLAS_LOCATION = ResourceLocation.withDefaultNamespace("textures/atlas/gui.png");
+	public static final ResourceLocation NOTCH_OVERLAY_SPRITE = ResourceLocation.withDefaultNamespace("boss_bar/notched_6_progress");
+	public static final ResourceLocation ARMOUR_ICON_SPRITE = ResourceLocation.withDefaultNamespace("hud/armor_full");
+	public static final ResourceLocation TOUGHNESS_ICON_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/toughness_full");
+	public static final ResourceLocation ENTITY_FIRE_IMMUNE_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_fire_immune");
+	public static final ResourceLocation ENTITY_MELEE_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_melee");
+	public static final ResourceLocation ENTITY_RANGED_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_ranged");
+	public static final ResourceLocation ENTITY_ARTHROPOD_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_type_arthropod");
+	public static final ResourceLocation ENTITY_ILLAGER_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_type_illager");
+	public static final ResourceLocation ENTITY_UNDEAD_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_type_undead");
+	public static final ResourceLocation ENTITY_WATER_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_type_water");
 
 	/**
 	 * Draw some text on screen at a given position, offset for the text's height and width
@@ -81,6 +83,7 @@ public final class TESClientUtil {
 	 */
 	public static void positionFacingCamera(PoseStack poseStack) {
 		poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+		poseStack.mulPose(Axis.YP.rotationDegrees(180));
 	}
 
 	/**
@@ -131,7 +134,7 @@ public final class TESClientUtil {
 	/**
 	 * Render a statically-positioned view of an {@link LivingEntity entity} instance, optionally including the frame TES usually renders with
 	 */
-	public static void renderEntityIcon(GuiGraphics guiGraphics, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean includeFrame) {
+	public static void renderEntityIcon(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean includeFrame) {
 		float scale = 0.04f * (float)Math.pow(Math.min(30 / entity.getBbWidth(), 40 / entity.getBbHeight()), 0.95f);
 		MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 		PoseStack poseStack = guiGraphics.pose();
@@ -159,6 +162,7 @@ public final class TESClientUtil {
 		int hurtTicks = entity.hurtTime;
 		float attackTimePrev = entity.attackAnim;
 		float attackTimeOldPrev = entity.oAttackAnim;
+		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
 
 		entity.setYRot(22.5f);
 		entity.setXRot(0);
@@ -268,34 +272,32 @@ public final class TESClientUtil {
 	 */
 	public static void drawSimpleTexture(GuiGraphics guiGraphics, int posX, int posY, int width, int height, float u, float v, int uWidth, int vHeight, int pngWidth, int pngHeight) {
 		final Matrix4f pose = guiGraphics.pose().last().pose();
-		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		final BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 		final float widthRatio = 1.0F / pngWidth;
 		final float heightRatio = 1.0F / pngHeight;
 
 		RenderSystem.enableBlend();
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		buffer.vertex(pose, (float)posX, (float)posY, 0).uv(u * widthRatio, v * heightRatio).endVertex();
-		buffer.vertex(pose, (float)posX, (float)posY + height, 0).uv(u * widthRatio, (v + vHeight) * heightRatio).endVertex();
-		buffer.vertex(pose, (float)posX + width, (float)posY + height, 0).uv((u + uWidth) * widthRatio, (v + vHeight) * heightRatio).endVertex();
-		buffer.vertex(pose, (float)posX + width, (float)posY, 0).uv((u + uWidth) * widthRatio, v * heightRatio).endVertex();
-		BufferUploader.drawWithShader(buffer.end());
+		buffer.addVertex(pose, (float)posX, (float)posY, 0).setUv(u * widthRatio, v * heightRatio);
+		buffer.addVertex(pose, (float)posX, (float)posY + height, 0).setUv(u * widthRatio, (v + vHeight) * heightRatio);
+		buffer.addVertex(pose, (float)posX + width, (float)posY + height, 0).setUv((u + uWidth) * widthRatio, (v + vHeight) * heightRatio);
+		buffer.addVertex(pose, (float)posX + width, (float)posY, 0).setUv((u + uWidth) * widthRatio, v * heightRatio);
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	public static void drawSprite(GuiGraphics guiGraphics, TextureAtlasSprite sprite, int posX, int posY, int width, int height, int u, int v, int uWidth, int vHeight, int pngWidth, int pngHeight) {
 		final Matrix4f pose = guiGraphics.pose().last().pose();
-		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		final BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 		final float uMin = sprite.getU(u / (float)pngWidth);
 		final float uMax = sprite.getU((u + uWidth) / (float)pngWidth);
 		final float vMin = sprite.getV(v / (float)pngHeight);
 		final float vMax = sprite.getV((v + vHeight) / (float)pngHeight);
 
 		RenderSystem.enableBlend();
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		buffer.vertex(pose, (float)posX, (float)posY, 0).uv(uMin, vMin).endVertex();
-		buffer.vertex(pose, (float)posX, (float)posY + height, 0).uv(uMin, vMax).endVertex();
-		buffer.vertex(pose, (float)posX + width, (float)posY + height, 0).uv(uMax, vMax).endVertex();
-		buffer.vertex(pose, (float)posX + width, (float)posY, 0).uv(uMax, vMin).endVertex();
-		BufferUploader.drawWithShader(buffer.end());
+		buffer.addVertex(pose, (float)posX, (float)posY, 0).setUv(uMin, vMin);
+		buffer.addVertex(pose, (float)posX, (float)posY + height, 0).setUv(uMin, vMax);
+		buffer.addVertex(pose, (float)posX + width, (float)posY + height, 0).setUv(uMax, vMax);
+		buffer.addVertex(pose, (float)posX + width, (float)posY, 0).setUv(uMax, vMin);
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	/**

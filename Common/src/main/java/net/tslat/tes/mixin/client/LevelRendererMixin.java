@@ -2,6 +2,7 @@ package net.tslat.tes.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -23,20 +24,20 @@ public class LevelRendererMixin {
 	@Inject(method = "renderLevel", require = 0, at = {
 			@At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleEngine;render(Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;F)V", shift = At.Shift.AFTER),
 			@At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleEngine;render(Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/culling/Frustum;Ljava/util/function/Predicate;)V", shift = At.Shift.AFTER)})
-	private void renderLevel(float partialTick, long nanoTime, boolean renderBlockOutlines, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f pose, Matrix4f effectModifiedPose, CallbackInfo callback) {
+	private void renderLevel(DeltaTracker deltaTracker, boolean renderBlockOutlines, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f pose, Matrix4f effectModifiedPose, CallbackInfo callback) {
 		if (TESAPI.getConfig().particlesEnabled()) {
-			TESParticleManager.render(TESClientUtil.createInlineGuiGraphics(new PoseStack(), Minecraft.getInstance().renderBuffers().bufferSource()), partialTick);
+			TESParticleManager.render(TESClientUtil.createInlineGuiGraphics(new PoseStack(), Minecraft.getInstance().renderBuffers().bufferSource()), deltaTracker);
 		}
 	}
 
 	@Inject(method = "renderLevel", at = @At("TAIL"))
-	private void renderInWorldHud(float partialTick, long nanoTime, boolean renderBlockOutlines, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f pose, Matrix4f effectModifiedPose, CallbackInfo callback) {
+	private void renderInWorldHud(DeltaTracker deltaTracker, boolean renderBlockOutlines, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f pose, Matrix4f effectModifiedPose, CallbackInfo callback) {
 		final PoseStack poseStack = new PoseStack();
 
 		poseStack.mulPose(pose);
 
 		for (LivingEntity entity : TESEntityTracking.getEntitiesToRender()) {
-			TESHud.renderInWorld(poseStack, entity, partialTick);
+			TESHud.renderInWorld(poseStack, entity, deltaTracker);
 		}
 	}
 }

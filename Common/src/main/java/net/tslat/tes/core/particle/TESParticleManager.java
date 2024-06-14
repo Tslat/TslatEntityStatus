@@ -3,6 +3,7 @@ package net.tslat.tes.core.particle;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -116,9 +117,10 @@ public final class TESParticleManager {
 		NEW_CLAIMS.clear();
 	}
 
-	public static void render(GuiGraphics guiGraphics, float partialTick) {
+	public static void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 		Minecraft mc = Minecraft.getInstance();
 		Font fontRenderer = mc.font;
+		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
 
 		PARTICLES.forEach(particle -> particle.render(guiGraphics, mc, fontRenderer, partialTick));
 	}

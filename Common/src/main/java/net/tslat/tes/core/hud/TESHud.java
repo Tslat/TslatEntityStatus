@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.Util;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.Entity;
@@ -87,7 +88,7 @@ public class TESHud {
 		return removed.get();
 	}
 
-	public static void renderForHud(GuiGraphics guiGraphics, Minecraft mc, float partialTick) {
+	public static void renderForHud(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker) {
 		if (TARGET_ENTITY == null)
 			return;
 
@@ -109,7 +110,7 @@ public class TESHud {
 
 		if (TESAPI.getConfig().hudEntityRender()) {
 			RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
-			TESClientUtil.renderEntityIcon(guiGraphics, mc, partialTick, TARGET_ENTITY, hudOpacity, true);
+			TESClientUtil.renderEntityIcon(guiGraphics, mc, deltaTracker, TARGET_ENTITY, hudOpacity, true);
 
 			poseStack.translate(40, 0, 0);
 		}
@@ -118,7 +119,7 @@ public class TESHud {
 
 		for (TESHudElement element : ELEMENTS.values()) {
 			RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
-			int offset = element.render(guiGraphics, mc, partialTick, TARGET_ENTITY, hudOpacity, false);
+			int offset = element.render(guiGraphics, mc, deltaTracker, TARGET_ENTITY, hudOpacity, false);
 
 			if (offset > 0)
 				poseStack.translate(0, 2 + offset, 0);
@@ -128,11 +129,12 @@ public class TESHud {
 		poseStack.popPose();
 	}
 
-	public static void renderInWorld(PoseStack poseStack, LivingEntity entity, float partialTick) {
+	public static void renderInWorld(PoseStack poseStack, LivingEntity entity, DeltaTracker deltaTracker) {
 		if (!TESAPI.getConfig().inWorldBarsEnabled() || entity.isDeadOrDying() || (entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf()))
 			return;
 
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
+		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
 
 		if (entityState == null || !TESAPI.getConfig().inWorldHUDActivation().test(entityState))
 			return;
@@ -160,7 +162,7 @@ public class TESHud {
 		guiGraphics.pose().pushPose();
 
 		for (TESHudElement element : INVERSE_ELEMENTS) {
-			int offset = element.render(guiGraphics, mc, partialTick, entity, hudOpacity, true);
+			int offset = element.render(guiGraphics, mc, deltaTracker, entity, hudOpacity, true);
 
 			if (offset > 0)
 				guiGraphics.pose().translate(0, -(2 + offset), 0);

@@ -19,7 +19,11 @@ subsystems {
 
 runs {
     configureEach {
-        modSource project.sourceSets.main
+        systemProperty 'forge.logging.console.level', 'debug'
+
+        modSources {
+            add(project.sourceSets.getByName("main"))
+        }
     }
 	
     client {

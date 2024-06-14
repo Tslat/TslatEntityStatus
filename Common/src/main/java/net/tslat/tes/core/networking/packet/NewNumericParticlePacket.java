@@ -14,7 +14,7 @@ import org.joml.Vector3f;
 import java.util.function.Consumer;
 
 public record NewNumericParticlePacket(double value, Vector3f position, int colour) implements MultiloaderPacket {
-	public static final CustomPacketPayload.Type<NewNumericParticlePacket> TYPE = new Type<>(new ResourceLocation(TESConstants.MOD_ID, "new_numeric_particle"));
+	public static final CustomPacketPayload.Type<NewNumericParticlePacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "new_numeric_particle"));
 	public static final StreamCodec<FriendlyByteBuf, NewNumericParticlePacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.DOUBLE,
 			NewNumericParticlePacket::value,

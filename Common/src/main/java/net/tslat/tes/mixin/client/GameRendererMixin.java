@@ -1,5 +1,6 @@
 package net.tslat.tes.mixin.client;
 
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -16,8 +17,8 @@ public class GameRendererMixin {
 		TESHud.pickNewEntity(partialTick);
 	}
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;render(Lnet/minecraft/client/gui/GuiGraphics;F)V", shift = At.Shift.AFTER))
-	private void renderTESHud(float partialTick, long nanoTime, boolean renderLevel, CallbackInfo callback) {
-		TESHud.renderForHud(new GuiGraphics(Minecraft.getInstance(), Minecraft.getInstance().renderBuffers().bufferSource()), Minecraft.getInstance(), partialTick);
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V", shift = At.Shift.BEFORE))
+	private void renderTESHud(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo callback) {
+		TESHud.renderForHud(new GuiGraphics(Minecraft.getInstance(), Minecraft.getInstance().renderBuffers().bufferSource()), Minecraft.getInstance(), deltaTracker);
 	}
 }
