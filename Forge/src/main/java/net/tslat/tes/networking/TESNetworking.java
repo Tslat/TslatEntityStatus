@@ -16,7 +16,6 @@ import net.minecraftforge.network.Channel;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.payload.PayloadProtocol;
-import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.networking.packet.*;
@@ -55,9 +54,6 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 
 	@Override
 	public void requestEffectsSync(int entityId) {
-		if (!TESAPI.getConfig().isSyncingEffects())
-			return;
-
 		CHANNEL.send(new RequestEffectsPacket(entityId), PacketDistributor.SERVER.noArg());
 	}
 

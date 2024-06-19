@@ -18,7 +18,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.TESClient;
-import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.core.networking.packet.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector3f;
@@ -42,9 +41,6 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 
 	@Override
 	public void requestEffectsSync(int entityId) {
-		if (!TESAPI.getConfig().isSyncingEffects())
-			return;
-
 		TESClient.sendPacket(new RequestEffectsPacket(entityId));
 	}
 
@@ -62,7 +58,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 
 	@Override
 	public void sendParticle(ServerLevel level, Vector3f position, Component contents) {
-		for (ServerPlayer player : PlayerLookup.tracking((ServerLevel)level, BlockPos.containing(position.x, position.y, position.z))) {
+		for (ServerPlayer player : PlayerLookup.tracking(level, BlockPos.containing(position.x, position.y, position.z))) {
 			ServerPlayNetworking.send(player, new NewComponentParticlePacket(position, contents));
 		}
 	}
@@ -76,7 +72,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 
 	@Override
 	public void sendParticle(ServerLevel level, Vector3f position, double value, int colour) {
-		for (ServerPlayer player : PlayerLookup.tracking((ServerLevel)level, BlockPos.containing(position.x, position.y, position.z))) {
+		for (ServerPlayer player : PlayerLookup.tracking(level, BlockPos.containing(position.x, position.y, position.z))) {
 			ServerPlayNetworking.send(player, new NewNumericParticlePacket(value, position, colour));
 		}
 	}

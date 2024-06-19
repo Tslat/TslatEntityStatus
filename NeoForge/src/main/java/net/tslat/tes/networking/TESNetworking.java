@@ -13,7 +13,6 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tslat.tes.TES;
-import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.core.networking.packet.*;
 import org.joml.Vector3f;
 
@@ -35,25 +34,16 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 
 	@Override
 	public void requestEffectsSync(int entityId) {
-		if (!TESAPI.getConfig().isSyncingEffects())
-			return;
-
 		PacketDistributor.sendToServer(new RequestEffectsPacket(entityId));
 	}
 
 	@Override
 	public void sendEffectsSync(ServerPlayer player, int entityId, Set<Holder<MobEffect>> toAdd, Set<Holder<MobEffect>> toRemove) {
-		if (!TESAPI.getConfig().isSyncingEffects())
-			return;
-
 		PacketDistributor.sendToPlayer(player, new SyncEffectsPacket(entityId, toAdd, toRemove));
 	}
 
 	@Override
 	public void sendEffectsSync(LivingEntity targetedEntity, Set<Holder<MobEffect>> toAdd, Set<Holder<MobEffect>> toRemove) {
-		if (!TESAPI.getConfig().isSyncingEffects())
-			return;
-
 		PacketDistributor.sendToPlayersTrackingEntity(targetedEntity, new SyncEffectsPacket(targetedEntity.getId(), toAdd, toRemove));
 	}
 
