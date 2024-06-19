@@ -39,7 +39,8 @@ public class EntityState {
 		this.currentHealth = entity.getHealth();
 		this.lastHealth = this.currentHealth;
 
-		TESConstants.NETWORKING.requestEffectsSync(this.entity.getId());
+		if (TESConstants.CONFIG.isSyncingEffects())
+			TESConstants.NETWORKING.requestEffectsSync(this.entity.getId());
 	}
 
 	public LivingEntity getEntity() {
