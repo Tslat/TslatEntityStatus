@@ -21,6 +21,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.FloatValue hudTargetDistance;
 	private final ForgeConfigSpec.IntValue hudTargetGracePeriod;
 	private final ForgeConfigSpec.BooleanValue hudEntityRender;
+	private final ForgeConfigSpec.BooleanValue hudPreventEntityOverflow;
 	private final ForgeConfigSpec.EnumValue<TESHud.BarRenderType> hudHealthRenderType;
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudHealthFontStyle;
 	private final ForgeConfigSpec.BooleanValue hudHealthBarSegments;
@@ -114,6 +115,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Whether the TES HUD should render the entity's image")
 				.translation("config.tes.hud.entityRender")
 				.define("hudEntityRender", true);
+
+		this.hudPreventEntityOverflow = config
+				.comment("Whether the TES HUD should cull any overflow for entities that don't scale properly to their rendering frame")
+				.translation("config.tes.hud.preventEntityOverflow")
+				.define("hudPreventEntityIconOverflow", false);
 
 		this.hudHealthRenderType = config
 				.comment("Select the health render type for the TES HUD",
@@ -382,6 +388,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public boolean hudEntityRender() {
 		return this.hudEntityRender.get();
+	}
+
+	@Override
+	public boolean hudPreventEntityOverflow() {
+		return this.hudPreventEntityOverflow.get();
 	}
 
 	@Override

@@ -55,6 +55,11 @@ public interface TESConfig {
 	boolean hudEntityRender();
 
 	/**
+	 * Whether the TES HUD should cull any overflow for entities that don't scale properly to their rendering frame
+	 */
+	boolean hudPreventEntityOverflow();
+
+	/**
 	 * Whether the entity rendered in the TES HUD should keep the red overlay when the real entity takes damage
 	 */
 	boolean hudEntityDamageOverlay();

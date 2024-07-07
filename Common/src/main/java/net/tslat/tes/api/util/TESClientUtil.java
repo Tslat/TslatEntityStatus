@@ -143,15 +143,20 @@ public final class TESClientUtil {
 	public static void renderEntityIcon(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean includeFrame) {
 		float scale = 0.04f * (float)Math.pow(Math.min(30 / entity.getBbWidth(), 40 / entity.getBbHeight()), 0.95f);
 		MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+		boolean scissor = TESConstants.CONFIG.hudPreventEntityOverflow();
+
+		if (scissor)
+			guiGraphics.enableScissor(2, 2, 36, 47);
+
 		PoseStack poseStack = guiGraphics.pose();
 
 		poseStack.pushPose();
 
 		if (includeFrame) {
-			TESClientUtil.prepRenderForTexture(ENTITY_ICON_FRAME);
+			TESClientUtil.prepRenderForTexture(SPRITES_ATLAS);
 			RenderSystem.enableBlend();
 			RenderSystem.setShaderColor(1, 1, 1, 0.5f * opacity);
-			TESClientUtil.drawSimpleTexture(guiGraphics, 2, 2, 34, 45, 0, 0, 34, 45);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(ENTITY_ICON_FRAME), 2, 2, 34, 45, 0, 0, 34, 45, 34, 45);
 
 			poseStack.translate(20, 25, 0);
 			poseStack.scale(-20, -20, 20);
@@ -200,6 +205,9 @@ public final class TESClientUtil {
 		entity.oAttackAnim = attackTimeOldPrev;
 
 		poseStack.popPose();
+
+		if (scissor)
+			guiGraphics.disableScissor();
 	}
 
 	/**

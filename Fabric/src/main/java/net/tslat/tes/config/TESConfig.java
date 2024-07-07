@@ -44,6 +44,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "HUD Entity Render")
 	public static boolean hudEntityRender = true;
 
+	@Comment public static final String hudPreventEntityOverflowComment = "Whether the TES HUD should cull any overflow for entities that don't scale properly to their rendering frame";
+	@Entry(name = "HUD Prevent Entity Overflow")
+	public static boolean hudPreventEntityOverflow = false;
+
 	@Comment public static final String hudHealthRenderTypeComment = "Select the health render type for the TES HUD";
 	@Comment public static final String hudHealthRenderTypeComment2 = "Options:";
 	@Comment public static final String hudHealthRenderTypeComment3 = "NUMERIC - Use numeric values for health only";
@@ -302,6 +306,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean hudEntityRender() {
 		return hudEntityRender;
+	}
+
+	@Override
+	public boolean hudPreventEntityOverflow() {
+		return hudPreventEntityOverflow;
 	}
 
 	@Override
