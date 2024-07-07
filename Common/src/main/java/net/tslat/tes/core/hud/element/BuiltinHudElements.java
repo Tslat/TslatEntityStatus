@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
@@ -77,9 +76,9 @@ public final class BuiltinHudElements {
 			float percentTransitionHealth = entityState.getLastTransitionHealth() / entity.getMaxHealth();
 			boolean doSegments = inWorldHud ? config.inWorldBarsSegments() : config.hudHealthBarSegments();
 			TESEntityType entityType = TESConstants.UTILS.getEntityType(entity);
-			TextureAtlasSprite backgroundSprite = TESClientUtil.getAtlasSprite(entityType.getBackgroundTexture());
-			TextureAtlasSprite progressSprite = TESClientUtil.getAtlasSprite(entityType.getOverlayTexture());
-			TextureAtlasSprite emptyBarSprite = TESClientUtil.getAtlasSprite(ResourceLocation.withDefaultNamespace("boss_bar/white_background"));
+			TextureAtlasSprite backgroundSprite = TESClientUtil.getAtlasSprite(entityType.backgroundTexture());
+			TextureAtlasSprite progressSprite = TESClientUtil.getAtlasSprite(entityType.overlayTexture());
+			TextureAtlasSprite emptyBarSprite = TESClientUtil.getAtlasSprite(TESClientUtil.BAR_EMPTY);
 			TESClientUtil.prepRenderForTexture(backgroundSprite.atlasLocation());
 
 			TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, emptyBarSprite, 1, false, opacity);
@@ -131,8 +130,8 @@ public final class BuiltinHudElements {
 		float toughness = TESUtil.getArmourToughness(entity);
 		int textColour = FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255);
 		PoseStack poseStack = guiGraphics.pose();
-		TextureAtlasSprite armourSprite = TESClientUtil.getAtlasSprite(TESClientUtil.ARMOUR_ICON_SPRITE);
-		TextureAtlasSprite toughnessSprite = TESClientUtil.getAtlasSprite(TESClientUtil.TOUGHNESS_ICON_SPRITE);
+		TextureAtlasSprite armourSprite = TESClientUtil.getAtlasSprite(TESClientUtil.STAT_ARMOUR);
+		TextureAtlasSprite toughnessSprite = TESClientUtil.getAtlasSprite(TESClientUtil.STAT_TOUGHNESS);
 
 		poseStack.pushPose();
 
@@ -172,22 +171,22 @@ public final class BuiltinHudElements {
 
 		int x = 0;
 
-		TESClientUtil.prepRenderForTexture(TESClientUtil.ICONS_ATLAS_LOCATION);
+		TESClientUtil.prepRenderForTexture(TESClientUtil.SPRITES_ATLAS);
 
 		if (TESUtil.isFireImmune(entity)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_FIRE_IMMUNE_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.PROPERTY_FIRE_IMMUNE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
 
 		if (TESUtil.isMeleeMob(entity)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_MELEE_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.PROPERTY_MELEE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
 
 		if (TESUtil.isRangedMob(entity)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_RANGED_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.PROPERTY_RANGED), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
@@ -195,25 +194,25 @@ public final class BuiltinHudElements {
 		final EntityType<?> entityType = entity.getType();
 
 		if (entityType.is(EntityTypeTags.AQUATIC)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_WATER_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_TYPE_AQUATIC), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
 
 		if (entityType.is(EntityTypeTags.ILLAGER)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_ILLAGER_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_TYPE_ILLAGER), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
 
 		if (entityType.is(EntityTypeTags.ARTHROPOD)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_ARTHROPOD_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_TYPE_ARTHROPOD), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}
 
 		if (entityType.is(EntityTypeTags.UNDEAD)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_UNDEAD_SPRITE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_TYPE_UNDEAD), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
 
 			x += 9;
 		}

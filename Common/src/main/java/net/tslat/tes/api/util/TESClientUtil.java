@@ -40,18 +40,24 @@ import java.util.function.BiConsumer;
  * Various helper methods for client-side functions
  */
 public final class TESClientUtil {
-	public static final ResourceLocation CREATIVE_INVENTORY_TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/container/creative_inventory/tab_inventory.png");
-	public static final ResourceLocation ICONS_ATLAS_LOCATION = ResourceLocation.withDefaultNamespace("textures/atlas/gui.png");
-	public static final ResourceLocation NOTCH_OVERLAY_SPRITE = ResourceLocation.withDefaultNamespace("boss_bar/notched_6_progress");
-	public static final ResourceLocation ARMOUR_ICON_SPRITE = ResourceLocation.withDefaultNamespace("hud/armor_full");
-	public static final ResourceLocation TOUGHNESS_ICON_SPRITE = TESConstants.id("hud/toughness_full");
-	public static final ResourceLocation ENTITY_FIRE_IMMUNE_SPRITE = TESConstants.id("hud/entity_fire_immune");
-	public static final ResourceLocation ENTITY_MELEE_SPRITE = TESConstants.id("hud/entity_melee");
-	public static final ResourceLocation ENTITY_RANGED_SPRITE = TESConstants.id("hud/entity_ranged");
-	public static final ResourceLocation ENTITY_ARTHROPOD_SPRITE = TESConstants.id("hud/entity_type_arthropod");
-	public static final ResourceLocation ENTITY_ILLAGER_SPRITE = TESConstants.id("hud/entity_type_illager");
-	public static final ResourceLocation ENTITY_UNDEAD_SPRITE = TESConstants.id("hud/entity_type_undead");
-	public static final ResourceLocation ENTITY_WATER_SPRITE = TESConstants.id("hud/entity_type_water");
+	public static final ResourceLocation SPRITES_ATLAS = ResourceLocation.withDefaultNamespace("textures/atlas/gui.png");
+
+	public static final ResourceLocation ENTITY_ICON_FRAME = TESConstants.id("entity_icon_frame");
+
+	public static final ResourceLocation BAR_EMPTY = TESConstants.id("bar/empty");
+	public static final ResourceLocation BAR_OVERLAY_SEGMENTS = TESConstants.id("bar/overlay_segments");
+
+	public static final ResourceLocation ENTITY_TYPE_AQUATIC = TESConstants.id("entity_type/aquatic");
+	public static final ResourceLocation ENTITY_TYPE_ARTHROPOD = TESConstants.id("entity_type/arthropod");
+	public static final ResourceLocation ENTITY_TYPE_ILLAGER = TESConstants.id("entity_type/illager");
+	public static final ResourceLocation ENTITY_TYPE_UNDEAD = TESConstants.id("entity_type/undead");
+
+	public static final ResourceLocation PROPERTY_FIRE_IMMUNE = TESConstants.id("property/fire_immune");
+	public static final ResourceLocation PROPERTY_MELEE = TESConstants.id("property/melee");
+	public static final ResourceLocation PROPERTY_RANGED = TESConstants.id("property/ranged");
+
+	public static final ResourceLocation STAT_ARMOUR = TESConstants.id("stat/armour");
+	public static final ResourceLocation STAT_TOUGHNESS = TESConstants.id("stat/toughness");
 
 	/**
 	 * Draw some text on screen at a given position, offset for the text's height and width
@@ -124,7 +130,7 @@ public final class TESClientUtil {
 		if (withBarOverlay && width > 10) {
 			RenderSystem.setShaderColor(1, 1, 1, 0.75f * opacity);
 
-			TextureAtlasSprite overlaySprite = getAtlasSprite(NOTCH_OVERLAY_SPRITE);
+			TextureAtlasSprite overlaySprite = getAtlasSprite(BAR_OVERLAY_SEGMENTS);
 
 			RenderSystem.setShaderTexture(0, overlaySprite.atlasLocation());
 			drawSprite(guiGraphics, overlaySprite, x, y, width, 5, 0, 0, 182, 5, 182, 5);
@@ -142,10 +148,10 @@ public final class TESClientUtil {
 		poseStack.pushPose();
 
 		if (includeFrame) {
-			TESClientUtil.prepRenderForTexture(TESClientUtil.CREATIVE_INVENTORY_TEXTURE);
+			TESClientUtil.prepRenderForTexture(ENTITY_ICON_FRAME);
 			RenderSystem.enableBlend();
 			RenderSystem.setShaderColor(1, 1, 1, 0.5f * opacity);
-			TESClientUtil.drawSimpleTexture(guiGraphics, 2, 2, 34, 45, 72, 5, 256);
+			TESClientUtil.drawSimpleTexture(guiGraphics, 2, 2, 34, 45, 0, 0, 34, 45);
 
 			poseStack.translate(20, 25, 0);
 			poseStack.scale(-20, -20, 20);
