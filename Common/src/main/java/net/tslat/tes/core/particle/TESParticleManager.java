@@ -98,14 +98,14 @@ public final class TESParticleManager {
 	public static void tick() {
 		Minecraft mc = Minecraft.getInstance();
 
-		if (!TESAPI.getConfig().particlesEnabled()) {
-			PARTICLES.clear();
-			CLAIMS.clear();
+		if (!mc.isPaused() && mc.level != null && !mc.level.tickRateManager().isFrozen()) {
+			if (!TESAPI.getConfig().particlesEnabled()) {
+				PARTICLES.clear();
+				CLAIMS.clear();
 
-			return;
-		}
+				return;
+			}
 
-		if (!mc.isPaused()) {
 			PARTICLES.forEach(particle -> particle.tick(mc));
 			PARTICLES.removeIf(particle -> !particle.isValid());
 		}

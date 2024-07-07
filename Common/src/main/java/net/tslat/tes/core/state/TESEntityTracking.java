@@ -9,8 +9,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.core.particle.TESParticleManager;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public final class TESEntityTracking {
@@ -36,12 +36,15 @@ public final class TESEntityTracking {
 	}
 
 	public static void tick() {
-		TESParticleManager.clearClaims();
-		ENTITY_STATES.values().forEach(EntityState::tick);
+		Minecraft mc = Minecraft.getInstance();
 
-		if (Minecraft.getInstance().level.getGameTime() % TESAPI.getConfig().getCacheCleanFrequency() == 0)
-			ENTITY_STATES.values().removeIf(state -> !state.isValid());
+		if (!mc.isPaused() && mc.level != null && !mc.level.tickRateManager().isFrozen()) {
+			TESParticleManager.clearClaims();
+			ENTITY_STATES.values().forEach(EntityState::tick);
 
+			if (mc.level.getGameTime() % TESAPI.getConfig().getCacheCleanFrequency() == 0)
+				ENTITY_STATES.values().removeIf(state -> !state.isValid());
+		}
 	}
 
 	public static void addEntityToRender(LivingEntity entity) {
