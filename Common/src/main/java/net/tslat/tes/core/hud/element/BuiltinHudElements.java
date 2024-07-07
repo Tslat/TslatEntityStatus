@@ -42,7 +42,7 @@ public final class BuiltinHudElements {
 			if (!TESAPI.getConfig().hudEntityName())
 				return 0;
 
-			TESAPI.getConfig().hudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), 0, 0, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource());
+			TESAPI.getConfig().hudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), 0, 0, FastColor.ARGB32.color(255, 255, 255, 255), guiGraphics.bufferSource());
 		}
 
 		TESEntityTracking.markNameRendered(entity);
@@ -211,6 +211,8 @@ public final class BuiltinHudElements {
 
 		poseStack.pushPose();
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.enableBlend();
+		RenderSystem.setShaderColor(1, 1, 1, opacity);
 		poseStack.scale(0.5f, 0.5f, 1);
 
 		if (inWorldHud)
@@ -231,6 +233,7 @@ public final class BuiltinHudElements {
 			}
 		}
 
+		RenderSystem.disableBlend();
 		poseStack.popPose();
 
 		return (int)Math.ceil(effectsSize / (float)iconsPerRow) * 9;
@@ -251,11 +254,10 @@ public final class BuiltinHudElements {
 
 		boolean hasChest = entity instanceof AbstractChestedHorse chestedHorse && chestedHorse.hasChest();
 		int x = inWorldHud ? hasChest ? -18 : -11 : 1;
-		int opacityInt = Mth.ceil(255 * opacity);
 
-		guiGraphics.drawString(mc.font, "H", x, 1, Mth.hsvToArgb(Mth.clamp(0.35f * ((float)horse.getAttributeBaseValue(Attributes.MAX_HEALTH) - AbstractHorse.MIN_HEALTH) / (AbstractHorse.MAX_HEALTH - AbstractHorse.MIN_HEALTH), 0, 0.35f), 1, 1, opacityInt), false);
-		guiGraphics.drawString(mc.font, "S", x + 8, 1, Mth.hsvToArgb(Mth.clamp(0.35f * ((float)horse.getAttributeBaseValue(Attributes.MOVEMENT_SPEED) - AbstractHorse.MIN_MOVEMENT_SPEED) / (AbstractHorse.MAX_MOVEMENT_SPEED - AbstractHorse.MIN_MOVEMENT_SPEED), 0, 0.35f), 1, 1, opacityInt), false);
-		guiGraphics.drawString(mc.font, "J", x + 16, 1, Mth.hsvToArgb(Mth.clamp(0.35f * ((float)horse.getAttributeBaseValue(Attributes.JUMP_STRENGTH) - AbstractHorse.MIN_JUMP_STRENGTH) / (AbstractHorse.MAX_JUMP_STRENGTH - AbstractHorse.MIN_JUMP_STRENGTH), 0, 0.35f), 1, 1, opacityInt), false);
+		guiGraphics.drawString(mc.font, "H", x, 1, Mth.hsvToArgb(Mth.clamp(0.35f * ((float)horse.getAttributeBaseValue(Attributes.MAX_HEALTH) - AbstractHorse.MIN_HEALTH) / (AbstractHorse.MAX_HEALTH - AbstractHorse.MIN_HEALTH), 0, 0.35f), 1, 1, 255), false);
+		guiGraphics.drawString(mc.font, "S", x + 8, 1, Mth.hsvToArgb(Mth.clamp(0.35f * ((float)horse.getAttributeBaseValue(Attributes.MOVEMENT_SPEED) - AbstractHorse.MIN_MOVEMENT_SPEED) / (AbstractHorse.MAX_MOVEMENT_SPEED - AbstractHorse.MIN_MOVEMENT_SPEED), 0, 0.35f), 1, 1, 255), false);
+		guiGraphics.drawString(mc.font, "J", x + 16, 1, Mth.hsvToArgb(Mth.clamp(0.35f * ((float)horse.getAttributeBaseValue(Attributes.JUMP_STRENGTH) - AbstractHorse.MIN_JUMP_STRENGTH) / (AbstractHorse.MAX_JUMP_STRENGTH - AbstractHorse.MIN_JUMP_STRENGTH), 0, 0.35f), 1, 1, 255), false);
 
 		if (hasChest) {
 			TESClientUtil.prepRenderForTexture(TESClientUtil.SPRITES_ATLAS);
