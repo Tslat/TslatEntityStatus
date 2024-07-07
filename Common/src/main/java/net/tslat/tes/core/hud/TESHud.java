@@ -117,7 +117,7 @@ public class TESHud {
 		if (TARGET_ENTITY == null)
 			return;
 
-		if (!TARGET_ENTITY.isAlive() || TARGET_ENTITY.level() != mc.level || Mth.floor(Blaze3D.getTime() * 20) > TARGET_EXPIRY_TIME) {
+		if (TARGET_ENTITY.isRemoved() || TARGET_ENTITY.level() != mc.level || Mth.floor(Blaze3D.getTime() * 20) > TARGET_EXPIRY_TIME) {
 			TARGET_ENTITY = null;
 
 			return;
