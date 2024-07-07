@@ -55,6 +55,7 @@ public final class TESClientUtil {
 	public static final ResourceLocation PROPERTY_FIRE_IMMUNE = TESConstants.id("property/fire_immune");
 	public static final ResourceLocation PROPERTY_MELEE = TESConstants.id("property/melee");
 	public static final ResourceLocation PROPERTY_RANGED = TESConstants.id("property/ranged");
+	public static final ResourceLocation PROPERTY_STORAGE = TESConstants.id("property/storage");
 
 	public static final ResourceLocation STAT_ARMOUR = TESConstants.id("stat/armour");
 	public static final ResourceLocation STAT_TOUGHNESS = TESConstants.id("stat/toughness");

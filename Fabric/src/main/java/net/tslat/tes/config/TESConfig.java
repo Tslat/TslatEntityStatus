@@ -115,6 +115,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "HUD Entity Effects Icons")
 	public static boolean hudPotionIcons = true;
 
+	@Comment public static final String hudHorseStatsComment = "Whether the TES HUD should render horses' stats";
+	@Entry(name = "HUD Horse Stats")
+	public static boolean hudHorseStats = true;
+
 	@Comment public static final String hudOpacityComment = "Set how opaque the TES HUD should be, overall. The lower the value, the more transparent the HUD will be";
 	@Entry(name = "HUD Opacity", isSlider = true, min = 0f, max = 1f)
 	public static float hudOpacity = 1f;
@@ -210,6 +214,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Comment public static final String inWorldHudPotionIconsComment = "Whether the in-world entity status HUD should render the entity's effects icons";
 	@Entry(name = "In-World HUD Effects Icons")
 	public static boolean inWorldHudPotionIcons = false;
+
+	@Comment public static final String inWorldHudHorseStatsComment = "Whether the in-world TES entity status HUD should include horse stats";
+	@Entry(name = "In-World HUD Horse Stats")
+	public static boolean inWorldHudHorseStats = false;
 
 	@Comment public static final String inWorldHudNameOverrideComment = "Whether the in-world TES entity status HUD should override vanilla name rendering";
 	@Entry(name = "In-World HUD Name Override")
@@ -354,6 +362,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	}
 
 	@Override
+	public boolean hudHorseStats() {
+		return hudHorseStats;
+	}
+
+	@Override
 	public float hudOpacity() {
 		return hudOpacity;
 	}
@@ -451,6 +464,11 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Override
 	public boolean inWorldHudPotionIcons() {
 		return inWorldHudPotionIcons;
+	}
+
+	@Override
+	public boolean inWorldHudHorseStats() {
+		return inWorldHudHorseStats;
 	}
 
 	@Override

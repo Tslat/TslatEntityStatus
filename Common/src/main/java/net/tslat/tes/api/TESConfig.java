@@ -100,6 +100,11 @@ public interface TESConfig {
 	boolean hudPotionIcons();
 
 	/**
+	 * Whether the TES HUD should render horses' stats
+	 */
+	boolean hudHorseStats();
+
+	/**
 	 * Get the rendered opacity of the TES HUD.<br>
 	 * This affects the entire HUD.<br>
 	 * Value range is 0->1, with 1 being 100% opacity
@@ -212,6 +217,11 @@ public interface TESConfig {
 	 * Whether the in-world TES entity status HUD should include the entity's effect icons
 	 */
 	boolean inWorldHudPotionIcons();
+
+	/**
+	 * Whether the in-world TES entity status HUD should include horse stats
+	 */
+	boolean inWorldHudHorseStats();
 
 	/**
 	 * Whether the in-world TES entity status HUD should override vanilla name rendering

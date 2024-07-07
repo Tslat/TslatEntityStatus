@@ -35,6 +35,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudArmourFontStyle;
 	private final ModConfigSpec.BooleanValue hudEntityIcons;
 	private final ModConfigSpec.BooleanValue hudPotionIcons;
+	private final ModConfigSpec.BooleanValue hudHorseStats;
 	private final ModConfigSpec.DoubleValue hudOpacity;
 	private final ModConfigSpec.DoubleValue hudBarFontBackingOpacity;
 
@@ -52,6 +53,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudArmourFontStyle;
 	private final ModConfigSpec.BooleanValue inWorldHudEntityIcons;
 	private final ModConfigSpec.BooleanValue inWorldHudPotionIcons;
+	private final ModConfigSpec.BooleanValue inWorldHudHorseStats;
 	private final ModConfigSpec.BooleanValue inWorldHudNameOverride;
 	private final ModConfigSpec.DoubleValue inWorldHudManualVerticalOffset;
 
@@ -186,6 +188,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.translation("config.tes.hud.potionIcons")
 				.define("hudPotionIcons", true);
 
+		this.hudHorseStats = config
+				.comment("Whether the TES HUD should render horses' stats")
+				.translation("config.tes.hud.horseStats")
+				.define("hudHorseStats", true);
+
 		this.hudOpacity = config
 				.comment("Set how opaque the TES HUD should be, overall. The lower the value, the more transparent the HUD will be")
 				.translation("config.tes.hud.opacity")
@@ -283,6 +290,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Whether the in-world entity status HUD should render the entity's effects icons")
 				.translation("config.tes.inWorldHud.potionIcons")
 				.define("inWorldHudPotionIcons", false);
+
+		this.inWorldHudHorseStats = config
+				.comment("Whether the in-world TES entity status HUD should include horse stats")
+				.translation("config.tes.inWorldHud.horseStats")
+				.define("inWorldHudHorseStats", false);
 
 		this.inWorldHudNameOverride = config
 				.comment("Whether the in-world TES entity status HUD should override vanilla name rendering")
@@ -437,6 +449,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	}
 
 	@Override
+	public boolean hudHorseStats() {
+		return hudHorseStats.get();
+	}
+
+	@Override
 	public float hudOpacity() {
 		return this.hudOpacity.get().floatValue();
 	}
@@ -534,6 +551,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	@Override
 	public boolean inWorldHudPotionIcons() {
 		return this.inWorldHudPotionIcons.get();
+	}
+
+	@Override
+	public boolean inWorldHudHorseStats() {
+		return this.inWorldHudHorseStats.get();
 	}
 
 	@Override

@@ -48,6 +48,7 @@ public class TESHud {
 			map.put("Armour", BuiltinHudElements::renderEntityArmour);
 			map.put("Icons", BuiltinHudElements::renderEntityIcons);
 			map.put("Effects", BuiltinHudElements::renderEntityEffects);
+			map.put("HorseStats", BuiltinHudElements::renderHorseStats);
 	});
 	protected static final List<TESHudEntityIcon> ENTITY_ICONS = Util.make(new CopyOnWriteArrayList<>(), list -> {
 		list.addAll(List.of(
@@ -161,7 +162,7 @@ public class TESHud {
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
 		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
 
-		if (entityState == null || !TESAPI.getConfig().inWorldHUDActivation().test(entityState))
+		if (entityState == null/* || !TESAPI.getConfig().inWorldHUDActivation().test(entityState)*/)
 			return;
 
 		float hudOpacity = TESAPI.getConfig().inWorldHudOpacity();
