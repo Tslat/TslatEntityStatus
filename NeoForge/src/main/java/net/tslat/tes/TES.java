@@ -32,7 +32,7 @@ public class TES {
 	}
 
 	private static void networkingInit(final RegisterPayloadHandlersEvent ev) {
-		packetRegistrar = ev.registrar(TESConstants.MOD_ID);
+		packetRegistrar = ev.registrar(TESConstants.MOD_ID).optional();
 		TESNetworking.init();
 		packetRegistrar = null;
 	}
