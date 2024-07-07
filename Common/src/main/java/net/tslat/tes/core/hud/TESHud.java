@@ -8,6 +8,7 @@ import net.minecraft.Util;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -23,12 +24,15 @@ import net.tslat.tes.api.TESHudElement;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.api.util.TESUtil;
 import net.tslat.tes.core.hud.element.BuiltinHudElements;
+import net.tslat.tes.core.hud.element.TESHudEntityIcon;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -42,6 +46,16 @@ public class TESHud {
 			map.put("Armour", BuiltinHudElements::renderEntityArmour);
 			map.put("Icons", BuiltinHudElements::renderEntityIcons);
 			map.put("Effects", BuiltinHudElements::renderEntityEffects);
+	});
+	protected static final List<TESHudEntityIcon> ENTITY_ICONS = Util.make(new CopyOnWriteArrayList<>(), list -> {
+		list.addAll(List.of(
+				TESHudEntityIcon.makeGeneric(TESClientUtil.PROPERTY_FIRE_IMMUNE, TESUtil::isFireImmune),
+				TESHudEntityIcon.makeGeneric(TESClientUtil.PROPERTY_MELEE, TESUtil::isMeleeMob),
+				TESHudEntityIcon.makeGeneric(TESClientUtil.PROPERTY_RANGED, TESUtil::isRangedMob),
+				TESHudEntityIcon.makeGeneric(TESClientUtil.ENTITY_TYPE_AQUATIC, entity -> entity.getType().is(EntityTypeTags.AQUATIC)),
+				TESHudEntityIcon.makeGeneric(TESClientUtil.ENTITY_TYPE_ILLAGER, entity -> entity.getType().is(EntityTypeTags.ILLAGER)),
+				TESHudEntityIcon.makeGeneric(TESClientUtil.ENTITY_TYPE_ARTHROPOD, entity -> entity.getType().is(EntityTypeTags.ARTHROPOD)),
+				TESHudEntityIcon.makeGeneric(TESClientUtil.ENTITY_TYPE_UNDEAD, entity -> entity.getType().is(EntityTypeTags.UNDEAD))));
 	});
 	private static TESHudElement[] INVERSE_ELEMENTS = buildInverseElementArray(ELEMENTS.values());
 	private static LivingEntity TARGET_ENTITY = null;
@@ -86,6 +100,15 @@ public class TESHud {
 		}
 
 		return removed.get();
+	}
+
+	/**
+	 * Add a {@link TESHudEntityIcon} to the TES HUD
+	 *
+	 * @param icon The icon instance to add
+	 */
+	public static void addHudEntityIcon(TESHudEntityIcon icon) {
+		ENTITY_ICONS.add(icon);
 	}
 
 	public static void renderForHud(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker) {
@@ -209,6 +232,10 @@ public class TESHud {
 			if (blockHitResult == null || blockHitResult.getType() == HitResult.Type.MISS || blockHitResult.getLocation().distanceToSqr(cameraPos) > entityHitClipDistanceSqr)
 				TESHud.setTargetEntity(target);
 		}
+	}
+
+	public static List<TESHudEntityIcon> getEntityIcons() {
+		return ENTITY_ICONS;
 	}
 
 	private static TESHudElement[] buildInverseElementArray(Collection<TESHudElement> elements) {

@@ -10,10 +10,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConfig;
@@ -173,48 +171,9 @@ public final class BuiltinHudElements {
 
 		TESClientUtil.prepRenderForTexture(TESClientUtil.SPRITES_ATLAS);
 
-		if (TESUtil.isFireImmune(entity)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.PROPERTY_FIRE_IMMUNE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
-
-			x += 9;
-		}
-
-		if (TESUtil.isMeleeMob(entity)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.PROPERTY_MELEE), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
-
-			x += 9;
-		}
-
-		if (TESUtil.isRangedMob(entity)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.PROPERTY_RANGED), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
-
-			x += 9;
-		}
-
-		final EntityType<?> entityType = entity.getType();
-
-		if (entityType.is(EntityTypeTags.AQUATIC)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_TYPE_AQUATIC), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
-
-			x += 9;
-		}
-
-		if (entityType.is(EntityTypeTags.ILLAGER)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_TYPE_ILLAGER), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
-
-			x += 9;
-		}
-
-		if (entityType.is(EntityTypeTags.ARTHROPOD)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_TYPE_ARTHROPOD), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
-
-			x += 9;
-		}
-
-		if (entityType.is(EntityTypeTags.UNDEAD)) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.ENTITY_TYPE_UNDEAD), x, 0, 8, 8, 0, 0, 8, 8, 8, 8);
-
-			x += 9;
+		for (TESHudEntityIcon icon : TESHud.getEntityIcons()) {
+			if (icon.renderIfApplicable(guiGraphics, entity, x, 0))
+				x += 9;
 		}
 
 		return x == 0 ? 0 : 8;
