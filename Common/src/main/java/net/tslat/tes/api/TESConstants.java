@@ -19,6 +19,9 @@ public final class TESConstants {
 	public static final String MOD_ID = "tslatentitystatus";
 	public static final String MOD_NAME = "TES";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+
+	private static final ResourceLocation BASE_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, "");
+
 	public static TESConfig CONFIG = null;
 
 	public static TESUtil UTILS = ServiceLoader.load(TESUtil.class).findFirst().get();
@@ -34,5 +37,9 @@ public final class TESConstants {
 
 	public static void setIsClient() {
 		IS_SERVER_SIDE = false;
+	}
+
+	public static ResourceLocation id(String path) {
+		return BASE_ID.withPath(path);
 	}
 }

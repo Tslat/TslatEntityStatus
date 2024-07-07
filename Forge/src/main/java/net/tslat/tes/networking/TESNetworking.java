@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public final class TESNetworking implements net.tslat.tes.core.networking.TESNetworking {
-	public static PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> NETWORK_CHANNEL_BUILDER = ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "tes_packets")).networkProtocolVersion(0).optional().payloadChannel().play();
+	public static PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> NETWORK_CHANNEL_BUILDER = ChannelBuilder.named(TESConstants.id("tes_packets")).networkProtocolVersion(0).optional().payloadChannel().play();
 	public static Channel<CustomPacketPayload> CHANNEL;
 
 	public TESNetworking() {}

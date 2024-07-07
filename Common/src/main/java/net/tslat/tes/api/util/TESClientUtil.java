@@ -44,14 +44,14 @@ public final class TESClientUtil {
 	public static final ResourceLocation ICONS_ATLAS_LOCATION = ResourceLocation.withDefaultNamespace("textures/atlas/gui.png");
 	public static final ResourceLocation NOTCH_OVERLAY_SPRITE = ResourceLocation.withDefaultNamespace("boss_bar/notched_6_progress");
 	public static final ResourceLocation ARMOUR_ICON_SPRITE = ResourceLocation.withDefaultNamespace("hud/armor_full");
-	public static final ResourceLocation TOUGHNESS_ICON_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/toughness_full");
-	public static final ResourceLocation ENTITY_FIRE_IMMUNE_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_fire_immune");
-	public static final ResourceLocation ENTITY_MELEE_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_melee");
-	public static final ResourceLocation ENTITY_RANGED_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_ranged");
-	public static final ResourceLocation ENTITY_ARTHROPOD_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_type_arthropod");
-	public static final ResourceLocation ENTITY_ILLAGER_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_type_illager");
-	public static final ResourceLocation ENTITY_UNDEAD_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_type_undead");
-	public static final ResourceLocation ENTITY_WATER_SPRITE = ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "hud/entity_type_water");
+	public static final ResourceLocation TOUGHNESS_ICON_SPRITE = TESConstants.id("hud/toughness_full");
+	public static final ResourceLocation ENTITY_FIRE_IMMUNE_SPRITE = TESConstants.id("hud/entity_fire_immune");
+	public static final ResourceLocation ENTITY_MELEE_SPRITE = TESConstants.id("hud/entity_melee");
+	public static final ResourceLocation ENTITY_RANGED_SPRITE = TESConstants.id("hud/entity_ranged");
+	public static final ResourceLocation ENTITY_ARTHROPOD_SPRITE = TESConstants.id("hud/entity_type_arthropod");
+	public static final ResourceLocation ENTITY_ILLAGER_SPRITE = TESConstants.id("hud/entity_type_illager");
+	public static final ResourceLocation ENTITY_UNDEAD_SPRITE = TESConstants.id("hud/entity_type_undead");
+	public static final ResourceLocation ENTITY_WATER_SPRITE = TESConstants.id("hud/entity_type_water");
 
 	/**
 	 * Draw some text on screen at a given position, offset for the text's height and width

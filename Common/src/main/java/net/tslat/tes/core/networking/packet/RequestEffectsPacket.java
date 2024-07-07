@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public record RequestEffectsPacket(int entityId) implements MultiloaderPacket {
-    public static final CustomPacketPayload.Type<RequestEffectsPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(TESConstants.MOD_ID, "request_effects"));
+    public static final CustomPacketPayload.Type<RequestEffectsPacket> TYPE = new Type<>(TESConstants.id("request_effects"));
     public static final StreamCodec<FriendlyByteBuf, RequestEffectsPacket> CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT,
             RequestEffectsPacket::entityId,
