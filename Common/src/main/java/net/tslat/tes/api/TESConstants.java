@@ -29,7 +29,7 @@ public final class TESConstants {
 
 	public static boolean IS_SERVER_SIDE = true;
 
-	public static final TagKey<EntityType<?>> NO_TES_HANDLING = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(MOD_ID, "no_tes_handling"));
+	public static final TagKey<EntityType<?>> NO_TES_HANDLING = TagKey.create(Registries.ENTITY_TYPE, id("no_tes_handling"));
 
 	public static void setConfig(TESConfig config) {
 		CONFIG = config;
