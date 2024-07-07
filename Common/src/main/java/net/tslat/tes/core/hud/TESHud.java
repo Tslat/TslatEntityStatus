@@ -1,5 +1,6 @@
 package net.tslat.tes.core.hud;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -9,6 +10,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -66,7 +68,7 @@ public class TESHud {
 	 */
 	public static void setTargetEntity(LivingEntity entity) {
 		TARGET_ENTITY = entity;
-		TARGET_EXPIRY_TIME = Minecraft.getInstance().level.getGameTime() + 1 + TESAPI.getConfig().hudTargetGracePeriod();
+		TARGET_EXPIRY_TIME = Mth.floor(Blaze3D.getTime() * 20) + 1 + TESAPI.getConfig().hudTargetGracePeriod();
 	}
 
 	/**
@@ -115,7 +117,7 @@ public class TESHud {
 		if (TARGET_ENTITY == null)
 			return;
 
-		if (!TARGET_ENTITY.isAlive() || TARGET_ENTITY.level() != mc.level || mc.level.getGameTime() > TARGET_EXPIRY_TIME) {
+		if (!TARGET_ENTITY.isAlive() || TARGET_ENTITY.level() != mc.level || Mth.floor(Blaze3D.getTime() * 20) > TARGET_EXPIRY_TIME) {
 			TARGET_ENTITY = null;
 
 			return;
