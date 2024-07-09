@@ -162,7 +162,7 @@ public class TESHud {
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
 		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
 
-		if (entityState == null/* || !TESAPI.getConfig().inWorldHUDActivation().test(entityState)*/)
+		if (entityState == null || !TESAPI.getConfig().inWorldHUDActivation().test(entityState))
 			return;
 
 		float hudOpacity = TESAPI.getConfig().inWorldHudOpacity();
