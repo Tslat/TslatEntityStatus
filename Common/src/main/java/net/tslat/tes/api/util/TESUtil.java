@@ -109,6 +109,11 @@ public interface TESUtil {
 	 */
 	TESEntityType getEntityType(LivingEntity entity);
 
+	/**
+	 * Determine whether the given entity instance should be considered a boss
+	 */
+	boolean isBossEntity(LivingEntity entity);
+
 	void clearDynamicCaches();
 
 	// Because vanilla isn't even remotely consistent

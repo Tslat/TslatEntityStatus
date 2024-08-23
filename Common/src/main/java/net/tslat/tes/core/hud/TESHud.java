@@ -21,7 +21,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
-import net.tslat.tes.api.TESEntityType;
 import net.tslat.tes.api.TESHudElement;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.api.util.TESUtil;
@@ -124,7 +123,7 @@ public class TESHud {
 			return;
 		}
 
-		if (!TESAPI.getConfig().hudEnabled() || Minecraft.getInstance().options.hideGui || (!TESAPI.getConfig().hudBossesEnabled() && TESConstants.UTILS.getEntityType(TARGET_ENTITY) == TESEntityType.BOSS))
+		if (!TESAPI.getConfig().hudEnabled() || Minecraft.getInstance().options.hideGui || (!TESAPI.getConfig().hudBossesEnabled() && TESConstants.UTILS.isBossEntity(TARGET_ENTITY)))
 			return;
 
 		float hudOpacity = TESAPI.getConfig().hudOpacity();

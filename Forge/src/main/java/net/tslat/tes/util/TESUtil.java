@@ -11,6 +11,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.tslat.tes.api.TESEntityType;
+import net.tslat.tes.api.util.TESClientUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -36,11 +37,14 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 
 	@Override
 	public TESEntityType getEntityType(LivingEntity entity) {
+		if (entity.getType() != EntityType.PLAYER && entity.isAlliedTo(TESClientUtil.getClientPlayer()))
+			return TESEntityType.PASSIVE;
+
 		return this.entityTypeMap.computeIfAbsent(entity.getClass(), clazz -> {
 			if (entity.getType() == EntityType.PLAYER)
 				return TESEntityType.PLAYER;
 
-			if (ForgeRegistries.ENTITY_TYPES.tags().getTag(Tags.EntityTypes.BOSSES).contains(entity.getType()))
+			if (isBossEntity(entity))
 				return TESEntityType.BOSS;
 
 			if (entity instanceof Enemy)
@@ -51,6 +55,11 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 
 			return TESEntityType.PASSIVE;
 		});
+	}
+
+	@Override
+	public boolean isBossEntity(LivingEntity entity) {
+		return ForgeRegistries.ENTITY_TYPES.tags().getTag(Tags.EntityTypes.BOSSES).contains(entity.getType());
 	}
 
 	@Override
