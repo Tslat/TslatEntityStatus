@@ -124,7 +124,7 @@ public class TESHud {
 			return;
 		}
 
-		if (!TESAPI.getConfig().hudEnabled() || (!TESAPI.getConfig().hudBossesEnabled() && TESConstants.UTILS.getEntityType(TARGET_ENTITY) == TESEntityType.BOSS))
+		if (!TESAPI.getConfig().hudEnabled() || Minecraft.getInstance().options.hideGui || (!TESAPI.getConfig().hudBossesEnabled() && TESConstants.UTILS.getEntityType(TARGET_ENTITY) == TESEntityType.BOSS))
 			return;
 
 		float hudOpacity = TESAPI.getConfig().hudOpacity();
