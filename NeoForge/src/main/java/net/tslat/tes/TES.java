@@ -6,6 +6,8 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -19,8 +21,10 @@ public class TES {
 	public static PayloadRegistrar packetRegistrar = null;
 
 	public TES(ModContainer modContainer, IEventBus modBus) {
-		if (FMLEnvironment.dist == Dist.CLIENT)
+		if (FMLEnvironment.dist == Dist.CLIENT) {
 			TESConfig.init(modContainer::registerConfig);
+			modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+		}
 
 		modBus.addListener(TES::clientInit);
 		modBus.addListener(TES::networkingInit);
