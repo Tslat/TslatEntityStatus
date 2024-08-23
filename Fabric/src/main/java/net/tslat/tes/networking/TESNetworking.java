@@ -30,8 +30,10 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 	@ApiStatus.Internal
 	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, boolean isClientBound) {
 		if (isClientBound) {
+			PayloadTypeRegistry.playS2C().register(packetType, (StreamCodec<FriendlyByteBuf, P>)codec);
+
 			if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
-				TESClient.registerPacket(packetType, codec);
+				TESClient.registerPacket(packetType);
 		}
 		else {
 			PayloadTypeRegistry.playC2S().register(packetType, (StreamCodec<FriendlyByteBuf, P>)codec);
