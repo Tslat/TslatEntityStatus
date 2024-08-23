@@ -174,7 +174,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 
 		this.hudArmourFontStyle = config
 				.comment("What style TES font should render in for entity armour values in the HUD")
-				.translation("onfig.tes.hud.armour.fontStyle")
+				.translation("config.tes.hud.armour.fontStyle")
 				.defineEnum("hudArmourFontStyle", TESClientUtil.TextRenderType.DROP_SHADOW);
 
 		this.hudEntityIcons = config
