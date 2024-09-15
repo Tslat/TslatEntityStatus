@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
@@ -15,8 +16,8 @@ import java.util.List;
 
 public final class TESEntityTracking {
 	private static final Int2ObjectOpenHashMap<EntityState> ENTITY_STATES = new Int2ObjectOpenHashMap<>(50);
+	private static final IntSet RENDERED_NAMES = new IntOpenHashSet();
 	private static List<LivingEntity> ENTITIES_TO_RENDER = new ObjectArrayList<>();
-	private static IntSet RENDERED_NAMES = new IntOpenHashSet();
 
 	public static void accountForEntity(LivingEntity entity) {
 		ENTITY_STATES.compute(entity.getId(), (key, value) -> {
@@ -40,10 +41,18 @@ public final class TESEntityTracking {
 
 		if (!mc.isPaused() && mc.level != null && !mc.level.tickRateManager().isFrozen()) {
 			TESParticleManager.clearClaims();
-			ENTITY_STATES.values().forEach(EntityState::tick);
 
-			if (mc.level.getGameTime() % TESAPI.getConfig().getCacheCleanFrequency() == 0)
-				ENTITY_STATES.values().removeIf(state -> !state.isValid());
+			for (ObjectIterator<EntityState> iterator = ENTITY_STATES.values().iterator(); iterator.hasNext();) {
+				EntityState state = iterator.next();
+
+				if (!state.isValid()) {
+					iterator.remove();
+
+					continue;
+				}
+
+				state.tick();
+			}
 		}
 	}
 

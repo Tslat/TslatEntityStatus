@@ -155,15 +155,19 @@ public class TESHud {
 	}
 
 	public static void renderInWorld(PoseStack poseStack, LivingEntity entity, DeltaTracker deltaTracker) {
-		if (!TESAPI.getConfig().inWorldBarsEnabled() || entity.isDeadOrDying() || (entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf()))
-			return;
-
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
-		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
 
-		if (entityState == null || !TESAPI.getConfig().inWorldHUDActivation().test(entityState))
+		if (entityState == null || !entityState.isValid())
 			return;
 
+		entityState.markActive();
+
+		if (!TESAPI.getConfig().inWorldBarsEnabled() ||
+				(entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf()) ||
+				!TESAPI.getConfig().inWorldHUDActivation().test(entityState))
+			return;
+
+		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
 		float hudOpacity = TESAPI.getConfig().inWorldHudOpacity();
 		Minecraft mc = Minecraft.getInstance();
 		Vec3 position = entity.getPosition(partialTick)

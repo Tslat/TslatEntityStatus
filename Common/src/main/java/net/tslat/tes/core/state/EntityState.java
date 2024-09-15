@@ -33,11 +33,13 @@ public class EntityState {
 	protected float lastTransitionHealth;
 	protected long lastTransitionTime;
 	protected DamageSource lastDamageSource;
+	protected int lastRenderTick;
 
 	public EntityState(LivingEntity entity) {
 		this.entity = entity;
 		this.currentHealth = entity.getHealth();
 		this.lastHealth = this.currentHealth;
+		this.lastRenderTick = entity.tickCount;
 
 		if (TESConstants.CONFIG.isSyncingEffects())
 			TESConstants.NETWORKING.requestEffectsSync(this.entity.getId());
@@ -77,9 +79,13 @@ public class EntityState {
 
 		this.effects.removeAll(idsToRemove);
 	}
+
+	public void markActive() {
+		this.lastRenderTick = this.entity.tickCount;
+	}
 	
 	public boolean isValid() {
-		return this.entity != null && this.entity.isAlive() && this.entity.level() == Minecraft.getInstance().level;
+		return this.entity != null && !this.entity.isRemoved() && this.entity.level() == Minecraft.getInstance().level && (this.lastRenderTick < 0 || this.lastRenderTick >= this.entity.tickCount - 200);
 	}
 
 	public void tick() {
