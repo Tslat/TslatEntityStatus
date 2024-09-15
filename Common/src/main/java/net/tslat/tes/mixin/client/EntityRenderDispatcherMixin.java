@@ -24,7 +24,7 @@ public class EntityRenderDispatcherMixin {
 	private <E extends Entity> void onEntityRender(E entity, double posX, double posY, double posZ, float rotYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo callback) {
 		LivingEntity target = TESConstants.UTILS.getLivingEntityIfPossible(entity);
 
-		if (target != null && TESUtil.shouldTESHandleEntity(target, TESClientUtil.getClientPlayer())) {
+		if (target != null && TESClientUtil.getClientPlayer() != null && TESUtil.shouldTESHandleEntity(target, TESClientUtil.getClientPlayer())) {
 			TESEntityTracking.accountForEntity(target);
 
 			if (TESAPI.getConfig().inWorldBarsEnabled())
