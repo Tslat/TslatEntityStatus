@@ -33,6 +33,7 @@ neoForge {
 dependencies {
     compileOnly(libs.mixin)
     compileOnly(libs.mixinextras.common)
+    compileOnly(libs.forgeconfigapiport.common)
 }
 
 publishing {

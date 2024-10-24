@@ -48,7 +48,7 @@ public interface TESParticle<D> {
 	 * This method handles the translations and rotations required to render text in-world
 	 */
 	default void defaultedTextRender(Minecraft mc, PoseStack poseStack, Vector3f prevPos, Vector3f pos, float partialTick, Runnable renderCallback) {
-		float scale = 0.035f * TESAPI.getConfig().getParticleScale();
+		float scale = 0.035f * TESAPI.getConfig().particleScale();
 		Camera camera = mc.gameRenderer.getMainCamera();
 		Vector3f renderPos = prevPos
 				.lerp(pos, partialTick, new Vector3f())

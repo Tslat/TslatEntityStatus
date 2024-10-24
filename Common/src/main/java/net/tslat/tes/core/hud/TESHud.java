@@ -216,7 +216,7 @@ public class TESHud {
 				TESHud.setTargetEntity(target);
 		}
 		else {
-			double targetingRange = TESAPI.getConfig().getHudTargetDistance();
+			double targetingRange = TESAPI.getConfig().hudTargetDistance();
 			Entity cameraEntity = mc.getCameraEntity();
 			Vec3 cameraPos = cameraEntity.getEyePosition(partialTick);
 			Vec3 cameraView = cameraEntity.getViewVector(partialTick);

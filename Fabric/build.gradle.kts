@@ -47,7 +47,7 @@ dependencies {
     })
     modImplementation(libs.fabric)
     modImplementation(libs.fabric.api)
-    modImplementation(libs.midnightlib)
+    modImplementation(libs.forgeconfigapiport.fabric)
     compileOnly(project(":common"))
 }
 
@@ -105,6 +105,7 @@ modrinth {
     loaders.set(listOf("fabric"))
     dependencies {
         required.project("fabric-api")
+        required.project("forge-config-api-port")
     }
 
     //debugMode = true
@@ -116,13 +117,15 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
     val mainFile = upload(modCurseforgeId, tasks.remapJar)
+    mainFile.displayName = "${modDisplayName} Fabric ${mcVersion} ${version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Fabric")
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java ${javaVersion}")
     mainFile.changelog = modChangelogUrl
+    mainFile.addRelation("forge-config-api-port-fabric", "RELATION_REQUIRED")
 
-    //debugMode = true
+    debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 

@@ -15,7 +15,7 @@ import net.tslat.tes.networking.TESNetworking;
 public class TES {
 	public TES() {
 		if (FMLEnvironment.dist == Dist.CLIENT)
-			TESConfig.init();
+			NeoForgeConfigRegistry.register(TESConstants.MOD_ID, ModConfig.Type.CLIENT, TESConfig.init());
 
 		TESNetworking.init();
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(TES::clientInit);

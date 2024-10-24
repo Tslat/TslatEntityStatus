@@ -13,7 +13,7 @@
       "sources": "${sources_url}"
     },
   
-    "license": "${license}",
+    "license": "${mod_license}",
     "icon": "logo.png",
   
     "environment": "*",
@@ -33,7 +33,8 @@
       "fabricloader": ">=${fabric_loader_version_range}",
       "fabric-api": "*",
       "minecraft": ">=${minecraft_version}",
-      "java": ">=${java_version}"
+      "java": ">=${java_version}",
+      "forgeconfigapiport": ">=${forgeconfigapiport_version}"
     }
   }
   

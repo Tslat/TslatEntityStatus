@@ -96,6 +96,7 @@ dependencies {
     compileOnly(libs.mixinextras.common)
     annotationProcessor(libs.mixinextras.common)
     testCompileOnly(libs.mixinextras.common)
+    implementation(libs.forgeconfigapiport.forge)
 
     runtimeOnly(libs.mixinextras.forge)
     jarJar(libs.mixinextras.forge) {
@@ -165,11 +166,13 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
     val mainFile = upload(modCurseforgeId, tasks.jarJar)
+    mainFile.displayName = "${modDisplayName} Forge ${mcVersion} ${version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java ${javaVersion}")
     mainFile.changelog = modChangelogUrl
+    mainFile.addRelation("forge-config-api-port-fabric", "RELATION_REQUIRED")
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
