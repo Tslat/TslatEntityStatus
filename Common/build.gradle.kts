@@ -4,10 +4,21 @@ plugins {
     alias(libs.plugins.moddevgradle)
 }
 
-version = libs.versions.tes.get()
+val modId              : String by project
+val modDisplayName     : String by project
+val modModrinthId      : String by project
+val modCurseforgeId    : String by project
+val modChangelogUrl    : String by project
+val modVersion         = libs.versions.tes.get()
+val javaVersion        = libs.versions.java.get()
+val mcVersion          = libs.versions.minecraft.asProvider().get()
+val parchmentMcVersion = libs.versions.parchment.minecraft.get()
+val parchmentVersion   = libs.versions.parchment.asProvider().get()
+
+version = modVersion
 
 base {
-    archivesName = "tes-common-${libs.versions.minecraft.asProvider().get()}"
+    archivesName = "${modDisplayName}-common-${mcVersion}"
 }
 
 neoForge {
@@ -15,8 +26,8 @@ neoForge {
     validateAccessTransformers = true
     accessTransformers.files.setFrom("src/main/resources/META-INF/accesstransformer-nf.cfg")
 
-    parchment.minecraftVersion.set(libs.versions.parchment.minecraft.get())
-    parchment.mappingsVersion.set(libs.versions.parchment.asProvider().get())
+    parchment.minecraftVersion.set(mcVersion)
+    parchment.mappingsVersion.set(parchmentVersion)
 }
 
 dependencies {
@@ -27,7 +38,7 @@ dependencies {
 publishing {
     publishing {
         publications {
-            create<MavenPublication>("tes") {
+            create<MavenPublication>(modId) {
                 from(components["java"])
                 artifactId = base.archivesName.get()
             }

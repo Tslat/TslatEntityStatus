@@ -4,9 +4,9 @@
     "version": "${version}",
   
     "name": "TES",
-    "description": "${description}",
+    "description": "${mod_description}",
     "authors": [
-      "${authors}"
+      "${mod_authors}"
     ],
     "contact": {
       "homepage": "${homepage_url}",

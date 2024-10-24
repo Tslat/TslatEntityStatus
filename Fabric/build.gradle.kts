@@ -128,7 +128,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
 
 publishing {
     publications {
-        create<MavenPublication>("tes") {
+        create<MavenPublication>(modId) {
             from(components["java"])
             artifactId = base.archivesName.get()
         }
