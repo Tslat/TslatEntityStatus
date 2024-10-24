@@ -26,7 +26,7 @@ neoForge {
     validateAccessTransformers = true
     accessTransformers.files.setFrom("src/main/resources/META-INF/accesstransformer-nf.cfg")
 
-    parchment.minecraftVersion.set(mcVersion)
+    parchment.minecraftVersion.set(parchmentMcVersion)
     parchment.mappingsVersion.set(parchmentVersion)
 }
 
