@@ -9,6 +9,8 @@ import net.minecraft.Util;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -44,7 +46,7 @@ public class TESHud {
 	private static final Map<String, TESHudElement> ELEMENTS = Util.make(Collections.synchronizedMap(new Object2ObjectArrayMap<>()), map -> {
 			map.put("EntityName", BuiltinHudElements::renderEntityName);
 			map.put("HealthBar", BuiltinHudElements::renderEntityHealth);
-			map.put("Armour", BuiltinHudElements::renderEntityArmour);
+			map.put("Stats", BuiltinHudElements::renderEntityStats);
 			map.put("Icons", BuiltinHudElements::renderEntityIcons);
 			map.put("Effects", BuiltinHudElements::renderEntityEffects);
 			map.put("HorseStats", BuiltinHudElements::renderHorseStats);
@@ -170,9 +172,10 @@ public class TESHud {
 		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
 		float hudOpacity = TESAPI.getConfig().inWorldHudOpacity();
 		Minecraft mc = Minecraft.getInstance();
+		EntityRenderer<? super LivingEntity, EntityRenderState> renderer = (EntityRenderer)mc.getEntityRenderDispatcher().getRenderer(entity);
 		Vec3 position = entity.getPosition(partialTick)
 				.subtract(mc.gameRenderer.getMainCamera().getPosition())
-				.add(mc.getEntityRenderDispatcher().getRenderer(entity).getRenderOffset(entity, partialTick));
+				.add(renderer.getRenderOffset(renderer.createRenderState(entity, partialTick)));
 
 		poseStack.pushPose();
 		poseStack.translate(position.x, position.y, position.z);

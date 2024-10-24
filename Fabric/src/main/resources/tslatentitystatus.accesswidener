@@ -1,10 +1,15 @@
 accessWidener v1 named
 
+accessible field net/minecraft/client/gui/GuiGraphics bufferSource Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;
+accessible field net/minecraft/client/renderer/LevelRenderer targets Lnet/minecraft/client/renderer/LevelTargetBundle;
 accessible class net/minecraft/client/gui/Font$StringRenderOutput
 accessible field net/minecraft/client/gui/Font filterFishyGlyphs Z
 accessible method net/minecraft/client/gui/Font getFontSet (Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/gui/font/FontSet;
 accessible field net/minecraft/client/gui/Font$StringRenderOutput x F
 accessible field net/minecraft/client/gui/Font$StringRenderOutput y F
+accessible method net/minecraft/client/gui/Font$StringRenderOutput finish (F)F
+accessible method net/minecraft/client/gui/Font$StringRenderOutput renderCharacters ()V
+
 accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MIN_MOVEMENT_SPEED F
 accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MAX_MOVEMENT_SPEED F
 accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MIN_JUMP_STRENGTH F

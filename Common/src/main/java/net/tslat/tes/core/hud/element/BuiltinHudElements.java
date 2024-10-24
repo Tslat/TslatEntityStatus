@@ -5,12 +5,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.CoreShaders;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,17 +37,17 @@ public final class BuiltinHudElements {
 			if (!TESAPI.getConfig().inWorldHudEntityName() && (!TESConstants.CONFIG.inWorldHudNameOverride() || !entity.hasCustomName()))
 				return 0;
 
-			TESClientUtil.centerTextForRender(entity.getDisplayName(), 0, 0, (x, y) -> TESAPI.getConfig().inWorldHudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), x, y, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource()));
+			TESClientUtil.centerTextForRender(entity.getDisplayName(), 0, 0, (x, y) -> TESAPI.getConfig().inWorldHudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), x, y, ARGB.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource));
 		}
 		else {
 			if (!TESAPI.getConfig().hudEntityName())
 				return 0;
 
-			TESAPI.getConfig().hudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), 0, 0, FastColor.ARGB32.color(255, 255, 255, 255), guiGraphics.bufferSource());
+			TESAPI.getConfig().hudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), 0, 0, ARGB.color(255, 255, 255, 255), guiGraphics.bufferSource);
 		}
 
 		TESEntityTracking.markNameRendered(entity);
-		guiGraphics.bufferSource().endLastBatch();
+		guiGraphics.bufferSource.endLastBatch();
 
 		return mc.font.lineHeight;
 	}
@@ -100,13 +101,13 @@ public final class BuiltinHudElements {
 			float halfTextWidth = mc.font.width(healthText) / 2f;
 			float center = barWidth / 2f;
 
-			RenderSystem.setShader(GameRenderer::getPositionColorShader);
+			RenderSystem.setShader(CoreShaders.POSITION_COLOR);
 
 			poseStack.translate(0, 0, 0.001f);
 			TESClientUtil.drawColouredSquare(guiGraphics, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 1, 9, 0x090909 | (int)(opacity * 255 * TESConstants.CONFIG.hudBarFontBackingOpacity()) << 24);
 			poseStack.translate(0, 0, 0.001f);
 
-			(inWorldHud ? TESAPI.getConfig().inWorldHudHealthFontStyle() : TESAPI.getConfig().hudHealthFontStyle()).render(mc.font, guiGraphics.pose(), Component.literal(healthText), center - halfTextWidth, -1, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource());
+			(inWorldHud ? TESAPI.getConfig().inWorldHudHealthFontStyle() : TESAPI.getConfig().hudHealthFontStyle()).render(mc.font, guiGraphics.pose(), Component.literal(healthText), center - halfTextWidth, -1, ARGB.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource);
 		}
 
 		poseStack.popPose();
@@ -114,13 +115,13 @@ public final class BuiltinHudElements {
 		return mc.font.lineHeight;
 	}
 
-	public static int renderEntityArmour(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean inWorldHud) {
+	public static int renderEntityStats(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean inWorldHud) {
 		if (inWorldHud) {
-			if (!TESAPI.getConfig().inWorldHudArmour())
+			if (!TESAPI.getConfig().inWorldHudStats())
 				return 0;
 		}
 		else {
-			if (!TESAPI.getConfig().hudArmour())
+			if (!TESAPI.getConfig().hudStats())
 				return 0;
 		}
 
@@ -130,31 +131,43 @@ public final class BuiltinHudElements {
 			return 0;
 
 		float toughness = TESUtil.getArmourToughness(entity);
-		int textColour = FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255);
+		float meleeDamage = TESUtil.getMeleeDamage(entity);
+		int textColour = ARGB.color((int)(opacity * 255f), 255, 255, 255);
+		Component armourString = Component.literal("x" + armour);
+		Component toughnessString  = toughness > 0 ? Component.literal("x" + TESUtil.roundToDecimal(toughness, 1)) : null;
+		Component meleeDamageString  = meleeDamage > 0 ? Component.literal("x" + TESUtil.roundToDecimal(meleeDamage, 1)) : null;
+		int armourX = 0;
+		int toughnessX = armourX + 11 + mc.font.width(armourString);
+		int meleeDamageX = toughnessX + (toughnessString == null ? 0 : mc.font.width(toughnessString));
 		PoseStack poseStack = guiGraphics.pose();
 		TextureAtlasSprite armourSprite = TESClientUtil.getAtlasSprite(TESClientUtil.STAT_ARMOUR);
 		TextureAtlasSprite toughnessSprite = TESClientUtil.getAtlasSprite(TESClientUtil.STAT_TOUGHNESS);
+		TextureAtlasSprite meleeDamageSprite = TESClientUtil.getAtlasSprite(TESClientUtil.STAT_MELEE_DAMAGE);
 
 		poseStack.pushPose();
 
-		if (inWorldHud) {
-			int totalWidth = toughness > 0 ? 43 + mc.font.width("x" + TESUtil.roundToDecimal(toughness, 1)) : mc.font.width("x" + armour) + 10;
-
-			poseStack.translate(totalWidth * -0.5f, 0, 0);
-		}
+		if (inWorldHud)
+			poseStack.translate((meleeDamageX + (meleeDamageString == null ? 0 : mc.font.width(meleeDamageString)) + 2) * -0.5f, 0, 0);
 
 		TESClientUtil.prepRenderForTexture(armourSprite.atlasLocation());
 		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(1, 1, 1, opacity);
-		TESClientUtil.drawSprite(guiGraphics, armourSprite, 0, 0, 9, 9, 0, 0, 9, 9, 9, 9);
+
+		TESClientUtil.drawSprite(guiGraphics, armourSprite, armourX, 0, 9, 9, 0, 0);
 
 		if (toughness > 0)
-			TESClientUtil.drawSprite(guiGraphics, toughnessSprite, 33, 0, 9, 9, 0, 0, 9, 9, 9, 9);
+			TESClientUtil.drawSprite(guiGraphics, toughnessSprite, toughnessX, 0, 9, 9, 0, 0);
 
-		(inWorldHud ? TESAPI.getConfig().inWorldHudArmourFontStyle() : TESAPI.getConfig().hudArmourFontStyle()).render(mc.font, guiGraphics.pose(), Component.literal("x" + armour), 9.5f, 1, textColour, guiGraphics.bufferSource());
+		if (meleeDamage > 0)
+			TESClientUtil.drawSprite(guiGraphics, meleeDamageSprite, meleeDamageX, 0, 9, 9, 0, 0);
+
+		(inWorldHud ? TESAPI.getConfig().inWorldHudStatsFontStyle() : TESAPI.getConfig().hudStatsFontStyle()).render(mc.font, guiGraphics.pose(), armourString, armourX + 10, 1, textColour, guiGraphics.bufferSource);
 
 		if (toughness > 0)
-			(inWorldHud ? TESAPI.getConfig().inWorldHudArmourFontStyle() : TESAPI.getConfig().hudArmourFontStyle()).render(mc.font, guiGraphics.pose(), Component.literal("x" + TESUtil.roundToDecimal(toughness, 1)), 43, 1, textColour, guiGraphics.bufferSource());
+			(inWorldHud ? TESAPI.getConfig().inWorldHudStatsFontStyle() : TESAPI.getConfig().hudStatsFontStyle()).render(mc.font, guiGraphics.pose(), toughnessString, toughnessX + 10, 1, textColour, guiGraphics.bufferSource);
+
+		if (meleeDamage > 0)
+			(inWorldHud ? TESAPI.getConfig().inWorldHudStatsFontStyle() : TESAPI.getConfig().hudStatsFontStyle()).render(mc.font, guiGraphics.pose(), meleeDamageString, meleeDamageX + 10, 1, textColour, guiGraphics.bufferSource);
 
 		poseStack.popPose();
 
@@ -210,7 +223,7 @@ public final class BuiltinHudElements {
 		PoseStack poseStack = guiGraphics.pose();
 
 		poseStack.pushPose();
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShader(CoreShaders.POSITION_TEX);
 		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(1, 1, 1, opacity);
 		poseStack.scale(0.5f, 0.5f, 1);
@@ -222,7 +235,7 @@ public final class BuiltinHudElements {
 			TextureAtlasSprite sprite = textureManager.get(effect);
 
 			RenderSystem.setShaderTexture(0, sprite.atlasLocation());
-			guiGraphics.blit(i * 18 + x, y, 0, 18, 18, sprite);
+			guiGraphics.blitSprite(RenderType::guiTextured, sprite, i * 18 + x, y, 18, 18);
 
 			if (++i >= iconsPerRow) {
 				i = 0;

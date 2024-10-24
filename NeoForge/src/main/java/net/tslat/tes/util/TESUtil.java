@@ -59,7 +59,7 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 
 	@Override
 	public boolean isBossEntity(LivingEntity entity) {
-		return BuiltInRegistries.ENTITY_TYPE.getTag(Tags.EntityTypes.BOSSES).get().contains(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entity.getType()));
+		return BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entity.getType()).is(Tags.EntityTypes.BOSSES);
 	}
 
 	@Override

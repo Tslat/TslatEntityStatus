@@ -4,18 +4,16 @@
   "package": "net.tslat.tes.mixin",
   "compatibilityLevel": "JAVA_21",
   "refmap": "tslatentitystatus.refmap.json",
+  "injectors": {
+    "defaultRequire": 1
+  },
   "mixins": [
     "common.LivingEntityMixin"
   ],
   "client": [
     "client.EntityRenderDispatcherMixin",
-    "client.EntityRendererMixin",
     "client.GameRendererMixin",
-    "client.GuiGraphicsAccessor",
     "client.LevelRendererMixin",
     "client.MinecraftMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+  ]
 }

@@ -1,8 +1,7 @@
 package net.tslat.tes.util;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalEntityTypeTags;
-import net.minecraft.core.Holder;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalEntityTypeTags;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -56,7 +55,7 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 
 	@Override
 	public boolean isBossEntity(LivingEntity entity) {
-		return BuiltInRegistries.ENTITY_TYPE.getTag(ConventionalEntityTypeTags.BOSSES).map(tag -> tag.contains(Holder.direct(entity.getType()))).orElse(false);
+		return BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entity.getType()).is(ConventionalEntityTypeTags.BOSSES);
 	}
 
 	@Override

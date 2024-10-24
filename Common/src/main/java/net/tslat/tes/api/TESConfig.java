@@ -80,14 +80,14 @@ public interface TESConfig {
 	boolean hudBossesEnabled();
 
 	/**
-	 * Whether the TES HUD should render the entity's armour and toughness
+	 * Whether the TES HUD should render the entity's stats
 	 */
-	boolean hudArmour();
+	boolean hudStats();
 
 	/**
-	 * What style TES font should render in for entity armour values in the HUD
+	 * What style TES font should render in for entity stats values in the HUD
 	 */
-	TESClientUtil.TextRenderType hudArmourFontStyle();
+	TESClientUtil.TextRenderType hudStatsFontStyle();
 
 	/**
 	 * Whether the TES HUD should render the entity's alignment icons
@@ -199,14 +199,14 @@ public interface TESConfig {
 	TESClientUtil.TextRenderType inWorldHudEntityNameFontStyle();
 
 	/**
-	 * Whether the in-world TES entity status HUD should include the entity's armour values
+	 * Whether the in-world TES entity status HUD should include the entity's stats values
 	 */
-	boolean inWorldHudArmour();
+	boolean inWorldHudStats();
 
 	/**
-	 * What style TES font should render in for entity armour values in the in-world HUD
+	 * What style TES font should render in for entity stats values in the in-world HUD
 	 */
-	TESClientUtil.TextRenderType inWorldHudArmourFontStyle();
+	TESClientUtil.TextRenderType inWorldHudStatsFontStyle();
 
 	/**
 	 * Whether the in-world TES entity status HUD should include the entity's alignment icons

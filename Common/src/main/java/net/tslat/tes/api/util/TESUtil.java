@@ -69,6 +69,16 @@ public interface TESUtil {
 	}
 
 	/**
+	 * Get the provided entity's {@link Attributes#ATTACK_DAMAGE attack damage} value, if it has any
+	 */
+	static float getMeleeDamage(LivingEntity entity) {
+		if (entity.getAttributes().hasAttribute(Attributes.ATTACK_DAMAGE))
+			return (float)entity.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
+		return 0;
+	}
+
+	/**
 	 * Get whether the provided Entity is immune to fire or not
 	 */
 	static boolean isFireImmune(Entity entity) {

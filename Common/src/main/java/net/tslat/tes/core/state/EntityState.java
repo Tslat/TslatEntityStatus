@@ -30,6 +30,7 @@ public class EntityState {
 
 	protected float currentHealth;
 	protected float lastHealth;
+	protected boolean wasPreHurt;
 	protected float lastTransitionHealth;
 	protected long lastTransitionTime;
 	protected DamageSource lastDamageSource;
@@ -39,6 +40,7 @@ public class EntityState {
 		this.entity = entity;
 		this.currentHealth = entity.getHealth();
 		this.lastHealth = this.currentHealth;
+		this.wasPreHurt = this.currentHealth < entity.getMaxHealth();
 		this.lastRenderTick = entity.tickCount;
 
 		if (TESConstants.CONFIG.isSyncingEffects())
@@ -140,7 +142,7 @@ public class EntityState {
 					}
 				}
 
-				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth <= 0 && this.lastHealth >= this.entity.getMaxHealth()) {
+				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth <= 0 && !this.wasPreHurt && this.lastHealth >= this.entity.getMaxHealth()) {
 					particle = new ComponentParticle(this, particlePos, TESParticle.Animation.POP_OFF, Component.translatable("config.tes.particle.verbal.instakill").setStyle(Style.EMPTY.withColor(colour)));
 				}
 				else {
@@ -156,6 +158,7 @@ public class EntityState {
 				}
 			}
 
+			this.wasPreHurt = false;
 			TESParticleManager.addParticle(particle);
 		}
 	}

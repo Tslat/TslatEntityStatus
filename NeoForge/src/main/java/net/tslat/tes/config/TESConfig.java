@@ -31,8 +31,8 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ModConfigSpec.BooleanValue hudEntityName;
 	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudEntityNameFontStyle;
 	private final ModConfigSpec.BooleanValue hudBossesEnabled;
-	private final ModConfigSpec.BooleanValue hudArmour;
-	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudArmourFontStyle;
+	private final ModConfigSpec.BooleanValue hudStats;
+	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudStatsFontStyle;
 	private final ModConfigSpec.BooleanValue hudEntityIcons;
 	private final ModConfigSpec.BooleanValue hudPotionIcons;
 	private final ModConfigSpec.BooleanValue hudHorseStats;
@@ -49,8 +49,8 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ModConfigSpec.BooleanValue inWorldBarsSegments;
 	private final ModConfigSpec.BooleanValue inWorldHudEntityName;
 	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudEntityNameFontStyle;
-	private final ModConfigSpec.BooleanValue inWorldHudArmour;
-	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudArmourFontStyle;
+	private final ModConfigSpec.BooleanValue inWorldHudStats;
+	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudStatsFontStyle;
 	private final ModConfigSpec.BooleanValue inWorldHudEntityIcons;
 	private final ModConfigSpec.BooleanValue inWorldHudPotionIcons;
 	private final ModConfigSpec.BooleanValue inWorldHudHorseStats;
@@ -168,15 +168,15 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.translation("config.tes.hud.bossesEnabled")
 				.define("hudBossesEnabled", true);
 
-		this.hudArmour = config
-				.comment("Whether the TES HUD should render the entity's armour and toughness")
-				.translation("config.tes.hud.armour")
-				.define("hudArmour", true);
+		this.hudStats = config
+				.comment("Whether the TES HUD should render the entity's stats")
+				.translation("config.tes.hud.stats")
+				.define("hudStats", true);
 
-		this.hudArmourFontStyle = config
-				.comment("What style TES font should render in for entity armour values in the HUD")
-				.translation("config.tes.hud.armour.fontStyle")
-				.defineEnum("hudArmourFontStyle", TESClientUtil.TextRenderType.DROP_SHADOW);
+		this.hudStatsFontStyle = config
+				.comment("What style TES font should render in for entity stats values in the HUD")
+				.translation("config.tes.hud.stats.fontStyle")
+				.defineEnum("hudStatsFontStyle", TESClientUtil.TextRenderType.DROP_SHADOW);
 
 		this.hudEntityIcons = config
 				.comment("Whether the TES HUD should render the entity's alignment icons")
@@ -271,15 +271,15 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.translation("config.tes.inWorldHud.entityName.fontStyle")
 				.defineEnum("inWorldHudEntityNameFontStyle", TESClientUtil.TextRenderType.DROP_SHADOW);
 
-		this.inWorldHudArmour = config
-				.comment("Whether the in-world entity status HUD should render the entity's armour values")
-				.translation("config.tes.inWorldHud.armour")
-				.define("inWorldHudArmour", false);
+		this.inWorldHudStats = config
+				.comment("Whether the in-world entity status HUD should render the entity's stats values")
+				.translation("config.tes.inWorldHud.stats")
+				.define("inWorldHudStats", false);
 
-		this.inWorldHudArmourFontStyle = config
-				.comment("What style TES font should render in for entity armour values in the in-world HUD")
-				.translation("config.tes.inWorldHud.armour.fontStyle")
-				.defineEnum("inWorldHudArmourFontStyle", TESClientUtil.TextRenderType.DROP_SHADOW);
+		this.inWorldHudStatsFontStyle = config
+				.comment("What style TES font should render in for entity stats values in the in-world HUD")
+				.translation("config.tes.inWorldHud.stats.fontStyle")
+				.defineEnum("inWorldHudStatsFontStyle", TESClientUtil.TextRenderType.DROP_SHADOW);
 
 		this.inWorldHudEntityIcons = config
 				.comment("Whether the in-world entity status HUD should render the entity's alignment icons")
@@ -429,13 +429,13 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	}
 
 	@Override
-	public boolean hudArmour() {
-		return hudArmour.get();
+	public boolean hudStats() {
+		return hudStats.get();
 	}
 
 	@Override
-	public TESClientUtil.TextRenderType hudArmourFontStyle() {
-		return this.hudArmourFontStyle.get();
+	public TESClientUtil.TextRenderType hudStatsFontStyle() {
+		return this.hudStatsFontStyle.get();
 	}
 
 	@Override
@@ -534,13 +534,13 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	}
 
 	@Override
-	public boolean inWorldHudArmour() {
-		return this.inWorldHudArmour.get();
+	public boolean inWorldHudStats() {
+		return this.inWorldHudStats.get();
 	}
 
 	@Override
-	public TESClientUtil.TextRenderType inWorldHudArmourFontStyle() {
-		return this.inWorldHudArmourFontStyle.get();
+	public TESClientUtil.TextRenderType inWorldHudStatsFontStyle() {
+		return this.inWorldHudStatsFontStyle.get();
 	}
 
 	@Override

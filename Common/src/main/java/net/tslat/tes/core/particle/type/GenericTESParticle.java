@@ -13,9 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
  * Generic class for TES Particles, with default base handling common to most particle types
  */
 public abstract class GenericTESParticle<D> implements TESParticle<D> {
-	@Deprecated(forRemoval = true)
-	protected static final int DEFAULT_LIFESPAN = 60;
-
 	protected int lifetime;
 	protected final Vector3f pos;
 	protected final Vector3f prevPos;

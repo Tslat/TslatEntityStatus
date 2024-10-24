@@ -13,16 +13,17 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor.ARGB32;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -31,7 +32,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
-import net.tslat.tes.mixin.client.GuiGraphicsAccessor;
 import org.joml.Matrix4f;
 
 import java.util.function.BiConsumer;
@@ -59,24 +59,7 @@ public final class TESClientUtil {
 
 	public static final ResourceLocation STAT_ARMOUR = TESConstants.id("stat/armour");
 	public static final ResourceLocation STAT_TOUGHNESS = TESConstants.id("stat/toughness");
-
-	/**
-	 * Draw some text on screen at a given position, offset for the text's height and width
-	 * @deprecated Use {@link TESClientUtil#centerTextForRender} and the various render style methods instead
-	 */
-	@Deprecated(forRemoval = true)
-	public static void renderCenteredText(GuiGraphics guiGraphics, String text, float x, float y, int colour) {
-		renderCenteredText(guiGraphics, Component.literal(text), x, y, colour);
-	}
-
-	/**
-	 * Draw some text on screen at a given position, offset for the text's height and width
-	 * @deprecated Use {@link TESClientUtil#centerTextForRender} and the various render style methods instead
-	 */
-	@Deprecated(forRemoval = true)
-	public static void renderCenteredText(GuiGraphics guiGraphics, Component text, float x, float y, int colour) {
-		drawText(guiGraphics, Minecraft.getInstance().font, text, x - Minecraft.getInstance().font.width(text) / 2f, y + 4f, colour);
-	}
+	public static final ResourceLocation STAT_MELEE_DAMAGE = TESConstants.id("stat/melee_damage");
 
 	/**
 	 * Draw some text on screen at a given position, offset for the text's height and width
@@ -97,7 +80,7 @@ public final class TESClientUtil {
 	 * Prep the shader and bind a texture for the given ResourceLocation
 	 */
 	public static void prepRenderForTexture(ResourceLocation texture) {
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShader(CoreShaders.POSITION_TEX);
 		RenderSystem.setShaderTexture(0, texture);
 	}
 
@@ -134,7 +117,7 @@ public final class TESClientUtil {
 			TextureAtlasSprite overlaySprite = getAtlasSprite(BAR_OVERLAY_SEGMENTS);
 
 			RenderSystem.setShaderTexture(0, overlaySprite.atlasLocation());
-			drawSprite(guiGraphics, overlaySprite, x, y, width, 5, 0, 0, 182, 5, 182, 5);
+			drawSprite(guiGraphics, overlaySprite, x, y, width, 5, 0, 0);
 		}
 	}
 
@@ -157,7 +140,7 @@ public final class TESClientUtil {
 			TESClientUtil.prepRenderForTexture(SPRITES_ATLAS);
 			RenderSystem.enableBlend();
 			RenderSystem.setShaderColor(1, 1, 1, 0.5f * opacity);
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(ENTITY_ICON_FRAME), 2, 2, 34, 45, 0, 0, 34, 45, 34, 45);
+			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(ENTITY_ICON_FRAME), 2, 2, 34, 45, 0, 0);
 
 			poseStack.translate(20, 25, 0);
 			poseStack.scale(-20, -20, 20);
@@ -189,7 +172,7 @@ public final class TESClientUtil {
 
 		Lighting.setupForEntityInInventory();
 
-		RenderSystem.runAsFancy(() -> renderEntityRaw(poseStack, entity, partialTick, 0, LightTexture.FULL_BRIGHT, bufferSource));
+		guiGraphics.drawSpecial(bufferSource2 -> renderEntityRaw(poseStack, entity, partialTick, 0, LightTexture.FULL_BRIGHT, bufferSource2));
 
 		bufferSource.endBatch();
 		Lighting.setupFor3DItems();
@@ -216,14 +199,15 @@ public final class TESClientUtil {
 	 */
 	public static <T extends Entity> void renderEntityRaw(PoseStack poseStack, T entity, float partialTick, float rotYaw, int packedLight, MultiBufferSource bufferSource) {
 		EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-		EntityRenderer<T> entityRenderer = (EntityRenderer<T>)entityRenderDispatcher.getRenderer(entity);
+		EntityRenderer<T, EntityRenderState> entityRenderer = (EntityRenderer<T, EntityRenderState>)entityRenderDispatcher.getRenderer(entity);
 
 		try {
-			Vec3 renderOffset = entityRenderer.getRenderOffset(entity, partialTick);
+			EntityRenderState renderState = entityRenderer.createRenderState(entity, 1);
+			Vec3 renderOffset = entityRenderer.getRenderOffset(renderState);
 
 			poseStack.pushPose();
 			poseStack.translate(renderOffset.x, renderOffset.y, renderOffset.z);
-			entityRenderer.render(entity, rotYaw, 1, poseStack, bufferSource, packedLight);
+			entityRenderer.render(renderState, poseStack, bufferSource, packedLight);
 			poseStack.popPose();
 		}
 		catch (Exception ex) {
@@ -299,6 +283,13 @@ public final class TESClientUtil {
 		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
+	public static void drawSprite(GuiGraphics guiGraphics, TextureAtlasSprite sprite, int posX, int posY, int width, int height, int u, int v) {
+		final int spriteWidth = sprite.contents().width();
+		final int spriteHeight = sprite.contents().height();
+
+		drawSprite(guiGraphics, sprite, posX, posY, width, height, u, v, spriteWidth, spriteHeight, spriteWidth, spriteHeight);
+	}
+
 	public static void drawSprite(GuiGraphics guiGraphics, TextureAtlasSprite sprite, int posX, int posY, int width, int height, int u, int v, int uWidth, int vHeight, int pngWidth, int pngHeight) {
 		final Matrix4f pose = guiGraphics.pose().last().pose();
 		final BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
@@ -322,7 +313,7 @@ public final class TESClientUtil {
 	 * @param text The text to draw
 	 * @param x The x position on the screen to render at
 	 * @param y The y position on the screen to render at
-	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 * @param colour The {@link ARGB packed int} colour for the text
 	 */
 	public static void drawText(GuiGraphics guiGraphics, Font font, String text, float x, float y, int colour) {
 		drawText(guiGraphics, font, Component.literal(text), x, y, colour);
@@ -335,11 +326,10 @@ public final class TESClientUtil {
 	 * @param text The text to draw
 	 * @param x The x position on the screen to render at
 	 * @param y The y position on the screen to render at
-	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 * @param colour The {@link ARGB packed int} colour for the text
 	 */
 	public static void drawText(GuiGraphics guiGraphics, Font font, Component text, float x, float y, int colour) {
-		renderDefaultStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.NORMAL.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource());
-		((GuiGraphicsAccessor)guiGraphics).callFlushIfUnmanaged();
+		renderDefaultStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.NORMAL.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource);
 	}
 
 	/**
@@ -356,7 +346,7 @@ public final class TESClientUtil {
 	 * @param text The text to draw
 	 * @param x The x position on the screen to render at
 	 * @param y The y position on the screen to render at
-	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 * @param colour The {@link ARGB packed int} colour for the text
 	 */
 	public static void drawTextWithShadow(GuiGraphics guiGraphics, Font font, String text, float x, float y, int colour) {
 		drawTextWithShadow(guiGraphics, font, Component.literal(text), x, y, colour);
@@ -368,11 +358,10 @@ public final class TESClientUtil {
 	 * @param text The text to draw
 	 * @param x The x position on the screen to render at
 	 * @param y The y position on the screen to render at
-	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 * @param colour The {@link ARGB packed int} colour for the text
 	 */
 	public static void drawTextWithShadow(GuiGraphics guiGraphics, Font font, Component text, float x, float y, int colour) {
-		renderDropShadowStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.DROP_SHADOW.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource());
-		((GuiGraphicsAccessor)guiGraphics).callFlushIfUnmanaged();
+		renderDropShadowStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.DROP_SHADOW.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource);
 	}
 
 	/**
@@ -392,10 +381,11 @@ public final class TESClientUtil {
 			return outlineOutput.accept(currentPosition, style.withColor(borderColour), codePoint);
 		});
 
+		outlineOutput.renderCharacters();
 		Font.StringRenderOutput output = fontRenderer.new StringRenderOutput(bufferSource, x, y, (colour & -67108864) == 0 ? colour | -16777216 : colour, false, pose, Font.DisplayMode.POLYGON_OFFSET, packedLight);
 
 		text.accept(output);
-		output.finish(0, x);
+		output.finish(x);
 	}
 
 	/**
@@ -405,7 +395,7 @@ public final class TESClientUtil {
 	 * @param text The text to draw
 	 * @param x The x position on the screen to render at
 	 * @param y The y position on the screen to render at
-	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 * @param colour The {@link ARGB packed int} colour for the text
 	 */
 	public static void drawTextWithGlow(GuiGraphics guiGraphics, Font font, String text, float x, float y, int colour) {
 		drawTextWithGlow(guiGraphics, font, Component.literal(text), x, y, colour);
@@ -417,11 +407,10 @@ public final class TESClientUtil {
 	 * @param text The text to draw
 	 * @param x The x position on the screen to render at
 	 * @param y The y position on the screen to render at
-	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 * @param colour The {@link ARGB packed int} colour for the text
 	 */
 	public static void drawTextWithGlow(GuiGraphics guiGraphics, Font font, Component text, float x, float y, int colour) {
-		renderGlowingStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.GLOWING.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource());
-		((GuiGraphicsAccessor)guiGraphics).callFlushIfUnmanaged();
+		renderGlowingStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.GLOWING.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource);
 	}
 
 	/**
@@ -438,7 +427,7 @@ public final class TESClientUtil {
 	 * @param text The text to draw
 	 * @param x The x position on the screen to render at
 	 * @param y The y position on the screen to render at
-	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 * @param colour The {@link ARGB packed int} colour for the text
 	 */
 	public static void drawTextWithOutline(GuiGraphics guiGraphics, Font font, String text, float x, float y, int colour) {
 		drawTextWithOutline(guiGraphics, font, Component.literal(text), x, y, colour);
@@ -450,11 +439,10 @@ public final class TESClientUtil {
 	 * @param text The text to draw
 	 * @param x The x position on the screen to render at
 	 * @param y The y position on the screen to render at
-	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the text
+	 * @param colour The {@link ARGB packed int} colour for the text
 	 */
 	public static void drawTextWithOutline(GuiGraphics guiGraphics, Font font, Component text, float x, float y, int colour) {
-		renderOutlineStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.OUTLINED.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource());
-		((GuiGraphicsAccessor)guiGraphics).callFlushIfUnmanaged();
+		renderOutlineStyleText(font, guiGraphics.pose().last().pose(), text.getVisualOrderText(), x, y, colour, TextRenderType.OUTLINED.getOutlineColour(colour), LightTexture.FULL_BRIGHT, guiGraphics.bufferSource);
 	}
 
 	/**
@@ -483,10 +471,11 @@ public final class TESClientUtil {
 			}
 		}
 
+		outlineOutput.renderCharacters();
 		Font.StringRenderOutput output = fontRenderer.new StringRenderOutput(bufferSource, x, y, (colour & -67108864) == 0 ? colour | -16777216 : colour, false, pose, Font.DisplayMode.POLYGON_OFFSET, packedLight);
 
 		text.accept(output);
-		output.finish(0, x);
+		output.finish(x);
 	}
 
 	/**
@@ -496,7 +485,7 @@ public final class TESClientUtil {
 	 * @param posY The y position on the screen to render at
 	 * @param width The width of the square
 	 * @param height The height of the square
-	 * @param colour The {@link net.minecraft.util.FastColor packed int} colour for the square
+	 * @param colour The {@link ARGB packed int} colour for the square
 	 */
 	public static void drawColouredSquare(GuiGraphics guiGraphics, int posX, int posY, int width, int height, int colour) {
 		guiGraphics.fill(posX, posY, posX + width, posY + height, colour);
@@ -538,7 +527,7 @@ public final class TESClientUtil {
 	 * Brighten/darken an ARGB-format colour packed integer by a given percentage
 	 */
 	public static int multiplyARGBColour(int colour, float multiplier) {
-		return ARGB32.color(colour >>> 24,
+		return ARGB.color(colour >>> 24,
 				Mth.floor((colour >> 16 & 255) * multiplier) & 255,
 				Mth.floor((colour >> 8 & 255) * multiplier) & 255,
 				Mth.floor((colour & 255) * multiplier) & 255);

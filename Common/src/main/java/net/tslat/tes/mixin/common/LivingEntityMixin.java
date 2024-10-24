@@ -10,17 +10,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 	@Inject(method = "onEffectAdded", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffect;addAttributeModifiers(Lnet/minecraft/world/entity/ai/attributes/AttributeMap;I)V"))
-	private void addEffect(MobEffectInstance effectInstance, @Nullable Entity entity, CallbackInfo callback) {
+	private void tes$syncAddedEffect(MobEffectInstance effectInstance, @Nullable Entity entity, CallbackInfo callback) {
 		TESConstants.NETWORKING.sendEffectsSync((LivingEntity)(Object)this, Set.of(effectInstance.getEffect()), Set.of());
 	}
 
-	@Inject(method = "onEffectRemoved", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffect;removeAttributeModifiers(Lnet/minecraft/world/entity/ai/attributes/AttributeMap;)V"))
-	private void removeEffect(MobEffectInstance effectInstance, CallbackInfo callback) {
-		TESConstants.NETWORKING.sendEffectsSync((LivingEntity)(Object)this, Set.of(), Set.of(effectInstance.getEffect()));
+	@Inject(method = "onEffectsRemoved", at = @At("HEAD"))
+	private void tes$syncRemovedEffect(Collection<MobEffectInstance> effects, CallbackInfo ci) {
+		TESConstants.NETWORKING.sendEffectsSync((LivingEntity)(Object)this, Set.of(), effects.stream().map(MobEffectInstance::getEffect).collect(Collectors.toSet()));
 	}
 }

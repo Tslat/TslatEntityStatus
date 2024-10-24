@@ -94,18 +94,18 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "HUD Bosses Enabled")
 	public static boolean hudBossesEnabled = true;
 
-	@Comment public static final String hudArmourComment = "Whether the TES HUD should render the entity's armour and toughness";
-	@Entry(name = "HUD Entity Armour")
-	public static boolean hudArmour = true;
+	@Comment public static final String hudStatsComment = "Whether the TES HUD should render the entity's stats";
+	@Entry(name = "HUD Entity Stats")
+	public static boolean hudStats = true;
 
-	@Comment public static final String hudArmourFontStyleComment = "What style TES font should render in for entity armour values in the HUD";
-	@Comment public static final String hudArmourFontStyleComment2 = "Options:";
-	@Comment public static final String hudArmourFontStyleComment3 = "NORMAL - Only the text with no additional stylings";
-	@Comment public static final String hudArmourFontStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
-	@Comment public static final String hudArmourFontStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
-	@Comment public static final String hudArmourFontStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
-	@Entry(name = "HUD Armour Font Style")
-	public static TESClientUtil.TextRenderType hudArmourFontStyle = TESClientUtil.TextRenderType.DROP_SHADOW;
+	@Comment public static final String hudStatsFontStyleComment = "What style TES font should render in for entity stats values in the HUD";
+	@Comment public static final String hudStatsFontStyleComment2 = "Options:";
+	@Comment public static final String hudStatsFontStyleComment3 = "NORMAL - Only the text with no additional stylings";
+	@Comment public static final String hudStatsFontStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
+	@Comment public static final String hudStatsFontStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
+	@Comment public static final String hudStatsFontStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
+	@Entry(name = "HUD Stats Font Style")
+	public static TESClientUtil.TextRenderType hudStatsFontStyle = TESClientUtil.TextRenderType.DROP_SHADOW;
 
 	@Comment public static final String hudEntityIconsComment = "Whether the TES HUD should render the entity's alignment icons";
 	@Entry(name = "HUD Entity Icons")
@@ -194,18 +194,18 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "In-World HUD Entity Name Font Style")
 	public static TESClientUtil.TextRenderType inWorldHudEntityNameFontStyle = TESClientUtil.TextRenderType.DROP_SHADOW;
 
-	@Comment public static final String inWorldHudArmourComment = "Whether the in-world entity status HUD should render the entity's armour values";
-	@Entry(name = "In-World HUD Armour")
-	public static boolean inWorldHudArmour = false;
+	@Comment public static final String inWorldHudStatsComment = "Whether the in-world entity status HUD should render the entity's stats values";
+	@Entry(name = "In-World HUD Stats")
+	public static boolean inWorldHudStats = false;
 
-	@Comment public static final String inWorldHudArmourFontStyleComment = "What style TES font should render in for entity armour values in the in-world HUD";
-	@Comment public static final String inWorldHudArmourFontStyleComment2 = "Options:";
-	@Comment public static final String inWorldHudArmourFontStyleComment3 = "NORMAL - Only the text with no additional stylings";
-	@Comment public static final String inWorldHudArmourFontStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
-	@Comment public static final String inWorldHudArmourFontStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
-	@Comment public static final String inWorldHudArmourFontStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
-	@Entry(name = "In-World HUD Armour Font Style")
-	public static TESClientUtil.TextRenderType inWorldHudArmourFontStyle = TESClientUtil.TextRenderType.DROP_SHADOW;
+	@Comment public static final String inWorldHudStatsFontStyleComment = "What style TES font should render in for entity stats values in the in-world HUD";
+	@Comment public static final String inWorldHudStatsFontStyleComment2 = "Options:";
+	@Comment public static final String inWorldHudStatsFontStyleComment3 = "NORMAL - Only the text with no additional stylings";
+	@Comment public static final String inWorldHudStatsFontStyleComment4 = "DROP_SHADOW - Text with a bottom-right offset shadow";
+	@Comment public static final String inWorldHudStatsFontStyleComment5 = "GLOWING - Text with a large high-contrast outline to emphasize the text.";
+	@Comment public static final String inWorldHudStatsFontStyleComment6 = "OUTLINED - Text with a thin dark outline to emphasize the text. Selected by default.";
+	@Entry(name = "In-World HUD Stats Font Style")
+	public static TESClientUtil.TextRenderType inWorldHudStatsFontStyle = TESClientUtil.TextRenderType.DROP_SHADOW;
 
 	@Comment public static final String inWorldHudEntityIconsComment = "Whether the in-world entity status HUD should render the entity's alignment icons";
 	@Entry(name = "In-World HUD Icons")
@@ -342,13 +342,13 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	}
 
 	@Override
-	public boolean hudArmour() {
-		return hudArmour;
+	public boolean hudStats() {
+		return hudStats;
 	}
 
 	@Override
-	public TESClientUtil.TextRenderType hudArmourFontStyle() {
-		return hudArmourFontStyle;
+	public TESClientUtil.TextRenderType hudStatsFontStyle() {
+		return hudStatsFontStyle;
 	}
 
 	@Override
@@ -447,13 +447,13 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	}
 
 	@Override
-	public boolean inWorldHudArmour() {
-		return inWorldHudArmour;
+	public boolean inWorldHudStats() {
+		return inWorldHudStats;
 	}
 
 	@Override
-	public TESClientUtil.TextRenderType inWorldHudArmourFontStyle() {
-		return inWorldHudArmourFontStyle;
+	public TESClientUtil.TextRenderType inWorldHudStatsFontStyle() {
+		return inWorldHudStatsFontStyle;
 	}
 
 	@Override
