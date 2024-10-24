@@ -9,6 +9,7 @@ plugins {
 }
 
 val modId              : String by project
+val modDisplayName     : String by project
 val modModrinthId      : String by project
 val modCurseforgeId    : String by project
 val modChangelogUrl    : String by project
@@ -21,7 +22,7 @@ val parchmentVersion   = libs.versions.parchment.asProvider().get()
 version = modVersion
 
 base {
-    archivesName = "tes-fabric-${mcVersion}"
+    archivesName = "${modDisplayName}-fabric-${mcVersion}"
 }
 
 repositories {

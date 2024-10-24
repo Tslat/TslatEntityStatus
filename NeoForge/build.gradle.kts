@@ -9,6 +9,7 @@ plugins {
 }
 
 val modId              : String by project
+val modDisplayName     : String by project
 val modModrinthId      : String by project
 val modCurseforgeId    : String by project
 val modChangelogUrl    : String by project
@@ -17,10 +18,12 @@ val javaVersion        = libs.versions.java.get()
 val mcVersion          = libs.versions.minecraft.asProvider().get()
 val parchmentMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion   = libs.versions.parchment.asProvider().get()
-val neoforgeVersion= libs.versions.neoforge.asProvider().get()
+val neoforgeVersion    = libs.versions.neoforge.asProvider().get()
+
+version = modVersion
 
 base {
-    archivesName = "tes-neoforge-${mcVersion}"
+    archivesName = "${modDisplayName}-neoforge-${mcVersion}"
 }
 
 neoForge {
@@ -105,7 +108,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
 publishing {
     publishing {
         publications {
-            create<MavenPublication>("tes") {
+            create<MavenPublication>(modId) {
                 from(components["java"])
                 artifactId = base.archivesName.get()
             }

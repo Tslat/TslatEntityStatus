@@ -9,6 +9,7 @@ plugins {
 }
 
 val modId              : String by project
+val modDisplayName     : String by project
 val modModrinthId      : String by project
 val modCurseforgeId    : String by project
 val modChangelogUrl    : String by project
@@ -19,10 +20,10 @@ val parchmentMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion   = libs.versions.parchment.asProvider().get()
 val forgeVersion= libs.versions.forge.asProvider().get()
 
-version = libs.versions.tes.get()
+version = modVersion
 
 base {
-    archivesName = "tes-forge-${mcVersion}"
+    archivesName = "${modDisplayName}-forge-${mcVersion}"
 }
 
 jarJar.enable()
