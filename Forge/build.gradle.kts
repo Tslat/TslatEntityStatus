@@ -1,3 +1,7 @@
+import net.darkhax.curseforgegradle.Constants
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+import net.minecraftforge.gradle.userdev.tasks.JarJar
+
 plugins {
     id("tes-convention")
 
@@ -29,7 +33,7 @@ base {
 jarJar.enable()
 
 minecraft {
-    mappings("parchment", "${mappingsMcVersion}-${parchmentVersion}-${mcVersion}")
+    mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}-${mcVersion}")
     accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
 
     reobf = false
@@ -141,9 +145,10 @@ mixin {
     config("${modId}.mixins.json")
 }
 
-sourceSets.each {
-    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
-    it.output.resourcesDir = dir
+sourceSets.forEach {
+    val dir = layout.buildDirectory.dir("sourcesSets/${it}.name")
+
+    it.output.setResourcesDir(dir)
     it.java.destinationDirectory = dir
 }
 
@@ -172,7 +177,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java ${javaVersion}")
     mainFile.changelog = modChangelogUrl
-    mainFile.addRelation("forge-config-api-port-fabric", "RELATION_REQUIRED")
+    mainFile.addRelation("forge-config-api-port-fabric", Constants.RELATION_REQUIRED)
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }

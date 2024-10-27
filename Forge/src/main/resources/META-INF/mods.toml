@@ -1,17 +1,17 @@
 modLoader="javafml"
 loaderVersion="${forge_loader_version_range}"
-license="${license}"
+license="${mod_license}"
 issueTrackerURL="${issues_url}"
 
 [[mods]]
 modId="${mod_id}"
 version="${version}"
-displayName="${mod_name}"
+displayName="${mod_display_name}"
 logoFile="logo.png"
-authors="${authors}"
+authors="${mod_authors}"
 displayTest="IGNORE_SERVER_VERSION"
 description='''
-${description}
+${mod_description}
 '''
 
 [[dependencies.${mod_id}]]

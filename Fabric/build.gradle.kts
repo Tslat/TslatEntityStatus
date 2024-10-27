@@ -1,3 +1,4 @@
+import net.darkhax.curseforgegradle.Constants
 import net.fabricmc.loom.task.RemapJarTask
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
@@ -123,7 +124,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java ${javaVersion}")
     mainFile.changelog = modChangelogUrl
-    mainFile.addRelation("forge-config-api-port-fabric", "RELATION_REQUIRED")
+    mainFile.addRelation("forge-config-api-port-fabric", Constants.RELATION_REQUIRED)
 
     debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
