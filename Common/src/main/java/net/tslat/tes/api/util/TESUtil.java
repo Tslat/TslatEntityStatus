@@ -45,7 +45,24 @@ public interface TESUtil {
 	 * Get the provided entity's health percentage, represented as a fraction of its max health
 	 */
 	static float getHealthPercent(LivingEntity entity) {
-		return entity.getHealth() / entity.getMaxHealth();
+		return getHealth(entity) / entity.getMaxHealth();
+	}
+
+	/**
+	 * Get the provided entity's current health
+	 */
+	static float getHealth(LivingEntity entity) {
+		return entity.getHealth();
+	}
+
+	/**
+	 * Get the provided entity's max health, if it has max health
+	 */
+	static float getMaxHealth(LivingEntity entity) {
+		if (entity.getAttributes().hasAttribute(Attributes.MAX_HEALTH))
+			return (float)entity.getAttributeValue(Attributes.MAX_HEALTH);
+
+		return 0;
 	}
 
 	/**

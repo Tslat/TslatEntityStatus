@@ -8,7 +8,6 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.FogParameters;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.LivingEntity;
@@ -49,7 +48,7 @@ public class LevelRendererMixin {
 					ordinal = 0,
 					shift = At.Shift.AFTER),
 			require = 0)
-	private void tes$renderInWorldHudsNf(FogParameters fogParameters, DeltaTracker deltaTracker, Camera camera, ProfilerFiller profilerFiller, Matrix4f frustumMatrix,
+	private static void tes$renderInWorldHudsNf(FogParameters fogParameters, DeltaTracker deltaTracker, Camera camera, ProfilerFiller profilerFiller, Matrix4f frustumMatrix,
 												Matrix4f projectionMatrix, ResourceHandle<RenderTarget> mainTarget, ResourceHandle<RenderTarget> translucentTarget, ResourceHandle<RenderTarget> itemEntityTarget,
 												ResourceHandle<RenderTarget> weatherTarget, Frustum frustum, boolean renderBlockOutline, ResourceHandle<RenderTarget> entityOutlineTarget, CallbackInfo ci) {
 		final PoseStack poseStack = new PoseStack();
@@ -59,13 +58,14 @@ public class LevelRendererMixin {
 		}
 	}
 
-	@Inject(method = {"lambda$addParticlesPass$2", "method_62213"},
+	@Inject(method = {"lambda$addParticlesPass$2", "method_62213", "m_371651_"},
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/renderer/RenderStateShard$OutputStateShard;clearRenderState()V"),
+					target = "Lnet/minecraft/client/particle/ParticleEngine;render(Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V",
+					shift = At.Shift.AFTER),
 			require = 0)
-	private void tes$renderParticles(FogParameters fogParameters, ResourceHandle<RenderTarget> mainTarget, ResourceHandle<RenderTarget> particleTarget,
-									 LightTexture lightTexture, Camera camera, float partialTick, CallbackInfo ci) {
+	private static void tes$renderParticles(FogParameters fogParameters, ResourceHandle<RenderTarget> mainTarget, ResourceHandle<RenderTarget> particleTarget,
+											Camera camera, float partialTick, CallbackInfo ci) {
 		if (TESAPI.getConfig().particlesEnabled())
 			TESParticleManager.render(TESClientUtil.createInlineGuiGraphics(new PoseStack(), Minecraft.getInstance().renderBuffers().bufferSource()), partialTick);
 	}
@@ -73,10 +73,11 @@ public class LevelRendererMixin {
 	@Inject(method = "lambda$addParticlesPass$5",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/renderer/RenderStateShard$OutputStateShard;clearRenderState()V"),
+					target = "Lnet/minecraft/client/particle/ParticleEngine;render(Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/culling/Frustum;Ljava/util/function/Predicate;)V",
+					shift = At.Shift.AFTER),
 			require = 0)
-	private void tes$renderParticlesNf(FogParameters fogParameters, ResourceHandle<RenderTarget> mainTarget, ResourceHandle<RenderTarget> particleTarget,
-									   LightTexture lightTexture, Camera camera, float partialTick, Frustum frustum, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
+	private static void tes$renderParticlesNf(FogParameters fogParameters, ResourceHandle<RenderTarget> mainTarget, ResourceHandle<RenderTarget> particleTarget,
+									   Camera camera, float partialTick, Frustum frustum, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
 		if (TESAPI.getConfig().particlesEnabled())
 			TESParticleManager.render(TESClientUtil.createInlineGuiGraphics(new PoseStack(), Minecraft.getInstance().renderBuffers().bufferSource()), partialTick);
 	}

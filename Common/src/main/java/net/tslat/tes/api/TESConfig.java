@@ -26,6 +26,7 @@ public final class TESConfig {
 	private final ModConfigSpec.IntValue hudHealthBarLength;
 	private final ModConfigSpec.BooleanValue hudEntityDamageTint;
 	private final ModConfigSpec.BooleanValue hudEntityName;
+	private final ModConfigSpec.BooleanValue hudEntityNamespace;
 	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudEntityNameFontStyle;
 	private final ModConfigSpec.BooleanValue hudBossesEnabled;
 	private final ModConfigSpec.BooleanValue hudStats;
@@ -45,7 +46,9 @@ public final class TESConfig {
 	private final ModConfigSpec.IntValue inWorldBarsLength;
 	private final ModConfigSpec.BooleanValue inWorldBarsSegments;
 	private final ModConfigSpec.BooleanValue inWorldHudEntityName;
+	private final ModConfigSpec.BooleanValue inWorldHudEntityNamespace;
 	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudEntityNameFontStyle;
+	private final ModConfigSpec.BooleanValue inWorldHudBossesEnabled;
 	private final ModConfigSpec.BooleanValue inWorldHudStats;
 	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudStatsFontStyle;
 	private final ModConfigSpec.BooleanValue inWorldHudEntityIcons;
@@ -121,6 +124,7 @@ public final class TESConfig {
 						"Options:",
 						"NUMERIC - Use numeric values for health only",
 						"BAR - Use a health-bar style render",
+						"BAR_ICONS - Display in the BAR style, but with the health numerically displayed in the stats icons row",
 						"COMBINED - Use a health-bar style render with numeric values overlaid")
 				.translation("config.tes.hud.healthRenderType")
 				.defineEnum("healthRenderType", TESHud.BarRenderType.COMBINED);
@@ -149,6 +153,11 @@ public final class TESConfig {
 				.comment("Whether the TES HUD should render the entity's name")
 				.translation("config.tes.hud.entityName")
 				.define("hudEntityName", true);
+
+		this.hudEntityNamespace = config
+				.comment("Whether the TES HUD should render the entity's mod ID under its name")
+				.translation("config.tes.hud.entityNamespace")
+				.define("hudEntityNamespace", false);
 
 		this.hudEntityNameFontStyle = config
 				.comment("What style TES font should render in for entity names in the HUD")
@@ -229,6 +238,7 @@ public final class TESConfig {
 						"Options:",
 						"NUMERIC - Use numeric values only",
 						"BAR - Use a health-bar style render",
+						"BAR_ICONS - Display in the BAR style, but with the health numerically displayed in the stats icons row",
 						"COMBINED - Use a health-bar style render with numeric values overlaid")
 				.translation("config.tes.inWorldHud.barsRenderType")
 				.defineEnum("inWorldBarsRenderType", TESHud.BarRenderType.BAR);
@@ -257,6 +267,16 @@ public final class TESConfig {
 				.comment("Whether the in-world entity status HUD should render the entity's name")
 				.translation("config.tes.inWorldHud.entityName")
 				.define("inWorldHudEntityName", false);
+
+		this.inWorldHudEntityNamespace = config
+				.comment("Whether the in-world entity status HUD should render the entity's mod ID under its name")
+				.translation("config.tes.inWorldHud.entityNamespace")
+				.define("inWorldHudEntityNamespace", false);
+
+		this.inWorldHudBossesEnabled = config
+				.comment("Whether the in-world entity status HUD should render if the entity is a boss (they usually have their own boss bars)")
+				.translation("config.tes.hud.inWorldHud.bossesEnabled")
+				.define("inWorldHudBossesEnabled", true);
 
 		this.inWorldHudEntityNameFontStyle = config
 				.comment("What style TES font should render in for entity names in the in-world HUD")
@@ -428,6 +448,13 @@ public final class TESConfig {
 	}
 
 	/**
+	 * Whether the TES HUD Should render the entity's name
+	 */
+	public boolean hudEntityNamespace() {
+		return this.hudEntityNamespace.get();
+	}
+
+	/**
 	 * What style TES font should render in for entity names in the HUD
 	 */
 	public TESClientUtil.TextRenderType hudEntityNameFontStyle() {
@@ -498,6 +525,7 @@ public final class TESConfig {
 	 * <ul>
 	 *     <li>NUMERIC - Use numeric values for health only</li>
 	 *     <li>BAR - Use a health-bar style render</li>
+	 *     <li>BAR_ICONS - Display in the BAR style, but with the health numerically displayed in the stats icons row</li>
 	 *     <li>COMBINED - Use a health-bar style render with numeric values overlaid</li>
 	 * </ul>
 	 */
@@ -560,6 +588,7 @@ public final class TESConfig {
 	 * <ul>
 	 *     <li>NUMERIC - Use numeric values only</li>
 	 *     <li>BAR - Use a health-bar style render</li>
+	 *     <li>BAR_ICONS - Display in the BAR style, but with the health numerically displayed in the stats icons row</li>
 	 *     <li>COMBINED - Use a health-bar style render with numeric values overlaid</li>
 	 * </ul>
 	 */
@@ -596,10 +625,24 @@ public final class TESConfig {
 	}
 
 	/**
+	 * Whether the in-world TES entity status HUD should include the entity's mod ID under its name
+	 */
+	public boolean inWorldHudEntityNamespace() {
+		return this.inWorldHudEntityNamespace.get();
+	}
+
+	/**
 	 * What style TES font should render in for entity names in the in-world HUD
 	 */
 	public TESClientUtil.TextRenderType inWorldHudEntityNameFontStyle() {
 		return this.inWorldHudEntityNameFontStyle.get();
+	}
+
+	/**
+	 * What style TES font should render in for entity names in the in-world HUD
+	 */
+	public boolean inWorldHudBossesEnabled() {
+		return this.inWorldHudBossesEnabled.get();
 	}
 
 	/**

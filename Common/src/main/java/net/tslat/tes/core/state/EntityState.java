@@ -17,6 +17,7 @@ import net.tslat.tes.core.particle.type.DamageParticle;
 import net.tslat.tes.core.particle.type.HealParticle;
 import org.joml.Vector3f;
 
+import java.lang.ref.WeakReference;
 import java.util.Set;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Set;
  * Each rendered entity is assigned one the first time it is rendered.
  */
 public class EntityState {
-	protected final LivingEntity entity;
+	protected final WeakReference<LivingEntity> entity;
 
 	protected Set<Holder<MobEffect>> effects;
 
@@ -33,22 +34,22 @@ public class EntityState {
 	protected boolean wasPreHurt;
 	protected float lastTransitionHealth;
 	protected long lastTransitionTime;
-	protected DamageSource lastDamageSource;
+	protected WeakReference<DamageSource> lastDamageSource;
 	protected int lastRenderTick;
 
 	public EntityState(LivingEntity entity) {
-		this.entity = entity;
+		this.entity = new WeakReference<>(entity);
 		this.currentHealth = entity.getHealth();
 		this.lastHealth = this.currentHealth;
 		this.wasPreHurt = this.currentHealth < entity.getMaxHealth();
 		this.lastRenderTick = entity.tickCount;
 
 		if (TESConstants.CONFIG.isSyncingEffects())
-			TESConstants.NETWORKING.requestEffectsSync(this.entity.getId());
+			TESConstants.NETWORKING.requestEffectsSync(entity.getId());
 	}
 
 	public LivingEntity getEntity() {
-		return this.entity;
+		return this.entity.get();
 	}
 
 	public float getHealth() {
@@ -83,27 +84,30 @@ public class EntityState {
 	}
 
 	public void markActive() {
-		this.lastRenderTick = this.entity.tickCount;
+		this.lastRenderTick = getEntity().tickCount;
 	}
 	
 	public boolean isValid() {
-		return this.entity != null && !this.entity.isRemoved() && this.entity.level() == Minecraft.getInstance().level && (this.lastRenderTick < 0 || this.lastRenderTick >= this.entity.tickCount - 200);
+		LivingEntity entity = getEntity();
+
+		return entity != null && !entity.isRemoved() && entity.level() == Minecraft.getInstance().level && (this.lastRenderTick < 0 || this.lastRenderTick >= entity.tickCount - 200);
 	}
 
 	public void tick() {
-		this.currentHealth = Math.min(this.entity.getHealth(), this.entity.getMaxHealth());
+		LivingEntity entity = getEntity();
+		this.currentHealth = Math.min(entity.getHealth(), entity.getMaxHealth());
 
-		if (this.currentHealth != this.lastHealth && this.entity.tickCount > 2) {
+		if (this.currentHealth != this.lastHealth && entity.tickCount > 2) {
 			handleHealthChange();
 
-			this.lastDamageSource = this.entity.getLastDamageSource();
+			this.lastDamageSource = new WeakReference<>(entity.getLastDamageSource());
 		}
 
 		this.lastHealth = currentHealth;
 
-		if (this.entity.level().getGameTime() - this.lastTransitionTime > 20) {
+		if (entity.level().getGameTime() - this.lastTransitionTime > 20) {
 			if (this.lastTransitionHealth > this.currentHealth) {
-				this.lastTransitionHealth -= this.entity.getMaxHealth() / 30f;
+				this.lastTransitionHealth -= entity.getMaxHealth() / 30f;
 			}
 			else {
 				this.lastTransitionTime = 0;
@@ -115,8 +119,9 @@ public class EntityState {
 	protected void handleHealthChange() {
 		if (TESAPI.getConfig().particlesEnabled()) {
 			TESParticle<?> particle;
+			LivingEntity entity = getEntity();
 			float healthDelta = this.currentHealth - this.lastHealth;
-			boolean damageSourceAccurate = this.entity.getLastDamageSource() != null && this.lastDamageSource != this.entity.getLastDamageSource();
+			boolean damageSourceAccurate = entity.getLastDamageSource() != null && this.lastDamageSource.get() != entity.getLastDamageSource();
 
 			if (healthDelta != 0)
 				healthDelta = TESParticleManager.handleParticleClaims(this, healthDelta, TESParticleManager::addParticle, damageSourceAccurate);
@@ -124,17 +129,17 @@ public class EntityState {
 			if (healthDelta == 0)
 				return;
 
-			Vector3f particlePos = new Vector3f((float)this.entity.getX(), (float)this.entity.getEyeY(), (float)this.entity.getZ());
+			Vector3f particlePos = new Vector3f((float)entity.getX(), (float)entity.getEyeY(), (float)entity.getZ());
 
 			if (healthDelta < 0) {
-				this.lastTransitionTime = this.entity.level().getGameTime();
+				this.lastTransitionTime = entity.level().getGameTime();
 				int colour = TESAPI.getConfig().getDamageParticleColour();
 
 				if (this.lastTransitionHealth == 0)
 					this.lastTransitionHealth = this.lastHealth;
 
 				if (damageSourceAccurate && TESAPI.getConfig().teamBasedDamageParticleColours()) {
-					if (this.entity.getLastDamageSource().getEntity() instanceof LivingEntity attacker) {
+					if (entity.getLastDamageSource().getEntity() instanceof LivingEntity attacker) {
 						int teamColour = attacker.getTeamColor();
 
 						if (teamColour != 0xFFFFFF)
@@ -142,7 +147,7 @@ public class EntityState {
 					}
 				}
 
-				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth <= 0 && !this.wasPreHurt && this.lastHealth >= this.entity.getMaxHealth()) {
+				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth <= 0 && !this.wasPreHurt && this.lastHealth >= entity.getMaxHealth()) {
 					particle = new ComponentParticle(this, particlePos, TESParticle.Animation.POP_OFF, Component.translatable("config.tes.particle.verbal.instakill").setStyle(Style.EMPTY.withColor(colour)));
 				}
 				else {
@@ -150,7 +155,7 @@ public class EntityState {
 				}
 			}
 			else {
-				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth >= this.entity.getMaxHealth() && this.lastHealth <= this.entity.getMaxHealth() * 0.05f) {
+				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth >= entity.getMaxHealth() && this.lastHealth <= entity.getMaxHealth() * 0.05f) {
 					particle = new ComponentParticle(this, particlePos, TESParticle.Animation.RISE, Component.translatable("config.tes.particle.verbal.fullHeal").setStyle(Style.EMPTY.withColor(TESAPI.getConfig().getHealParticleColour())));
 				}
 				else {
