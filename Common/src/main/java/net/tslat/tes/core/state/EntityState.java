@@ -121,7 +121,7 @@ public class EntityState {
 			TESParticle<?> particle;
 			LivingEntity entity = getEntity();
 			float healthDelta = this.currentHealth - this.lastHealth;
-			boolean damageSourceAccurate = entity.getLastDamageSource() != null && this.lastDamageSource.get() != entity.getLastDamageSource();
+			boolean damageSourceAccurate = entity.getLastDamageSource() != null && this.lastDamageSource != null && this.lastDamageSource.get() != entity.getLastDamageSource();
 
 			if (healthDelta != 0)
 				healthDelta = TESParticleManager.handleParticleClaims(this, healthDelta, TESParticleManager::addParticle, damageSourceAccurate);
