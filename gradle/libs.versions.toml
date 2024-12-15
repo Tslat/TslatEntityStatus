@@ -1,6 +1,6 @@
 [versions]
 # Common
-tes = "1.8"
+tes = "1.8.1"
 minecraft-range = "[1.21.4,)"
 minecraft = "1.21.4"
 parchment-minecraft = "1.21"
