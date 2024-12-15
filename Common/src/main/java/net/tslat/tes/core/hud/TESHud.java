@@ -151,6 +151,7 @@ public class TESHud {
 		}
 
 		RenderSystem.setShaderColor(1, 1, 1, 1);
+		RenderSystem.disableBlend();
 		poseStack.popPose();
 	}
 
@@ -164,7 +165,8 @@ public class TESHud {
 
 		if (!TESAPI.getConfig().inWorldBarsEnabled() ||
 				(entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf()) ||
-				!TESAPI.getConfig().inWorldHUDActivation().test(entityState))
+				!TESAPI.getConfig().inWorldHUDActivation().test(entityState) ||
+				(!TESAPI.getConfig().inWorldHudBossesEnabled() && TESConstants.UTILS.isBossEntity(TARGET_ENTITY)))
 			return;
 
 		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
@@ -200,6 +202,7 @@ public class TESHud {
 		guiGraphics.flush();
 		guiGraphics.pose().popPose();
 		RenderSystem.setShaderColor(1, 1, 1, 1);
+		RenderSystem.disableBlend();
 		poseStack.popPose();
 	}
 
@@ -259,6 +262,7 @@ public class TESHud {
 	public enum BarRenderType {
 		NUMERIC,
 		BAR,
+		BAR_ICONS,
 		COMBINED;
 	}
 }

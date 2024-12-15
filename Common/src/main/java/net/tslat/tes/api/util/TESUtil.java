@@ -45,7 +45,24 @@ public interface TESUtil {
 	 * Get the provided entity's health percentage, represented as a fraction of its max health
 	 */
 	static float getHealthPercent(LivingEntity entity) {
-		return entity.getHealth() / entity.getMaxHealth();
+		return getHealth(entity) / entity.getMaxHealth();
+	}
+
+	/**
+	 * Get the provided entity's current health
+	 */
+	static float getHealth(LivingEntity entity) {
+		return entity.getHealth();
+	}
+
+	/**
+	 * Get the provided entity's max health, if it has max health
+	 */
+	static float getMaxHealth(LivingEntity entity) {
+		if (entity.getAttributes().hasAttribute(Attributes.MAX_HEALTH))
+			return (float)entity.getAttributeValue(Attributes.MAX_HEALTH);
+
+		return 0;
 	}
 
 	/**
@@ -64,6 +81,16 @@ public interface TESUtil {
 	static float getArmourToughness(LivingEntity entity) {
 		if (entity.getAttributes().hasAttribute(Attributes.ARMOR_TOUGHNESS))
 			return (float)entity.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
+
+		return 0;
+	}
+
+	/**
+	 * Get the provided entity's {@link Attributes#ATTACK_DAMAGE attack damage} value, if it has any
+	 */
+	static float getMeleeDamage(LivingEntity entity) {
+		if (entity.getAttributes().hasAttribute(Attributes.ATTACK_DAMAGE))
+			return (float)entity.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
 		return 0;
 	}

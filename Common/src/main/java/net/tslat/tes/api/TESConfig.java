@@ -70,6 +70,11 @@ public interface TESConfig {
 	boolean hudEntityName();
 
 	/**
+	 * Whether the TES HUD should render the entity's mod ID under its name
+	 */
+	boolean hudEntityNamespace();
+
+	/**
 	 * What style TES font should render in for entity names in the HUD
 	 */
 	TESClientUtil.TextRenderType hudEntityNameFontStyle();
@@ -192,6 +197,16 @@ public interface TESConfig {
 	 * Whether the in-world TES entity status HUD should include the entity's name
 	 */
 	boolean inWorldHudEntityName();
+
+	/**
+	 * Whether the in-world entity status HUD should render the entity's mod ID under its name
+	 */
+	boolean inWorldHudEntityNamespace();
+
+	/**
+	 * Whether the in-world entity status HUD should render if the entity is a boss (they usually have their own boss bars)
+	 */
+	boolean inWorldHudBossesEnabled();
 
 	/**
 	 * What style TES font should render in for entity names in the in-world HUD

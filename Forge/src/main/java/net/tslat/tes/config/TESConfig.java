@@ -28,6 +28,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.IntValue hudHealthBarLength;
 	private final ForgeConfigSpec.BooleanValue hudEntityDamageTint;
 	private final ForgeConfigSpec.BooleanValue hudEntityName;
+	private final ForgeConfigSpec.BooleanValue hudEntityNamespace;
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudEntityNameFontStyle;
 	private final ForgeConfigSpec.BooleanValue hudBossesEnabled;
 	private final ForgeConfigSpec.BooleanValue hudArmour;
@@ -47,7 +48,9 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.IntValue inWorldBarsLength;
 	private final ForgeConfigSpec.BooleanValue inWorldBarsSegments;
 	private final ForgeConfigSpec.BooleanValue inWorldHudEntityName;
+	private final ForgeConfigSpec.BooleanValue inWorldHudEntityNamespace;
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudEntityNameFontStyle;
+	private final ForgeConfigSpec.BooleanValue inWorldHudBossesEnabled;
 	private final ForgeConfigSpec.BooleanValue inWorldHudArmour;
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudArmourFontStyle;
 	private final ForgeConfigSpec.BooleanValue inWorldHudEntityIcons;
@@ -128,6 +131,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 						"Options:",
 						"NUMERIC - Use numeric values for health only",
 						"BAR - Use a health-bar style render",
+						"BAR_ICONS - Display in the BAR style, but with the health numerically displayed in the stats icons row",
 						"COMBINED - Use a health-bar style render with numeric values overlaid")
 				.translation("config.tes.hud.healthRenderType")
 				.defineEnum("healthRenderType", TESHud.BarRenderType.COMBINED);
@@ -156,6 +160,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Whether the TES HUD should render the entity's name")
 				.translation("config.tes.hud.entityName")
 				.define("hudEntityName", true);
+
+		this.hudEntityNamespace = config
+				.comment("Whether the TES HUD should render the entity's mod ID under its name")
+				.translation("config.tes.hud.entityNamespace")
+				.define("hudEntityNamespace", false);
 
 		this.hudEntityNameFontStyle = config
 				.comment("What style TES font should render in for entity names in the HUD")
@@ -236,6 +245,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 						"Options:",
 						"NUMERIC - Use numeric values only",
 						"BAR - Use a health-bar style render",
+						"BAR_ICONS - Display in the BAR style, but with the health numerically displayed in the stats icons row",
 						"COMBINED - Use a health-bar style render with numeric values overlaid")
 				.translation("config.tes.inWorldHud.barsRenderType")
 				.defineEnum("inWorldBarsRenderType", TESHud.BarRenderType.BAR);
@@ -264,6 +274,16 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Whether the in-world entity status HUD should render the entity's name")
 				.translation("config.tes.inWorldHud.entityName")
 				.define("inWorldHudEntityName", false);
+
+		this.inWorldHudEntityNamespace = config
+				.comment("Whether the in-world entity status HUD should render the entity's mod ID under its name")
+				.translation("config.tes.inWorldHud.entityNamespace")
+				.define("inWorldHudEntityNamespace", false);
+
+		this.inWorldHudBossesEnabled = config
+				.comment("Whether the in-world entity status HUD should render if the entity is a boss (they usually have their own boss bars)")
+				.translation("config.tes.hud.inWorldHud.bossesEnabled")
+				.define("inWorldHudBossesEnabled", true);
 
 		this.inWorldHudEntityNameFontStyle = config
 				.comment("What style TES font should render in for entity names in the in-world HUD")
@@ -418,6 +438,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	}
 
 	@Override
+	public boolean hudEntityNamespace() {
+		return this.hudEntityNamespace.get();
+	}
+
+	@Override
 	public TESClientUtil.TextRenderType hudEntityNameFontStyle() {
 		return this.hudEntityNameFontStyle.get();
 	}
@@ -528,8 +553,18 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	}
 
 	@Override
+	public boolean inWorldHudEntityNamespace() {
+		return this.inWorldHudEntityNamespace.get();
+	}
+
+	@Override
 	public TESClientUtil.TextRenderType inWorldHudEntityNameFontStyle() {
 		return this.inWorldHudEntityNameFontStyle.get();
+	}
+
+	@Override
+	public boolean inWorldHudBossesEnabled() {
+		return this.inWorldHudBossesEnabled.get();
 	}
 
 	@Override

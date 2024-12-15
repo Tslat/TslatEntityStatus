@@ -59,6 +59,7 @@ public final class TESClientUtil {
 
 	public static final ResourceLocation STAT_ARMOUR = TESConstants.id("stat/armour");
 	public static final ResourceLocation STAT_TOUGHNESS = TESConstants.id("stat/toughness");
+	public static final ResourceLocation STAT_MELEE_DAMAGE = TESConstants.id("stat/melee_damage");
 
 	/**
 	 * Draw some text on screen at a given position, offset for the text's height and width
