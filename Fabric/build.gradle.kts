@@ -126,7 +126,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.changelog = modChangelogUrl
     mainFile.addRelation("forge-config-api-port-fabric", Constants.RELATION_REQUIRED)
 
-    debugMode = true
+    //debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
