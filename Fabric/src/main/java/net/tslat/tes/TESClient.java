@@ -2,6 +2,7 @@ package net.tslat.tes;
 
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.fml.config.ModConfig;
@@ -15,6 +16,7 @@ public class TESClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		TESConstants.setIsClient();
 		NeoForgeConfigRegistry.INSTANCE.register(TESConstants.MOD_ID, ModConfig.Type.CLIENT, TESConfig.init());
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> TESConstants.HAS_SERVER_CONNECTION = false);
 	}
 
 	public static void sendPacket(CustomPacketPayload packet) {

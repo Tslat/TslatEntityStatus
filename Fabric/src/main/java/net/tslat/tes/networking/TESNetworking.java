@@ -28,15 +28,15 @@ import java.util.Set;
 public class TESNetworking implements net.tslat.tes.core.networking.TESNetworking {
 	@Override
 	@ApiStatus.Internal
-	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, boolean isClientBound) {
+	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, boolean isClientBound, boolean configurationStage) {
 		if (isClientBound) {
-			PayloadTypeRegistry.playS2C().register(packetType, (StreamCodec<FriendlyByteBuf, P>)codec);
+			(configurationStage ? PayloadTypeRegistry.configurationS2C() : PayloadTypeRegistry.playS2C()).register(packetType, (StreamCodec<FriendlyByteBuf, P>)codec);
 
 			if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 				TESClient.registerPacket(packetType);
 		}
 		else {
-			PayloadTypeRegistry.playC2S().register(packetType, (StreamCodec<FriendlyByteBuf, P>)codec);
+			(configurationStage ? PayloadTypeRegistry.configurationS2C() : PayloadTypeRegistry.playS2C()).register(packetType, (StreamCodec<FriendlyByteBuf, P>)codec);
 			ServerPlayNetworking.registerGlobalReceiver(packetType, (packet, context) -> packet.receiveMessage(context.player(), context.player().getServer()::execute));
 		}
 	}

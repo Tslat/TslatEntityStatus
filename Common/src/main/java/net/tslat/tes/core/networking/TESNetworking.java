@@ -99,17 +99,18 @@ public interface TESNetworking {
 	// <-- Internal methods --> //
 
 	static void init() {
-		registerPacket(NewComponentParticlePacket.TYPE, NewComponentParticlePacket.CODEC, true);
-		registerPacket(NewNumericParticlePacket.TYPE, NewNumericParticlePacket.CODEC, true);
-		registerPacket(ParticleClaimPacket.TYPE, ParticleClaimPacket.CODEC, true);
-		registerPacket(RequestEffectsPacket.TYPE, RequestEffectsPacket.CODEC, false);
-		registerPacket(SyncEffectsPacket.TYPE, SyncEffectsPacket.CODEC, true);
+		registerPacket(NewComponentParticlePacket.TYPE, NewComponentParticlePacket.CODEC, true, false);
+		registerPacket(NewNumericParticlePacket.TYPE, NewNumericParticlePacket.CODEC, true, false);
+		registerPacket(ParticleClaimPacket.TYPE, ParticleClaimPacket.CODEC, true, false);
+		registerPacket(RequestEffectsPacket.TYPE, RequestEffectsPacket.CODEC, false, false);
+		registerPacket(SyncEffectsPacket.TYPE, SyncEffectsPacket.CODEC, true, false);
+		registerPacket(ServerHandshakePacket.TYPE, ServerHandshakePacket.CODEC, true, true);
 	}
 
-	static <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacket(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound) {
-		TESConstants.NETWORKING.registerPacketInternal(payloadType, codec, isClientBound);
+	static <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacket(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound, boolean configurationStage) {
+		TESConstants.NETWORKING.registerPacketInternal(payloadType, codec, isClientBound, configurationStage);
 	}
 
 	@ApiStatus.Internal
-	<B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound);
+	<B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound, boolean configurationStage);
 }

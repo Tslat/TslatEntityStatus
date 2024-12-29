@@ -764,7 +764,7 @@ public final class TESConfig {
 	 * Whether TES currently has mob effect syncing active
 	 */
 	public boolean isSyncingEffects() {
-		return hudPotionIcons() || inWorldHudPotionIcons();
+		return TESConstants.HAS_SERVER_CONNECTION && (hudPotionIcons() || inWorldHudPotionIcons());
 	}
 
 	public static ModConfigSpec init() {

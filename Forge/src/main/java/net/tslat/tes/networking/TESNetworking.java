@@ -37,15 +37,15 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 	}
 
 	@Override
-	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, boolean isClientBound) {
-		if (isClientBound) {
-			NETWORK_CHANNEL_BUILDER.clientbound().add(packetType, (StreamCodec<RegistryFriendlyByteBuf, P>)codec, (packet, context) -> {
+	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, boolean isClientBound, boolean configurationStage) {
+		if (configurationStage) {
+			(isClientBound ? NETWORK_CHANNEL_BUILDER.configuration().clientbound() : NETWORK_CHANNEL_BUILDER.configuration().serverbound()).add(packetType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> {
 				packet.receiveMessage(context.getSender() != null ? context.getSender() : TESClientUtil.getClientPlayer(), context::enqueueWork);
 				context.setPacketHandled(true);
 			});
 		}
 		else {
-			NETWORK_CHANNEL_BUILDER.serverbound().add(packetType, (StreamCodec<RegistryFriendlyByteBuf, P>)codec, (packet, context) -> {
+			(isClientBound ? NETWORK_CHANNEL_BUILDER.clientbound() : NETWORK_CHANNEL_BUILDER.serverbound()).add(packetType, (StreamCodec<RegistryFriendlyByteBuf, P>)codec, (packet, context) -> {
 				packet.receiveMessage(context.getSender() != null ? context.getSender() : TESClientUtil.getClientPlayer(), context::enqueueWork);
 				context.setPacketHandled(true);
 			});
