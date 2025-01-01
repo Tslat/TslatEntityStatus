@@ -14,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tslat.tes.TES;
 import net.tslat.tes.core.networking.packet.*;
+import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector3f;
 
 import java.util.Optional;
@@ -23,23 +24,28 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 	public TESNetworking() {}
 
 	@Override
-	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound, boolean configurationStage) {
-		if (isClientBound) {
-			if (configurationStage) {
-				TES.packetRegistrar.configurationToClient(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
-			}
-			else {
-				TES.packetRegistrar.playToClient(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
-			}
+	@ApiStatus.Internal
+	public <B extends FriendlyByteBuf, P extends MultiloaderConfigurationPacket> void registerConfigurationPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, Direction direction) {
+		switch (direction) {
+			case CLIENTBOUND -> TES.packetRegistrar.configurationToClient(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.handleTask(new MultiloaderConfigurationPacket.TaskHandler(context::reply, type -> {})));
+			case SERVERBOUND -> TES.packetRegistrar.configurationToServer(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.handleTask(new MultiloaderConfigurationPacket.TaskHandler(reply -> {}, context::finishCurrentTask)));
+			case BIDIRECTIONAL -> TES.packetRegistrar.configurationBidirectional(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.handleTask(new MultiloaderConfigurationPacket.TaskHandler(reply -> {
+				if (context.flow().isClientbound())
+					context.reply(reply);
+			}, task -> {
+				if (context.flow().isServerbound())
+					context.finishCurrentTask(task);
+			})));
 		}
-		else {
-			if (configurationStage) {
-				TES.packetRegistrar.configurationToServer(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
-			}
-			else {
-				TES.packetRegistrar.playToServer(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
-			}
-		}
+	}
+
+	@Override
+	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, Direction direction) {
+		switch (direction) {
+			case CLIENTBOUND -> TES.packetRegistrar.playToClient(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
+			case SERVERBOUND -> TES.packetRegistrar.playToServer(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
+            case BIDIRECTIONAL -> TES.packetRegistrar.playBidirectional(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
+        }
 	}
 
 	@Override

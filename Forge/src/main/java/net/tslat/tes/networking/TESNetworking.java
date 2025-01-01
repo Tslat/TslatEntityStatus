@@ -6,6 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -15,10 +16,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.network.Channel;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.payload.PayloadFlow;
 import net.minecraftforge.network.payload.PayloadProtocol;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.networking.packet.*;
+import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector3f;
 
 import java.util.Optional;
@@ -37,19 +40,35 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 	}
 
 	@Override
-	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, boolean isClientBound, boolean configurationStage) {
-		if (configurationStage) {
-			(isClientBound ? NETWORK_CHANNEL_BUILDER.configuration().clientbound() : NETWORK_CHANNEL_BUILDER.configuration().serverbound()).add(packetType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> {
-				packet.receiveMessage(context.getSender() != null ? context.getSender() : TESClientUtil.getClientPlayer(), context::enqueueWork);
-				context.setPacketHandled(true);
-			});
-		}
-		else {
-			(isClientBound ? NETWORK_CHANNEL_BUILDER.clientbound() : NETWORK_CHANNEL_BUILDER.serverbound()).add(packetType, (StreamCodec<RegistryFriendlyByteBuf, P>)codec, (packet, context) -> {
-				packet.receiveMessage(context.getSender() != null ? context.getSender() : TESClientUtil.getClientPlayer(), context::enqueueWork);
-				context.setPacketHandled(true);
-			});
-		}
+	@ApiStatus.Internal
+	public <B extends FriendlyByteBuf, P extends MultiloaderConfigurationPacket> void registerConfigurationPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, Direction direction) {
+		final PayloadFlow<FriendlyByteBuf, CustomPacketPayload> payloadFlow = switch (direction) {
+            case SERVERBOUND -> NETWORK_CHANNEL_BUILDER.configuration().serverbound();
+            case CLIENTBOUND -> NETWORK_CHANNEL_BUILDER.configuration().clientbound();
+            case BIDIRECTIONAL -> NETWORK_CHANNEL_BUILDER.configuration().bidirectional();
+        };
+
+		payloadFlow.add(packetType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> {
+			packet.handleTask(new MultiloaderConfigurationPacket.TaskHandler(reply -> {
+				if (context.isClientSide())
+					context.getConnection().send(new ServerboundCustomPayloadPacket(reply));
+			}, type -> {}));
+			context.setPacketHandled(true);
+		});
+	}
+
+	@Override
+	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, Direction direction) {
+		final PayloadFlow<RegistryFriendlyByteBuf, CustomPacketPayload> payloadFlow = switch (direction) {
+			case SERVERBOUND -> NETWORK_CHANNEL_BUILDER.serverbound();
+			case CLIENTBOUND -> NETWORK_CHANNEL_BUILDER.clientbound();
+			case BIDIRECTIONAL -> NETWORK_CHANNEL_BUILDER.bidirectional();
+		};
+
+		payloadFlow.add(packetType, (StreamCodec<RegistryFriendlyByteBuf, P>)codec, (packet, context) -> {
+			packet.receiveMessage(context.getSender() != null ? context.getSender() : TESClientUtil.getClientPlayer(), context::enqueueWork);
+			context.setPacketHandled(true);
+		});
 	}
 
 	@Override

@@ -25,7 +25,6 @@ import java.util.Set;
  * Access this from {@link net.tslat.tes.api.TESConstants#NETWORKING TESConstants.NETWORKING}
  */
 public interface TESNetworking {
-
 	/**
 	 * Request an update for {@link net.minecraft.world.effect.MobEffect MobEffects} for a given entity<br>
 	 * Network direction: (CLIENT -> SERVER)
@@ -99,18 +98,31 @@ public interface TESNetworking {
 	// <-- Internal methods --> //
 
 	static void init() {
-		registerPacket(NewComponentParticlePacket.TYPE, NewComponentParticlePacket.CODEC, true, false);
-		registerPacket(NewNumericParticlePacket.TYPE, NewNumericParticlePacket.CODEC, true, false);
-		registerPacket(ParticleClaimPacket.TYPE, ParticleClaimPacket.CODEC, true, false);
-		registerPacket(RequestEffectsPacket.TYPE, RequestEffectsPacket.CODEC, false, false);
-		registerPacket(SyncEffectsPacket.TYPE, SyncEffectsPacket.CODEC, true, false);
-		registerPacket(ServerHandshakePacket.TYPE, ServerHandshakePacket.CODEC, true, true);
+		registerPacket(NewComponentParticlePacket.TYPE, NewComponentParticlePacket.CODEC, Direction.CLIENTBOUND);
+		registerPacket(NewNumericParticlePacket.TYPE, NewNumericParticlePacket.CODEC, Direction.CLIENTBOUND);
+		registerPacket(ParticleClaimPacket.TYPE, ParticleClaimPacket.CODEC, Direction.CLIENTBOUND);
+		registerPacket(RequestEffectsPacket.TYPE, RequestEffectsPacket.CODEC, Direction.SERVERBOUND);
+		registerPacket(SyncEffectsPacket.TYPE, SyncEffectsPacket.CODEC, Direction.CLIENTBOUND);
+		registerConfigurationPacket(ServerConnectionAckPacket.TYPE, ServerConnectionAckPacket.CODEC, Direction.BIDIRECTIONAL);
 	}
 
-	static <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacket(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound, boolean configurationStage) {
-		TESConstants.NETWORKING.registerPacketInternal(payloadType, codec, isClientBound, configurationStage);
+	static <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacket(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, Direction direction) {
+		TESConstants.NETWORKING.registerPacketInternal(payloadType, codec, direction);
+	}
+
+	static <B extends FriendlyByteBuf, P extends MultiloaderConfigurationPacket> void registerConfigurationPacket(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, Direction direction) {
+		TESConstants.NETWORKING.registerConfigurationPacketInternal(payloadType, codec, direction);
 	}
 
 	@ApiStatus.Internal
-	<B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound, boolean configurationStage);
+	<B extends FriendlyByteBuf, P extends MultiloaderConfigurationPacket> void registerConfigurationPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, Direction direction);
+
+	@ApiStatus.Internal
+	<B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, Direction direction);
+
+	public enum Direction {
+		SERVERBOUND,
+		CLIENTBOUND,
+		BIDIRECTIONAL
+	}
 }

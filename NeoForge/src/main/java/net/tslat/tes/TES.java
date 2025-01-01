@@ -1,5 +1,6 @@
 package net.tslat.tes;
 
+import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -11,11 +12,14 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.tslat.tes.api.TESConfig;
 import net.tslat.tes.api.TESConstants;
+import net.tslat.tes.core.networking.ServerConnectionAckTask;
 import net.tslat.tes.core.networking.TESNetworking;
+import net.tslat.tes.core.networking.packet.ServerConnectionAckPacket;
 
 @Mod(TESConstants.MOD_ID)
 public class TES {
@@ -28,8 +32,15 @@ public class TES {
 		}
 
 		modBus.addListener(TES::clientInit);
+		modBus.addListener(TES::serverHandshake);
 		modBus.addListener(TES::networkingInit);
 		NeoForge.EVENT_BUS.addListener(TES::serverStart);
+	}
+
+	private static void serverHandshake(final RegisterConfigurationTasksEvent ev) {
+		final ServerConfigurationPacketListener listener = ev.getListener();
+
+		ev.register(new ServerConnectionAckTask(() -> listener.hasChannel(ServerConnectionAckPacket.TYPE)));
 	}
 
 	private static void clientInit(final FMLClientSetupEvent ev) {
