@@ -119,7 +119,7 @@ public final class BuiltinHudElements {
 
 			poseStack.translate(0, 0, 0.001f);
 			TESClientUtil.drawColouredSquare(guiGraphics, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 1, 9, 0x090909 | (int)(opacity * 255 * TESAPI.getConfig().hudBarFontBackingOpacity()) << 24);
-			poseStack.translate(0, 0, 0.001f);
+			poseStack.translate(0, 0, 0.005f);
 
 			(inWorldHud ? TESAPI.getConfig().inWorldHudHealthFontStyle() : TESAPI.getConfig().hudHealthFontStyle()).render(mc.font, guiGraphics.pose(), Component.literal(healthText), center - halfTextWidth, -1, ARGB.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource);
 		}
@@ -157,6 +157,9 @@ public final class BuiltinHudElements {
 		TextureAtlasSprite armourSprite = TESClientUtil.getAtlasSprite(TESClientUtil.STAT_ARMOUR);
 		TextureAtlasSprite toughnessSprite = TESClientUtil.getAtlasSprite(TESClientUtil.STAT_TOUGHNESS);
 		TextureAtlasSprite meleeDamageSprite = TESClientUtil.getAtlasSprite(TESClientUtil.STAT_MELEE_DAMAGE);
+
+		if (healthX == 0 && heartsString == null)
+			return 0;
 
 		poseStack.pushPose();
 
