@@ -32,8 +32,8 @@ public class LevelRendererMixin {
 					shift = At.Shift.AFTER),
 			require = 0)
 	private static void tes$renderInWorldHuds(FogParameters fogParameters, DeltaTracker deltaTracker, Camera camera, ProfilerFiller profiler, Matrix4f frustumMatrix,
-											  Matrix4f projectionMatrix, ResourceHandle resourcehandle2, ResourceHandle resourcehandle3, boolean renderBlockOutline,
-											  Frustum frustum, ResourceHandle resourcehandle1, ResourceHandle resourcehandle, CallbackInfo ci) {
+											  Matrix4f projectionMatrix, ResourceHandle<RenderTarget> mainTarget, ResourceHandle<RenderTarget> translucentTarget, boolean renderBlockOutline,
+											  Frustum frustum, ResourceHandle<RenderTarget> weatherTarget, ResourceHandle<RenderTarget> entityOutlineTarget, CallbackInfo ci) {
 		final PoseStack poseStack = new PoseStack();
 
 		for (LivingEntity entity : TESEntityTracking.getEntitiesToRender()) {
@@ -49,8 +49,8 @@ public class LevelRendererMixin {
 					shift = At.Shift.AFTER),
 			require = 0)
 	private static void tes$renderInWorldHudsNf(FogParameters fogParameters, DeltaTracker deltaTracker, Camera camera, ProfilerFiller profilerFiller, Matrix4f frustumMatrix,
-												Matrix4f projectionMatrix, ResourceHandle<RenderTarget> mainTarget, ResourceHandle<RenderTarget> translucentTarget, ResourceHandle<RenderTarget> itemEntityTarget,
-												ResourceHandle<RenderTarget> weatherTarget, Frustum frustum, boolean renderBlockOutline, ResourceHandle<RenderTarget> entityOutlineTarget, CallbackInfo ci) {
+												Matrix4f projectionMatrix, ResourceHandle<RenderTarget> mainTarget, ResourceHandle<RenderTarget> translucentTarget,
+												Frustum frustum, boolean renderBlockOutline, ResourceHandle<RenderTarget> weatherTarget, ResourceHandle<RenderTarget> entityOutlineTarget, CallbackInfo ci) {
 		final PoseStack poseStack = new PoseStack();
 
 		for (LivingEntity entity : TESEntityTracking.getEntitiesToRender()) {

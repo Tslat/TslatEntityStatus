@@ -1,6 +1,7 @@
 package net.tslat.tes.core.hud;
 
 import com.mojang.blaze3d.Blaze3D;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -132,6 +133,7 @@ public class TESHud {
 		PoseStack poseStack = guiGraphics.pose();
 
 		poseStack.pushPose();
+		Lighting.setupFor3DItems();
 		TESAPI.getConfig().hudRenderPosition().adjustRenderForHudPosition(guiGraphics);
 
 		if (TESAPI.getConfig().hudEntityRender()) {
@@ -143,6 +145,7 @@ public class TESHud {
 
 		poseStack.translate(0, 2, 0);
 
+		Lighting.setupFor3DItems();
 		for (TESHudElement element : ELEMENTS.values()) {
 			RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
 			int offset = element.render(guiGraphics, mc, deltaTracker, TARGET_ENTITY, hudOpacity, false);

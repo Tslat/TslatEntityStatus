@@ -17,7 +17,7 @@ public class GameRendererMixin {
 		TESHud.pickNewEntity(partialTick);
 	}
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V"))
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V", shift = At.Shift.AFTER))
 	private void tes$renderHud(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo callback) {
 		TESHud.renderForHud(new GuiGraphics(Minecraft.getInstance(), Minecraft.getInstance().renderBuffers().bufferSource()), Minecraft.getInstance(), deltaTracker);
 	}
