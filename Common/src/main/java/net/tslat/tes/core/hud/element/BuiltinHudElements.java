@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
@@ -86,7 +85,6 @@ public final class BuiltinHudElements {
 		}
 
 		RenderSystem.setShaderColor(1, 1, 1, opacity);
-		RenderSystem.enableDepthTest();
 
 		if (renderType != TESHud.BarRenderType.NUMERIC) {
 			float percentHealth = entityState.getHealth() / entity.getMaxHealth();
@@ -96,7 +94,6 @@ public final class BuiltinHudElements {
 			TextureAtlasSprite backgroundSprite = TESClientUtil.getAtlasSprite(entityType.backgroundTexture());
 			TextureAtlasSprite progressSprite = TESClientUtil.getAtlasSprite(entityType.overlayTexture());
 			TextureAtlasSprite emptyBarSprite = TESClientUtil.getAtlasSprite(TESClientUtil.BAR_EMPTY);
-			TESClientUtil.prepRenderForTexture(backgroundSprite.atlasLocation());
 
 			TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, emptyBarSprite, 1, false, opacity);
 			poseStack.translate(0, 0, 0.001f);
@@ -106,7 +103,6 @@ public final class BuiltinHudElements {
 
 			poseStack.translate(0, 0, 0.001f);
 
-			RenderSystem.enableBlend();
 			TESClientUtil.constructBarRender(guiGraphics, 0, 0, barWidth, progressSprite, percentHealth, doSegments, opacity);
 		}
 
@@ -114,8 +110,6 @@ public final class BuiltinHudElements {
 			String healthText = TESUtil.roundToDecimal(entityState.getHealth(), 1) + "/" + TESUtil.roundToDecimal(entity.getMaxHealth(), 1);
 			float halfTextWidth = mc.font.width(healthText) / 2f;
 			float center = barWidth / 2f;
-
-			RenderSystem.setShader(CoreShaders.POSITION_COLOR);
 
 			poseStack.translate(0, 0, 0.001f);
 			TESClientUtil.drawColouredSquare(guiGraphics, (int)(center - halfTextWidth - 1), -2, (int)(halfTextWidth * 2) + 1, 9, 0x090909 | (int)(opacity * 255 * TESAPI.getConfig().hudBarFontBackingOpacity()) << 24);
@@ -166,22 +160,20 @@ public final class BuiltinHudElements {
 		if (inWorldHud)
 			poseStack.translate((healthX + (heartsString == null ? 0 : mc.font.width(heartsString)) + 2) * -0.5f, 0, 0);
 
-		TESClientUtil.prepRenderForTexture(armourSprite.atlasLocation());
-		RenderSystem.enableBlend();
-		RenderSystem.setShaderColor(1, 1, 1, opacity);
+		int colour  = ARGB.white(opacity);
 
 		if (armour > 0)
-			TESClientUtil.drawSprite(guiGraphics, armourSprite, armourX, 0, 9, 9, 0, 0);
+			TESClientUtil.drawSprite(RenderType::guiTextured, guiGraphics, armourSprite, armourX, 0, 9, 9, 0, 0, colour);
 
 		if (toughness > 0)
-			TESClientUtil.drawSprite(guiGraphics, toughnessSprite, toughnessX, 0, 9, 9, 0, 0);
+			TESClientUtil.drawSprite(RenderType::guiTextured, guiGraphics, toughnessSprite, toughnessX, 0, 9, 9, 0, 0, colour);
 
 		if (meleeDamage > 0)
-			TESClientUtil.drawSprite(guiGraphics, meleeDamageSprite, meleeDamageX, 0, 9, 9, 0, 0);
+			TESClientUtil.drawSprite(RenderType::guiTextured, guiGraphics, meleeDamageSprite, meleeDamageX, 0, 9, 9, 0, 0, colour);
 
 		if (heartsString != null) {
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(ResourceLocation.withDefaultNamespace("hud/heart/container")), healthX, 0, 9, 9, 0, 0);
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(ResourceLocation.withDefaultNamespace("hud/heart/full")), healthX, 0, 9, 9, 0, 0);
+			TESClientUtil.drawSprite(RenderType::guiTextured, guiGraphics, TESClientUtil.getAtlasSprite(ResourceLocation.withDefaultNamespace("hud/heart/container")), healthX, 0, 9, 9, 0, 0, colour);
+			TESClientUtil.drawSprite(RenderType::guiTextured, guiGraphics, TESClientUtil.getAtlasSprite(ResourceLocation.withDefaultNamespace("hud/heart/full")), healthX, 0, 9, 9, 0, 0, colour);
 		}
 
 		if (armour > 0)
@@ -212,8 +204,6 @@ public final class BuiltinHudElements {
 		}
 
 		int x = 0;
-
-		TESClientUtil.prepRenderForTexture(TESClientUtil.SPRITES_ATLAS);
 
 		for (TESHudEntityIcon icon : TESHud.getEntityIcons()) {
 			if (icon.renderIfApplicable(guiGraphics, entity, x, 0))
@@ -250,8 +240,6 @@ public final class BuiltinHudElements {
 		PoseStack poseStack = guiGraphics.pose();
 
 		poseStack.pushPose();
-		RenderSystem.setShader(CoreShaders.POSITION_TEX);
-		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(1, 1, 1, opacity);
 		poseStack.scale(0.5f, 0.5f, 1);
 
@@ -261,7 +249,6 @@ public final class BuiltinHudElements {
 		for (Holder<MobEffect> effect : entityState.getEffects()) {
 			TextureAtlasSprite sprite = textureManager.get(effect);
 
-			RenderSystem.setShaderTexture(0, sprite.atlasLocation());
 			guiGraphics.blitSprite(RenderType::guiTextured, sprite, i * 18 + x, y, 18, 18);
 
 			if (++i >= iconsPerRow) {
@@ -273,7 +260,6 @@ public final class BuiltinHudElements {
 			}
 		}
 
-		RenderSystem.disableBlend();
 		poseStack.popPose();
 
 		return (int)Math.ceil(effectsSize / (float)iconsPerRow) * 9;
@@ -300,8 +286,7 @@ public final class BuiltinHudElements {
 		guiGraphics.drawString(mc.font, "J", x + 16, 1, Mth.hsvToArgb(Mth.clamp(0.35f * ((float)horse.getAttributeBaseValue(Attributes.JUMP_STRENGTH) - AbstractHorse.MIN_JUMP_STRENGTH) / (AbstractHorse.MAX_JUMP_STRENGTH - AbstractHorse.MIN_JUMP_STRENGTH), 0, 0.35f), 1, 1, 255), false);
 
 		if (hasChest) {
-			TESClientUtil.prepRenderForTexture(TESClientUtil.SPRITES_ATLAS);
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.PROPERTY_STORAGE), x + 24, 1, 8, 8, 0, 0, 36, 36, 36, 36);
+			TESClientUtil.drawSprite(RenderType::guiTextured, guiGraphics, TESClientUtil.getAtlasSprite(TESClientUtil.PROPERTY_STORAGE), x + 24, 1, 8, 8, 0, 0, 36, 36, 36, 36, -1);
 		}
 
 		return 9;

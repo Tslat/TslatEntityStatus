@@ -2,8 +2,8 @@ package net.tslat.tes.api.util;
 
 import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.minecraft.CrashReport;
@@ -13,9 +13,9 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -35,6 +35,7 @@ import net.tslat.tes.api.TESConstants;
 import org.joml.Matrix4f;
 
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * Various helper methods for client-side functions
@@ -77,14 +78,6 @@ public final class TESClientUtil {
 	}
 
 	/**
-	 * Prep the shader and bind a texture for the given ResourceLocation
-	 */
-	public static void prepRenderForTexture(ResourceLocation texture) {
-		RenderSystem.setShader(CoreShaders.POSITION_TEX);
-		RenderSystem.setShaderTexture(0, texture);
-	}
-
-	/**
 	 * Render a TES-style health bar at a given position for a given width
 	 * @param guiGraphics The GuiGraphics instance for the current render state
 	 * @param x The x-position of the bar (use 0 and translate the {@link PoseStack} for in-world rendering
@@ -99,26 +92,18 @@ public final class TESClientUtil {
 		int percentPixels = Math.round(percentComplete * width);
 		int midBarWidth = width - 10;
 
-		RenderSystem.setShaderTexture(0, sprite.atlasLocation());
-
-		drawSprite(guiGraphics, sprite, x, y, Math.min(5, percentPixels), 5, 0, 0, Math.min(5, percentPixels), 5, 182, 5);
+		drawSprite(RenderType::guiTextured, guiGraphics, sprite, x, y, Math.min(5, percentPixels), 5, 0, 0, Math.min(5, percentPixels), 5, 182, 5, -1);
 
 		if (percentPixels > 5) {
 			if (midBarWidth > 0)
-				drawSprite(guiGraphics, sprite, x + 5, y, Math.min(midBarWidth, percentPixels - 5), 5, 5, 0, Math.min(midBarWidth, percentPixels - 5), 5, 182, 5);
+				drawSprite(RenderType::guiTextured, guiGraphics, sprite, x + 5, y, Math.min(midBarWidth, percentPixels - 5), 5, 5, 0, Math.min(midBarWidth, percentPixels - 5), 5, 182, 5, -1);
 
 			if (percentPixels > width - 5)
-				drawSprite(guiGraphics, sprite, x + 5 + midBarWidth, y, Math.min(5, percentPixels - 5), 5, 177, 0, Math.min(5, percentPixels - 5), 5, 182, 5);
+				drawSprite(RenderType::guiTextured, guiGraphics, sprite, x + 5 + midBarWidth, y, Math.min(5, percentPixels - 5), 5, 177, 0, Math.min(5, percentPixels - 5), 5, 182, 5, -1);
 		}
 
-		if (withBarOverlay && width > 10) {
-			RenderSystem.setShaderColor(1, 1, 1, 0.75f * opacity);
-
-			TextureAtlasSprite overlaySprite = getAtlasSprite(BAR_OVERLAY_SEGMENTS);
-
-			RenderSystem.setShaderTexture(0, overlaySprite.atlasLocation());
-			drawSprite(guiGraphics, overlaySprite, x, y, width, 5, 0, 0);
-		}
+		if (withBarOverlay && width > 10)
+			drawSprite(RenderType::guiTextured, guiGraphics, getAtlasSprite(BAR_OVERLAY_SEGMENTS), x, y, width, 5, 0, 0, ARGB.white(0.75f * opacity));
 	}
 
 	/**
@@ -137,10 +122,7 @@ public final class TESClientUtil {
 		poseStack.pushPose();
 
 		if (includeFrame) {
-			TESClientUtil.prepRenderForTexture(SPRITES_ATLAS);
-			RenderSystem.enableBlend();
-			RenderSystem.setShaderColor(1, 1, 1, 0.5f * opacity);
-			TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(ENTITY_ICON_FRAME), 2, 2, 34, 45, 0, 0);
+			drawSprite(RenderType::guiTextured, guiGraphics, TESClientUtil.getAtlasSprite(ENTITY_ICON_FRAME), 2, 2, 34, 45, 0, 0, ARGB.white(0.5f * opacity));
 
 			poseStack.translate(20, 25, 0);
 			poseStack.scale(-20, -20, 20);
@@ -226,7 +208,9 @@ public final class TESClientUtil {
 
 	/**
 	 * Wrapper for {@link GuiGraphics#blit} to make it easier to use
+	 * @param renderTypeFunction The RenderType factory for the given render operation
 	 * @param guiGraphics The GuiGraphics instance for the current render state
+	 * @param texture The path to the texture to render
 	 * @param posX The x position on the screen to render at
 	 * @param posY The y position on the screen to render at
 	 * @param width The width of the image
@@ -234,14 +218,17 @@ public final class TESClientUtil {
 	 * @param u The x position on the texture image to render from
 	 * @param v The y position on the texture image to render from
 	 * @param pngSize The pixel-size of the png file (only for square png files)
+	 * @param colour The colour tint to render with
 	 */
-	public static void drawSimpleTexture(GuiGraphics guiGraphics, int posX, int posY, int width, int height, float u, float v, int pngSize) {
-		drawSimpleTexture(guiGraphics, posX, posY, width, height, u, v, pngSize, pngSize);
+	public static void drawSimpleTexture(Function<ResourceLocation, RenderType> renderTypeFunction, ResourceLocation texture, GuiGraphics guiGraphics, int posX, int posY, int width, int height, float u, float v, int pngSize, int colour) {
+		drawSimpleTexture(renderTypeFunction, texture, guiGraphics, posX, posY, width, height, u, v, pngSize, pngSize, colour);
 	}
 
 	/**
 	 * Wrapper for {@link GuiGraphics#blit} to make it easier to use
+	 * @param renderTypeFunction The RenderType factory for the given render operation
 	 * @param guiGraphics The GuiGraphics instance for the current render state
+	 * @param texture The path to the texture to render
 	 * @param posX The x position on the screen to render at
 	 * @param posY The y position on the screen to render at
 	 * @param width The width of the image
@@ -250,14 +237,17 @@ public final class TESClientUtil {
 	 * @param v The y position on the texture image to render from
 	 * @param pngWidth The pixel-width of the png file
 	 * @param pngHeight The pixel-height of the png file
+	 * @param colour The colour tint to render with
 	 */
-	public static void drawSimpleTexture(GuiGraphics guiGraphics, int posX, int posY, int width, int height, float u, float v, int pngWidth, int pngHeight) {
-		drawSimpleTexture(guiGraphics, posX, posY, width, height, u, v, width, height, pngWidth, pngHeight);
+	public static void drawSimpleTexture(Function<ResourceLocation, RenderType> renderTypeFunction, ResourceLocation texture, GuiGraphics guiGraphics, int posX, int posY, int width, int height, float u, float v, int pngWidth, int pngHeight, int colour) {
+		drawSimpleTexture(renderTypeFunction, texture, guiGraphics, posX, posY, width, height, u, v, width, height, pngWidth, pngHeight, colour);
 	}
 
 	/**
 	 * Wrapper for {@link GuiGraphics#blit} to make it easier to use
+	 * @param renderTypeFunction The RenderType factory for the given render operation
 	 * @param guiGraphics The GuiGraphics instance for the current render state
+	 * @param texture The path to the texture to render
 	 * @param posX The x position on the screen to render at
 	 * @param posY The y position on the screen to render at
 	 * @param width The width of the in-game render
@@ -269,41 +259,39 @@ public final class TESClientUtil {
 	 * @param pngWidth The width of the entire png file
 	 * @param pngHeight The height of the entire png file
 	 */
-	public static void drawSimpleTexture(GuiGraphics guiGraphics, int posX, int posY, int width, int height, float u, float v, int uWidth, int vHeight, int pngWidth, int pngHeight) {
+	public static void drawSimpleTexture(Function<ResourceLocation, RenderType> renderTypeFunction, ResourceLocation texture, GuiGraphics guiGraphics, int posX, int posY, int width, int height, float u, float v, int uWidth, int vHeight, int pngWidth, int pngHeight, int colour) {
+		RenderType renderType = renderTypeFunction.apply(texture);
 		final Matrix4f pose = guiGraphics.pose().last().pose();
-		final BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		final VertexConsumer buffer = guiGraphics.bufferSource.getBuffer(renderType);
 		final float widthRatio = 1.0F / pngWidth;
 		final float heightRatio = 1.0F / pngHeight;
 
-		RenderSystem.enableBlend();
-		buffer.addVertex(pose, (float)posX, (float)posY, 0).setUv(u * widthRatio, v * heightRatio);
-		buffer.addVertex(pose, (float)posX, (float)posY + height, 0).setUv(u * widthRatio, (v + vHeight) * heightRatio);
-		buffer.addVertex(pose, (float)posX + width, (float)posY + height, 0).setUv((u + uWidth) * widthRatio, (v + vHeight) * heightRatio);
-		buffer.addVertex(pose, (float)posX + width, (float)posY, 0).setUv((u + uWidth) * widthRatio, v * heightRatio);
-		BufferUploader.drawWithShader(buffer.buildOrThrow());
+		buffer.addVertex(pose, (float)posX, (float)posY, 0).setUv(u * widthRatio, v * heightRatio).setColor(colour);
+		buffer.addVertex(pose, (float)posX, (float)posY + height, 0).setUv(u * widthRatio, (v + vHeight) * heightRatio).setColor(colour);
+		buffer.addVertex(pose, (float)posX + width, (float)posY + height, 0).setUv((u + uWidth) * widthRatio, (v + vHeight) * heightRatio).setColor(colour);
+		buffer.addVertex(pose, (float)posX + width, (float)posY, 0).setUv((u + uWidth) * widthRatio, v * heightRatio).setColor(colour);
 	}
 
-	public static void drawSprite(GuiGraphics guiGraphics, TextureAtlasSprite sprite, int posX, int posY, int width, int height, int u, int v) {
+	public static void drawSprite(Function<ResourceLocation, RenderType> renderTypeFunction, GuiGraphics guiGraphics, TextureAtlasSprite sprite, int posX, int posY, int width, int height, int u, int v, int colour) {
 		final int spriteWidth = sprite.contents().width();
 		final int spriteHeight = sprite.contents().height();
 
-		drawSprite(guiGraphics, sprite, posX, posY, width, height, u, v, spriteWidth, spriteHeight, spriteWidth, spriteHeight);
+		drawSprite(renderTypeFunction, guiGraphics, sprite, posX, posY, width, height, u, v, spriteWidth, spriteHeight, spriteWidth, spriteHeight, colour);
 	}
 
-	public static void drawSprite(GuiGraphics guiGraphics, TextureAtlasSprite sprite, int posX, int posY, int width, int height, int u, int v, int uWidth, int vHeight, int pngWidth, int pngHeight) {
+	public static void drawSprite(Function<ResourceLocation, RenderType> renderTypeFunction, GuiGraphics guiGraphics, TextureAtlasSprite sprite, int posX, int posY, int width, int height, int u, int v, int uWidth, int vHeight, int pngWidth, int pngHeight, int colour) {
+		final RenderType renderType = renderTypeFunction.apply(sprite.atlasLocation());
 		final Matrix4f pose = guiGraphics.pose().last().pose();
-		final BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		final VertexConsumer buffer = guiGraphics.bufferSource.getBuffer(renderType);
 		final float uMin = sprite.getU(u / (float)pngWidth);
 		final float uMax = sprite.getU((u + uWidth) / (float)pngWidth);
 		final float vMin = sprite.getV(v / (float)pngHeight);
 		final float vMax = sprite.getV((v + vHeight) / (float)pngHeight);
 
-		RenderSystem.enableBlend();
-		buffer.addVertex(pose, (float)posX, (float)posY, 0).setUv(uMin, vMin);
-		buffer.addVertex(pose, (float)posX, (float)posY + height, 0).setUv(uMin, vMax);
-		buffer.addVertex(pose, (float)posX + width, (float)posY + height, 0).setUv(uMax, vMax);
-		buffer.addVertex(pose, (float)posX + width, (float)posY, 0).setUv(uMax, vMin);
-		BufferUploader.drawWithShader(buffer.buildOrThrow());
+		buffer.addVertex(pose, (float)posX, (float)posY, 0).setUv(uMin, vMin).setColor(colour);
+		buffer.addVertex(pose, (float)posX, (float)posY + height, 0).setUv(uMin, vMax).setColor(colour);
+		buffer.addVertex(pose, (float)posX + width, (float)posY + height, 0).setUv(uMax, vMax).setColor(colour);
+		buffer.addVertex(pose, (float)posX + width, (float)posY, 0).setUv(uMax, vMin).setColor(colour);
 	}
 
 	/**

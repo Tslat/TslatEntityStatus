@@ -1,6 +1,7 @@
 package net.tslat.tes.core.hud.element;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.util.TESClientUtil;
@@ -32,7 +33,7 @@ public interface TESHudEntityIcon {
      * Builtin renderer for easily rendering an appropriately sized and positioned icon
      */
     static boolean genericSpriteRender(GuiGraphics guiGraphics, ResourceLocation sprite, int x, int y) {
-        TESClientUtil.drawSprite(guiGraphics, TESClientUtil.getAtlasSprite(sprite), x, y, 8, 8, 0, 0, 8, 8, 8, 8);
+        TESClientUtil.drawSprite(RenderType::guiTextured, guiGraphics, TESClientUtil.getAtlasSprite(sprite), x, y, 8, 8, 0, 0, 8, 8, 8, 8, -1);
 
         return true;
     }

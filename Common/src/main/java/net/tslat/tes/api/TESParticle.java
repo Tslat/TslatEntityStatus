@@ -7,10 +7,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.CoreShaders;
 import net.tslat.tes.api.util.TESClientUtil;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
 
@@ -60,16 +58,13 @@ public interface TESParticle<D> {
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180));
 		poseStack.scale(scale, scale, scale);
 
-		RenderSystem.enableBlend();
-		RenderSystem.enableDepthTest();
-		RenderSystem.setShader(CoreShaders.POSITION_COLOR);
+		//RenderSystem.enableDepthTest();
 		RenderSystem.setShaderColor(1, 1, 1, 1);
-		RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+		//RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
 		renderCallback.run();
 
 		RenderSystem.setShaderColor(1, 1, 1, 1);
-		RenderSystem.disableBlend();
 		poseStack.popPose();
 	}
 

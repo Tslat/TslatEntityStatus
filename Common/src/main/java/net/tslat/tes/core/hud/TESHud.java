@@ -133,7 +133,6 @@ public class TESHud {
 
 		poseStack.pushPose();
 		TESAPI.getConfig().hudRenderPosition().adjustRenderForHudPosition(guiGraphics);
-		RenderSystem.enableBlend();
 
 		if (TESAPI.getConfig().hudEntityRender()) {
 			RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
@@ -153,7 +152,6 @@ public class TESHud {
 		}
 
 		RenderSystem.setShaderColor(1, 1, 1, 1);
-		RenderSystem.disableBlend();
 		poseStack.popPose();
 	}
 
@@ -187,8 +185,6 @@ public class TESHud {
 		TESClientUtil.positionFacingCamera(poseStack);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180));
 		poseStack.scale(0.02f, 0.02f, 0.02f);
-		RenderSystem.enableBlend();
-		RenderSystem.enableDepthTest();
 		RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
 
 		GuiGraphics guiGraphics = TESClientUtil.createInlineGuiGraphics(poseStack, mc.renderBuffers().bufferSource());
@@ -205,7 +201,6 @@ public class TESHud {
 		guiGraphics.flush();
 		guiGraphics.pose().popPose();
 		RenderSystem.setShaderColor(1, 1, 1, 1);
-		RenderSystem.disableBlend();
 		poseStack.popPose();
 	}
 

@@ -1,6 +1,7 @@
 package net.tslat.tes.api.util;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,11 +10,9 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.SwordItem;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.TESEntityType;
-
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -153,10 +152,10 @@ public interface TESUtil {
 				return true;
 
 			if (entity instanceof AbstractSkeleton skeleton)
-				return skeleton.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof SwordItem;
+				return skeleton.getMainHandItem().has(DataComponents.WEAPON);
 
 			if (entity instanceof Phantom || entity instanceof EnderDragon || entity instanceof Spider || entity instanceof Slime ||
-			entity instanceof Endermite || entity instanceof Silverfish)
+				entity instanceof Endermite || entity instanceof Silverfish)
 				return true;
 
 			return false;
