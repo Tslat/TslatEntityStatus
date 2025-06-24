@@ -5,6 +5,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.tslat.tes.api.object.TESHudElement;
+import net.tslat.tes.api.object.TESParticle;
 import net.tslat.tes.core.hud.TESHud;
 import net.tslat.tes.core.particle.TESParticleClaimant;
 import net.tslat.tes.core.particle.TESParticleManager;
@@ -19,14 +21,18 @@ import org.joml.Vector3f;
 import java.util.Optional;
 
 /**
- * Public-facing API class for TES.<br>
- * Contains most of the commonly-used access functions for ease-of-use and code-stability.
+ * Public-facing API class for TES.
+ * <p>
+ * Contains most of the commonly used access functions for ease-of-use and code-stability.
  */
 public final class TESAPI {
 	/**
-	 * Add a {@link TESParticle} to the TES Particle manager.<br>
-	 * This method should only be called <u><b>client-side</b></u><br>
+	 * Add a {@link TESParticle} to the TES Particle manager.
+	 * <p>
+	 * This method should only be called <u><b>client-side</b></u>
+	 * <p>
 	 * The particle itself is responsible for rendering and its own validity/lifespan.
+	 *
 	 * @param particle The particle to add
 	 */
 	public static void addTESParticle(TESParticle<?> particle) {
@@ -34,10 +40,12 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Add a {@link TESHudElement HUD element} to the {@link TESHud TES HUD manager}.<br>
-	 * The element will be called to render at each render frame, with its position pre-adjusted.<br>
-	 * <br>
+	 * Add a {@link TESHudElement HUD element} to the {@link TESHud TES HUD manager}.
+	 * <p>
+	 * The element will be called to render at each render frame, with its position pre-adjusted.
+	 * <p>
 	 * Generally, HUD elements should be added at mod construct
+	 *
 	 * @param id The id of the element to add
 	 * @param element The element instance to add to the HUD
 	 */
@@ -47,6 +55,7 @@ public final class TESAPI {
 
 	/**
 	 * Remove an existing {@link TESHudElement HUD Element} from the {@link TESHud TES HUD manager}, if present
+	 *
 	 * @param id The id of the element to remove
 	 * @return true if the element was present
 	 */
@@ -55,8 +64,10 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Register a {@link TESParticleClaimant} with TES for handling custom claims.<br>
+	 * Register a {@link TESParticleClaimant} with TES for handling custom claims.
+	 * <p>
 	 * This allows for overriding damage particles dynamically or doing other similar things
+	 *
 	 * @param id The id of the claimant to register
 	 * @param claimant The claimant instance
 	 */
@@ -65,7 +76,8 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Register a {@link TESParticleSourceHandler TESParticleSourceHandler} with TES for custom handling of damage-based {@link net.tslat.tes.api.TESParticle TESParticles} predicated by their {@link net.minecraft.world.damagesource.DamageSource}<br>
+	 * Register a {@link TESParticleSourceHandler TESParticleSourceHandler} with TES for custom handling of damage-based {@link TESParticle TESParticles} predicated by their {@link net.minecraft.world.damagesource.DamageSource}
+	 * <p>
 	 * This can be used to more reliably special-handle damage particles for specific DamageSources (such as freezing damage, fire damage, etc)
 	 */
 	public static void registerParticleSourceHandler(TESParticleSourceHandler handler) {
@@ -74,7 +86,8 @@ public final class TESAPI {
 
 	/**
 	 * Get the current config for TES.
-	 * <p>Config is only available on the client side</p>
+	 * <p>
+	 * Config is only available on the client side
 	 */
 	@Nullable
 	public static TESConfig getConfig() {
@@ -82,7 +95,7 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Get TES' current HUD target entity, if it has one
+	 * Get TES' current HUD target entity if it has one
 	 */
 	@Nullable
 	public static LivingEntity getCurrentHUDTarget() {
@@ -90,7 +103,7 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Get TES' current status data for a given entity, if it has one
+	 * Get TES' current status data for a given entity if it has one
 	 */
 	@Nullable
 	public static EntityState getTESDataForEntity(LivingEntity entity) {
@@ -98,7 +111,7 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Get TES' current status data for a given entity, if it has one
+	 * Get TES' current status data for a given entity if it has one
 	 */
 	@Nullable
 	public static EntityState getTESDataForEntity(int entityId) {
@@ -106,8 +119,10 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Submit a particle claim to the particle manager for the next/upcoming tick.<br>
+	 * Submit a particle claim to the particle manager for the next/upcoming tick.
+	 * <p>
 	 * If the target entity has a health change next tick, your claimant will be called with the relevant info
+	 *
 	 * @param id The id of the claimant responsible for handling the claim
 	 * @param targetEntity The entity the claim is for
 	 * @param additionalData Optional additional data passed back to the claimant at the time of the claim
@@ -122,7 +137,8 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position
+	 * Add a {@link TESParticle TESParticle} for the given position
+	 *
 	 * @param level The level the particle is in
 	 * @param position The position the particle should appear at
 	 * @param contents The contents of the particle. If using a numeric value, use one of the double-based methods
@@ -137,7 +153,8 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity
+	 * Add a {@link TESParticle TESParticle} for the given entity
+	 *
 	 * @param targetedEntity The entity the particle should appear on
 	 * @param contents The contents of the particle. If using a numeric value, use one of the double-based methods
 	 */
@@ -154,7 +171,8 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position
+	 * Add a {@link TESParticle TESParticle} for the given position
+	 *
 	 * @param level The level the particle is in
 	 * @param position The position the particle should appear at
 	 * @param value    The value of the particle
@@ -170,7 +188,8 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity
+	 * Add a {@link TESParticle TESParticle} for the given entity
+	 *
 	 * @param targetedEntity The entity the particle should appear on
 	 * @param value The value of the particle
 	 * @param colour The text colour of the particle

@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESConstants;
+import net.tslat.tes.api.object.TESParticle;
 import net.tslat.tes.core.networking.packet.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector3f;
@@ -51,7 +52,7 @@ public interface TESNetworking {
 	void sendEffectsSync(LivingEntity targetedEntity, Set<Holder<MobEffect>> toAdd, Set<Holder<MobEffect>> toRemove);
 
 	/**
-	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position<br>
+	 * Send a {@link TESParticle TESParticle} for the given position<br>
 	 * Network direction: SERVER -> CLIENT
 	 * @param level The level the particle is in
 	 * @param position The position the particle should appear at
@@ -60,7 +61,7 @@ public interface TESNetworking {
 	void sendParticle(ServerLevel level, Vector3f position, Component contents);
 
 	/**
-	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity<br>
+	 * Send a {@link TESParticle TESParticle} for the given entity<br>
 	 * Network direction: SERVER -> CLIENT
 	 * @param targetedEntity The entity the particle should appear on
 	 * @param contents The contents of the particle. If sending a numeric value, use one of the double-based methods
@@ -68,7 +69,7 @@ public interface TESNetworking {
 	void sendParticle(LivingEntity targetedEntity, Component contents);
 
 	/**
-	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position<br>
+	 * Send a {@link TESParticle TESParticle} for the given position<br>
 	 * Network direction: SERVER -> CLIENT
 	 * @param level The level the particle is in
 	 * @param position The position the particle should appear at
@@ -78,7 +79,7 @@ public interface TESNetworking {
 	void sendParticle(ServerLevel level, Vector3f position, double value, int colour);
 
 	/**
-	 * Send a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity<br>
+	 * Send a {@link TESParticle TESParticle} for the given entity<br>
 	 * Network direction: SERVER -> CLIENT
 	 * @param targetedEntity The entity the particle should appear on
 	 * @param value The value of the particle

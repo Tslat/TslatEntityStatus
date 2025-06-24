@@ -1,14 +1,31 @@
 accessWidener v1 named
 
-accessible field net/minecraft/client/gui/GuiGraphics bufferSource Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;
+# Rendering
+accessible field net/minecraft/client/gui/GuiGraphics guiRenderState Lnet/minecraft/client/gui/render/state/GuiRenderState;
+accessible field net/minecraft/client/gui/GuiGraphics scissorStack Lnet/minecraft/client/gui/GuiGraphics$ScissorStack;
+accessible class net/minecraft/client/gui/GuiGraphics$ScissorStack
+accessible class net/minecraft/client/gui/render/state/GuiTextRenderState
+extendable class net/minecraft/client/gui/render/state/GuiTextRenderState
+accessible field net/minecraft/client/gui/render/state/GuiTextRenderState preparedText Lnet/minecraft/client/gui/Font$PreparedText;
+accessible field net/minecraft/client/gui/render/state/GuiTextRenderState bounds Lnet/minecraft/client/gui/navigation/ScreenRectangle;
+accessible class net/minecraft/client/gui/Font$PreparedTextBuilder
+accessible method net/minecraft/client/gui/Font$PreparedTextBuilder getShadowColor (Lnet/minecraft/network/chat/Style;I)I
+extendable method net/minecraft/client/gui/Font$PreparedTextBuilder getShadowColor (Lnet/minecraft/network/chat/Style;I)I
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder x F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder y F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder glyphs Ljava/util/List;
+accessible method net/minecraft/client/gui/font/glyphs/BakedGlyph$GlyphInstance hasShadow ()Z
+accessible method net/minecraft/client/gui/font/glyphs/BakedGlyph render (ZFFFLorg/joml/Matrix4f;Lcom/mojang/blaze3d/vertex/VertexConsumer;IZI)V
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder backgroundLeft F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder backgroundTop F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder backgroundRight F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder backgroundBottom F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder backgroundColor I
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder effects Ljava/util/List;
+
 accessible field net/minecraft/client/renderer/LevelRenderer targets Lnet/minecraft/client/renderer/LevelTargetBundle;
-accessible class net/minecraft/client/gui/Font$StringRenderOutput
 accessible field net/minecraft/client/gui/Font filterFishyGlyphs Z
 accessible method net/minecraft/client/gui/Font getFontSet (Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/gui/font/FontSet;
-accessible field net/minecraft/client/gui/Font$StringRenderOutput x F
-accessible field net/minecraft/client/gui/Font$StringRenderOutput y F
-accessible method net/minecraft/client/gui/Font$StringRenderOutput finish (F)F
-accessible method net/minecraft/client/gui/Font$StringRenderOutput renderCharacters ()V
 
 accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MIN_MOVEMENT_SPEED F
 accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MAX_MOVEMENT_SPEED F

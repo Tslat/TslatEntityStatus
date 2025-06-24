@@ -1,7 +1,10 @@
 package net.tslat.tes.mixin.client;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.tslat.tes.core.hud.TESHud;
@@ -17,8 +20,9 @@ public class GameRendererMixin {
 		TESHud.pickNewEntity(partialTick);
 	}
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V", shift = At.Shift.AFTER))
-	private void tes$renderHud(DeltaTracker deltaTracker, boolean renderLevel, CallbackInfo callback) {
-		TESHud.renderForHud(new GuiGraphics(Minecraft.getInstance(), Minecraft.getInstance().renderBuffers().bufferSource()), Minecraft.getInstance(), deltaTracker);
+	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V"))
+	private void tes$renderHud(Gui gui, GuiGraphics guiGraphics, DeltaTracker deltaTracker, Operation<Void> original) {
+		original.call(gui, guiGraphics, deltaTracker);
+		TESHud.renderForHud(guiGraphics, Minecraft.getInstance(), deltaTracker);
 	}
 }

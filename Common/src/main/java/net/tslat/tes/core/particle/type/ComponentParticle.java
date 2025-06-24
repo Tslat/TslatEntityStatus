@@ -1,12 +1,13 @@
 package net.tslat.tes.core.particle.type;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
-import net.tslat.tes.api.util.TESClientUtil;
+import net.tslat.tes.api.util.render.TextRenderHelper;
 import net.tslat.tes.core.state.EntityState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -37,8 +38,8 @@ public class ComponentParticle extends GenericTESParticle<Component> {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, Minecraft mc, Font fontRenderer, float partialTick) {
-		defaultedTextRender(mc, guiGraphics.pose(), this.prevPos, this.pos, partialTick, () -> TESClientUtil.centerTextForRender(this.contents, 0, 0, (x, y) ->
-				TESAPI.getConfig().particleFontStyle().render(fontRenderer, guiGraphics.pose(), this.contents, x, y, 0xFFFFFF, guiGraphics.bufferSource)));
+	public void render(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Minecraft mc, Font fontRenderer, float partialTick) {
+		defaultedTextRender(mc, poseStack, this.prevPos, this.pos, partialTick, () ->
+				TextRenderHelper.of(this.contents).centered().style(TESAPI.getConfig().particleFontStyle()).renderInWorld(poseStack, bufferSource, 0, -4));
 	}
 }

@@ -1,13 +1,12 @@
-package net.tslat.tes.api;
+package net.tslat.tes.api.object;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.tslat.tes.api.util.TESClientUtil;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.tslat.tes.api.TESAPI;
+import net.tslat.tes.api.util.TESRenderUtil;
 import org.joml.Vector3f;
 
 import java.util.Random;
@@ -25,9 +24,9 @@ public interface TESParticle<D> {
 	/**
 	 * Render the particle.<br>
 	 * The implementing class is responsible for positioning and validating the particle prior to rendering.<br>
-	 * The {@link PoseStack} in the {@link GuiGraphics} has already been transformed relative to the player's camera at this stage.
+	 * The {@link PoseStack} has already been transformed relative to the player's camera at this stage.
 	 */
-	void render(GuiGraphics guiGraphics, Minecraft mc, Font fontRenderer, float partialTick);
+	void render(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Minecraft mc, Font fontRenderer, float partialTick);
 
 	/**
 	 * Tick the particle (if required).<br>
@@ -54,17 +53,11 @@ public interface TESParticle<D> {
 
 		poseStack.pushPose();
 		poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
-		TESClientUtil.positionFacingCamera(poseStack);
-		poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+		TESRenderUtil.positionFacingCamera(poseStack);
 		poseStack.scale(scale, scale, scale);
-
-		//RenderSystem.enableDepthTest();
-		RenderSystem.setShaderColor(1, 1, 1, 1);
-		//RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
 		renderCallback.run();
 
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		poseStack.popPose();
 	}
 

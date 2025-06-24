@@ -2,6 +2,7 @@ package net.tslat.tes.api.util;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,7 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
-import net.tslat.tes.api.TESEntityType;
+import net.tslat.tes.api.object.TESEntityType;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,7 +27,15 @@ public interface TESUtil {
 	Object2BooleanOpenHashMap<Class<? extends LivingEntity>> rangedMobs = new Object2BooleanOpenHashMap<>();
 
 	/**
+	 * Translate a given locale key to its locally translated string equivalent
+	 */
+	static String translateKey(String key, Object... args) {
+		return Component.translatable(key, args).getString();
+	}
+
+	/**
 	 * Round the provided number to the nearest decimal place, trimming trailing zeroes as needed
+	 *
 	 * @param value The value to round
 	 * @param decimals The number of decimals to round the value to at minimum
 	 * @return The rounded value, as a String
@@ -124,7 +133,8 @@ public interface TESUtil {
 	}
 
 	/**
-	 * Get a LivingEntity instance from the provided Entity instance, if possible.<br>
+	 * Get a LivingEntity instance from the provided Entity instance, if possible.
+	 * <p>
 	 * Includes handling for part-entities and eliminates invalid entities
 	 */
 	@Nullable

@@ -1,13 +1,13 @@
 package net.tslat.tes.core.particle;
 
 import net.minecraft.world.damagesource.DamageSource;
-import net.tslat.tes.api.TESParticle;
+import net.tslat.tes.api.object.TESParticle;
 import net.tslat.tes.core.state.EntityState;
 
 import java.util.function.Consumer;
 
 /**
- * Interface for custom handling of damage-based {@link net.tslat.tes.api.TESParticle TESParticles} predicated by their {@link net.minecraft.world.damagesource.DamageSource}<br>
+ * Interface for custom handling of damage-based {@link TESParticle TESParticles} predicated by their {@link net.minecraft.world.damagesource.DamageSource}<br>
  * This can be used to more reliably special-handle damage particles for specific DamageSources (such as freezing damage, fire damage, etc)
  */
 public interface TESParticleSourceHandler {

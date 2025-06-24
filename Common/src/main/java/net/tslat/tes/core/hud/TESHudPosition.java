@@ -11,12 +11,12 @@ import java.util.function.Consumer;
  */
 public enum TESHudPosition {
     TOP_LEFT(guiGraphics -> {}),
-    CENTER_TOP(guiGraphics -> guiGraphics.pose().translate(guiGraphics.guiWidth() / 2f - 21 - TESAPI.getConfig().hudHealthBarLength() / 2f, 0, 0)),
-    TOP_RIGHT(guiGraphics -> guiGraphics.pose().translate(guiGraphics.guiWidth() - 42 - TESAPI.getConfig().hudHealthBarLength(), 0, 0)),
-    CENTER_RIGHT(guiGraphics -> guiGraphics.pose().translate(guiGraphics.guiWidth() - 42 - TESAPI.getConfig().hudHealthBarLength(), guiGraphics.guiHeight() / 2f - 22.5f, 0)),
-    BOTTOM_RIGHT(guiGraphics -> guiGraphics.pose().translate(guiGraphics.guiWidth() - 42 - TESAPI.getConfig().hudHealthBarLength(), guiGraphics.guiHeight() - 50, 0)),
-    BOTTOM_LEFT(guiGraphics -> guiGraphics.pose().translate(0, guiGraphics.guiHeight() - 50, 0)),
-    CENTER_LEFT(guiGraphics -> guiGraphics.pose().translate(0, guiGraphics.guiHeight() / 2f - 22.5f, 0));
+    CENTER_TOP(guiGraphics -> guiGraphics.pose().translate(guiGraphics.guiWidth() / 2f - 21 - TESAPI.getConfig().hudHealthBarLength() / 2f, 0)),
+    TOP_RIGHT(guiGraphics -> guiGraphics.pose().translate(guiGraphics.guiWidth() - 42 - TESAPI.getConfig().hudHealthBarLength(), 0)),
+    CENTER_RIGHT(guiGraphics -> guiGraphics.pose().translate(guiGraphics.guiWidth() - 42 - TESAPI.getConfig().hudHealthBarLength(), guiGraphics.guiHeight() / 2f - 22.5f)),
+    BOTTOM_RIGHT(guiGraphics -> guiGraphics.pose().translate(guiGraphics.guiWidth() - 42 - TESAPI.getConfig().hudHealthBarLength(), guiGraphics.guiHeight() - 50)),
+    BOTTOM_LEFT(guiGraphics -> guiGraphics.pose().translate(0, guiGraphics.guiHeight() - 50)),
+    CENTER_LEFT(guiGraphics -> guiGraphics.pose().translate(0, guiGraphics.guiHeight() / 2f - 22.5f));
 
     private final Consumer<GuiGraphics> renderAdjuster;
 
@@ -28,6 +28,6 @@ public enum TESHudPosition {
         final TESConfig config = TESAPI.getConfig();
 
         this.renderAdjuster.accept(guiGraphics);
-        guiGraphics.pose().translate(config.hudPositionLeftAdjust(), config.hudPositionTopAdjust(), 0);
+        guiGraphics.pose().translate(config.hudPositionLeftAdjust(), config.hudPositionTopAdjust());
     }
 }

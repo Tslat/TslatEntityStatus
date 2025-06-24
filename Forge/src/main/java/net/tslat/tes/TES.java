@@ -3,7 +3,6 @@ package net.tslat.tes;
 import fuzs.forgeconfigapiport.forge.api.v5.NeoForgeConfigRegistry;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.network.ConfigurationTask;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,9 +21,9 @@ import java.util.function.Consumer;
 public class TES {
 	public TES(FMLJavaModLoadingContext context) {
 		TESNetworking.init();
-		context.getModEventBus().addListener(TES::clientInit);
-		MinecraftForge.EVENT_BUS.addListener(TES::serverStart);
-		MinecraftForge.EVENT_BUS.addListener(TES::serverHandshake);
+		FMLClientSetupEvent.getBus(context.getModBusGroup()).addListener(TES::clientInit);
+		ServerStartedEvent.BUS.addListener(TES::serverStart);
+		GatherLoginConfigurationTasksEvent.BUS.addListener(TES::serverHandshake);
 	}
 
 	private static void serverHandshake(final GatherLoginConfigurationTasksEvent ev) {

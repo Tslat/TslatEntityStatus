@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.monster.Enemy;
-import net.tslat.tes.api.TESEntityType;
+import net.tslat.tes.api.object.TESEntityType;
 import net.tslat.tes.api.util.TESClientUtil;
 import org.jetbrains.annotations.Nullable;
 

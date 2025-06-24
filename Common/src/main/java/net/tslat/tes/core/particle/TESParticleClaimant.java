@@ -1,7 +1,7 @@
 package net.tslat.tes.core.particle;
 
 import net.minecraft.nbt.CompoundTag;
-import net.tslat.tes.api.TESParticle;
+import net.tslat.tes.api.object.TESParticle;
 import net.tslat.tes.core.state.EntityState;
 
 import java.util.Optional;

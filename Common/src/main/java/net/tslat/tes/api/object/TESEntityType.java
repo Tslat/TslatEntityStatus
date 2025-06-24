@@ -1,6 +1,7 @@
-package net.tslat.tes.api;
+package net.tslat.tes.api.object;
 
 import net.minecraft.resources.ResourceLocation;
+import net.tslat.tes.api.TESConstants;
 
 /**
  * "Entity type" enum for TES to differentiate entities for handling

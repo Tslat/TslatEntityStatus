@@ -1,7 +1,8 @@
 package net.tslat.tes.api;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.tslat.tes.api.util.TESClientUtil;
+import net.tslat.tes.api.object.TESHUDActivation;
+import net.tslat.tes.api.object.TextRenderStyle;
 import net.tslat.tes.core.hud.TESHud;
 import net.tslat.tes.core.hud.TESHudPosition;
 import org.apache.commons.lang3.tuple.Pair;
@@ -21,16 +22,16 @@ public final class TESConfig {
 	private final ModConfigSpec.BooleanValue hudEntityRender;
 	private final ModConfigSpec.BooleanValue hudPreventEntityOverflow;
 	private final ModConfigSpec.EnumValue<TESHud.BarRenderType> hudHealthRenderType;
-	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudHealthFontStyle;
+	private final ModConfigSpec.EnumValue<TextRenderStyle> hudHealthFontStyle;
 	private final ModConfigSpec.BooleanValue hudHealthBarSegments;
 	private final ModConfigSpec.IntValue hudHealthBarLength;
 	private final ModConfigSpec.BooleanValue hudEntityDamageTint;
 	private final ModConfigSpec.BooleanValue hudEntityName;
 	private final ModConfigSpec.BooleanValue hudEntityNamespace;
-	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudEntityNameFontStyle;
+	private final ModConfigSpec.EnumValue<TextRenderStyle> hudEntityNameFontStyle;
 	private final ModConfigSpec.BooleanValue hudBossesEnabled;
 	private final ModConfigSpec.BooleanValue hudStats;
-	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudStatsFontStyle;
+	private final ModConfigSpec.EnumValue<TextRenderStyle> hudStatsFontStyle;
 	private final ModConfigSpec.BooleanValue hudEntityIcons;
 	private final ModConfigSpec.BooleanValue hudPotionIcons;
 	private final ModConfigSpec.BooleanValue hudHorseStats;
@@ -42,15 +43,15 @@ public final class TESConfig {
 	private final ModConfigSpec.EnumValue<TESHUDActivation> inWorldHUDActivation;
 	private final ModConfigSpec.DoubleValue inWorldHudOpacity;
 	private final ModConfigSpec.EnumValue<TESHud.BarRenderType> inWorldBarsRenderType;
-	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudHealthFontStyle;
+	private final ModConfigSpec.EnumValue<TextRenderStyle> inWorldHudHealthFontStyle;
 	private final ModConfigSpec.IntValue inWorldBarsLength;
 	private final ModConfigSpec.BooleanValue inWorldBarsSegments;
 	private final ModConfigSpec.BooleanValue inWorldHudEntityName;
 	private final ModConfigSpec.BooleanValue inWorldHudEntityNamespace;
-	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudEntityNameFontStyle;
+	private final ModConfigSpec.EnumValue<TextRenderStyle> inWorldHudEntityNameFontStyle;
 	private final ModConfigSpec.BooleanValue inWorldHudBossesEnabled;
 	private final ModConfigSpec.BooleanValue inWorldHudStats;
-	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudStatsFontStyle;
+	private final ModConfigSpec.EnumValue<TextRenderStyle> inWorldHudStatsFontStyle;
 	private final ModConfigSpec.BooleanValue inWorldHudEntityIcons;
 	private final ModConfigSpec.BooleanValue inWorldHudPotionIcons;
 	private final ModConfigSpec.BooleanValue inWorldHudHorseStats;
@@ -58,7 +59,7 @@ public final class TESConfig {
 	private final ModConfigSpec.DoubleValue inWorldHudManualVerticalOffset;
 
 	private final ModConfigSpec.BooleanValue particlesEnabled;
-	private final ModConfigSpec.EnumValue<TESClientUtil.TextRenderType> particleFontStyle;
+	private final ModConfigSpec.EnumValue<TextRenderStyle> particleFontStyle;
 	private final ModConfigSpec.IntValue defaultParticleLifespan;
 	private final ModConfigSpec.IntValue particleDecimalPoints;
 	private final ModConfigSpec.DoubleValue particleScale;
@@ -132,7 +133,7 @@ public final class TESConfig {
 		this.hudHealthFontStyle = config
 				.comment("What style TES font should render in for entity health in the HUD (if applicable)")
 				.translation("config.tes.hud.healthRenderType.fontStyle")
-				.defineEnum("hudHealthFontStyle", TESClientUtil.TextRenderType.NORMAL);
+				.defineEnum("hudHealthFontStyle", TextRenderStyle.NORMAL);
 
 		this.hudHealthBarSegments = config
 				.comment("Set whether the TES HUD health bar should render bar-segments")
@@ -162,7 +163,7 @@ public final class TESConfig {
 		this.hudEntityNameFontStyle = config
 				.comment("What style TES font should render in for entity names in the HUD")
 				.translation("config.tes.hud.entityName.fontStyle")
-				.defineEnum("hudEntityNameFontStyle", TESClientUtil.TextRenderType.DROP_SHADOW);
+				.defineEnum("hudEntityNameFontStyle", TextRenderStyle.DROP_SHADOW);
 
 		this.hudBossesEnabled = config
 				.comment("Whether the TES HUD should render if the entity is a boss (they usually have their own boss bars)")
@@ -177,7 +178,7 @@ public final class TESConfig {
 		this.hudStatsFontStyle = config
 				.comment("What style TES font should render in for entity stats values in the HUD")
 				.translation("config.tes.hud.stats.fontStyle")
-				.defineEnum("hudStatsFontStyle", TESClientUtil.TextRenderType.DROP_SHADOW);
+				.defineEnum("hudStatsFontStyle", TextRenderStyle.DROP_SHADOW);
 
 		this.hudEntityIcons = config
 				.comment("Whether the TES HUD should render the entity's alignment icons")
@@ -246,7 +247,7 @@ public final class TESConfig {
 		this.inWorldHudHealthFontStyle = config
 				.comment("What style TES font should render in for entity health in the in-world HUD (if applicable)")
 				.translation("config.tes.inWorldHud.health.fontStyle")
-				.defineEnum("inWorldHudHealthFontStyle", TESClientUtil.TextRenderType.NORMAL);
+				.defineEnum("inWorldHudHealthFontStyle", TextRenderStyle.NORMAL);
 
 		this.inWorldHudOpacity = config
 				.comment("How opaque the TES in-world entity HUD should be.")
@@ -281,7 +282,7 @@ public final class TESConfig {
 		this.inWorldHudEntityNameFontStyle = config
 				.comment("What style TES font should render in for entity names in the in-world HUD")
 				.translation("config.tes.inWorldHud.entityName.fontStyle")
-				.defineEnum("inWorldHudEntityNameFontStyle", TESClientUtil.TextRenderType.DROP_SHADOW);
+				.defineEnum("inWorldHudEntityNameFontStyle", TextRenderStyle.DROP_SHADOW);
 
 		this.inWorldHudStats = config
 				.comment("Whether the in-world entity status HUD should render the entity's stats values")
@@ -291,7 +292,7 @@ public final class TESConfig {
 		this.inWorldHudStatsFontStyle = config
 				.comment("What style TES font should render in for entity stats values in the in-world HUD")
 				.translation("config.tes.inWorldHud.stats.fontStyle")
-				.defineEnum("inWorldHudStatsFontStyle", TESClientUtil.TextRenderType.DROP_SHADOW);
+				.defineEnum("inWorldHudStatsFontStyle", TextRenderStyle.DROP_SHADOW);
 
 		this.inWorldHudEntityIcons = config
 				.comment("Whether the in-world entity status HUD should render the entity's alignment icons")
@@ -329,7 +330,7 @@ public final class TESConfig {
 		this.particleFontStyle = config
 				.comment("What style TES particles' font should render in")
 				.translation("config.tes.particle.fontStyle")
-				.defineEnum("particleFontStyle", TESClientUtil.TextRenderType.OUTLINED);
+				.defineEnum("particleFontStyle", TextRenderStyle.OUTLINED);
 
 		this.defaultParticleLifespan = config
 				.comment("How long (in ticks) TES particles should display for")
@@ -457,7 +458,7 @@ public final class TESConfig {
 	/**
 	 * What style TES font should render in for entity names in the HUD
 	 */
-	public TESClientUtil.TextRenderType hudEntityNameFontStyle() {
+	public TextRenderStyle hudEntityNameFontStyle() {
 		return this.hudEntityNameFontStyle.get();
 	}
 
@@ -478,7 +479,7 @@ public final class TESConfig {
 	/**
 	 * What style TES font should render in for entity stats values in the HUD
 	 */
-	public TESClientUtil.TextRenderType hudStatsFontStyle() {
+	public TextRenderStyle hudStatsFontStyle() {
 		return this.hudStatsFontStyle.get();
 	}
 
@@ -536,7 +537,7 @@ public final class TESConfig {
 	/**
 	 * What style TES font should render in for entity health in the HUD (if applicable)
 	 */
-	public TESClientUtil.TextRenderType hudHealthFontStyle() {
+	public TextRenderStyle hudHealthFontStyle() {
 		return this.hudHealthFontStyle.get();
 	}
 
@@ -599,7 +600,7 @@ public final class TESConfig {
 	/**
 	 * What style TES font should render in for entity health in the in-world HUD (if applicable)
 	 */
-	public TESClientUtil.TextRenderType inWorldHudHealthFontStyle() {
+	public TextRenderStyle inWorldHudHealthFontStyle() {
 		return this.inWorldHudHealthFontStyle.get();
 	}
 
@@ -634,7 +635,7 @@ public final class TESConfig {
 	/**
 	 * What style TES font should render in for entity names in the in-world HUD
 	 */
-	public TESClientUtil.TextRenderType inWorldHudEntityNameFontStyle() {
+	public TextRenderStyle inWorldHudEntityNameFontStyle() {
 		return this.inWorldHudEntityNameFontStyle.get();
 	}
 
@@ -655,7 +656,7 @@ public final class TESConfig {
 	/**
 	 * What style TES font should render in for entity stats values in the in-world HUD
 	 */
-	public TESClientUtil.TextRenderType inWorldHudStatsFontStyle() {
+	public TextRenderStyle inWorldHudStatsFontStyle() {
 		return this.inWorldHudStatsFontStyle.get();
 	}
 
@@ -704,7 +705,7 @@ public final class TESConfig {
 	/**
 	 * What style TES particles' font should render in
 	 */
-	public TESClientUtil.TextRenderType particleFontStyle() {
+	public TextRenderStyle particleFontStyle() {
 		return this.particleFontStyle.get();
 	}
 

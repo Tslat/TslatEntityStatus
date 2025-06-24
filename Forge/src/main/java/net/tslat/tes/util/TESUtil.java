@@ -10,7 +10,7 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.tslat.tes.api.TESEntityType;
+import net.tslat.tes.api.object.TESEntityType;
 import net.tslat.tes.api.util.TESClientUtil;
 import org.jetbrains.annotations.Nullable;
 

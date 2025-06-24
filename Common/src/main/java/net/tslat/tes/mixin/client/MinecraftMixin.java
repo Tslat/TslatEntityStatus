@@ -16,7 +16,7 @@ public class MinecraftMixin {
 	private void tes$tickTES(CallbackInfo callback) {
 		ProfilerFiller profiler = Profiler.get();
 
-		profiler.push("tes_tick");
+		profiler.popPush("tes_tick");
 		TESParticleManager.tick();
 		TESEntityTracking.tick();
 		profiler.pop();

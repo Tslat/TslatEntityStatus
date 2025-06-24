@@ -2,9 +2,7 @@ package net.tslat.tes.core.hud;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.Util;
 import net.minecraft.client.DeltaTracker;
@@ -15,6 +13,7 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
@@ -23,14 +22,19 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.tes.api.TESAPI;
+import net.tslat.tes.api.TESConfig;
 import net.tslat.tes.api.TESConstants;
-import net.tslat.tes.api.TESHudElement;
+import net.tslat.tes.api.TESTextures;
+import net.tslat.tes.api.object.TESHudElement;
+import net.tslat.tes.api.object.TESHudRenderContext;
 import net.tslat.tes.api.util.TESClientUtil;
+import net.tslat.tes.api.util.TESRenderUtil;
 import net.tslat.tes.api.util.TESUtil;
 import net.tslat.tes.core.hud.element.BuiltinHudElements;
 import net.tslat.tes.core.hud.element.TESHudEntityIcon;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
+import org.joml.Matrix3x2fStack;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,7 +44,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Manager class for the TES HUD.<br>
+ * Manager class for the TES HUD.
+ * <p>
  * Handles rendering and updating the HUD itself, as well as taking registrations of new {@link TESHudElement TES HUD Elements}
  */
 public class TESHud {
@@ -54,13 +59,13 @@ public class TESHud {
 	});
 	protected static final List<TESHudEntityIcon> ENTITY_ICONS = Util.make(new CopyOnWriteArrayList<>(), list -> {
 		list.addAll(List.of(
-				TESHudEntityIcon.makeGeneric(TESClientUtil.PROPERTY_FIRE_IMMUNE, TESUtil::isFireImmune),
-				TESHudEntityIcon.makeGeneric(TESClientUtil.PROPERTY_MELEE, TESUtil::isMeleeMob),
-				TESHudEntityIcon.makeGeneric(TESClientUtil.PROPERTY_RANGED, TESUtil::isRangedMob),
-				TESHudEntityIcon.makeGeneric(TESClientUtil.ENTITY_TYPE_AQUATIC, entity -> entity.getType().is(EntityTypeTags.AQUATIC)),
-				TESHudEntityIcon.makeGeneric(TESClientUtil.ENTITY_TYPE_ILLAGER, entity -> entity.getType().is(EntityTypeTags.ILLAGER)),
-				TESHudEntityIcon.makeGeneric(TESClientUtil.ENTITY_TYPE_ARTHROPOD, entity -> entity.getType().is(EntityTypeTags.ARTHROPOD)),
-				TESHudEntityIcon.makeGeneric(TESClientUtil.ENTITY_TYPE_UNDEAD, entity -> entity.getType().is(EntityTypeTags.UNDEAD))));
+				TESHudEntityIcon.makeGeneric(TESTextures.PROPERTY_FIRE_IMMUNE, TESUtil::isFireImmune),
+				TESHudEntityIcon.makeGeneric(TESTextures.PROPERTY_MELEE, TESUtil::isMeleeMob),
+				TESHudEntityIcon.makeGeneric(TESTextures.PROPERTY_RANGED, TESUtil::isRangedMob),
+				TESHudEntityIcon.makeGeneric(TESTextures.ENTITY_TYPE_AQUATIC, entity -> entity.getType().is(EntityTypeTags.AQUATIC)),
+				TESHudEntityIcon.makeGeneric(TESTextures.ENTITY_TYPE_ILLAGER, entity -> entity.getType().is(EntityTypeTags.ILLAGER)),
+				TESHudEntityIcon.makeGeneric(TESTextures.ENTITY_TYPE_ARTHROPOD, entity -> entity.getType().is(EntityTypeTags.ARTHROPOD)),
+				TESHudEntityIcon.makeGeneric(TESTextures.ENTITY_TYPE_UNDEAD, entity -> entity.getType().is(EntityTypeTags.UNDEAD))));
 	});
 	private static TESHudElement[] INVERSE_ELEMENTS = buildInverseElementArray(ELEMENTS.values());
 	private static LivingEntity TARGET_ENTITY = null;
@@ -126,36 +131,38 @@ public class TESHud {
 			return;
 		}
 
-		if (!TESAPI.getConfig().hudEnabled() || Minecraft.getInstance().options.hideGui || (!TESAPI.getConfig().hudBossesEnabled() && TESConstants.UTILS.isBossEntity(TARGET_ENTITY)))
+		TESConfig config = TESAPI.getConfig();
+
+		if (!config.hudEnabled() || Minecraft.getInstance().options.hideGui || (!config.hudBossesEnabled() && TESConstants.UTILS.isBossEntity(TARGET_ENTITY)))
 			return;
 
-		float hudOpacity = TESAPI.getConfig().hudOpacity();
-		PoseStack poseStack = guiGraphics.pose();
+		float hudOpacity = config.hudOpacity();
+		Matrix3x2fStack poseStack = guiGraphics.pose();
 
-		poseStack.pushPose();
-		Lighting.setupFor3DItems();
-		TESAPI.getConfig().hudRenderPosition().adjustRenderForHudPosition(guiGraphics);
+		poseStack.pushMatrix();
+		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
+		config.hudRenderPosition().adjustRenderForHudPosition(guiGraphics);
 
 		if (TESAPI.getConfig().hudEntityRender()) {
-			RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
-			TESClientUtil.renderEntityIcon(guiGraphics, mc, deltaTracker, TARGET_ENTITY, hudOpacity, true);
+			TESRenderUtil.renderEntityIcon(guiGraphics, mc, deltaTracker, TARGET_ENTITY, hudOpacity, true);
 
-			poseStack.translate(40, 0, 0);
+			poseStack.translate(40, 0);
 		}
 
-		poseStack.translate(0, 2, 0);
+		poseStack.translate(0, 2);
 
-		Lighting.setupFor3DItems();
+		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
+
+		TESHudRenderContext renderContext = TESHudRenderContext.guiContext(guiGraphics);
+
 		for (TESHudElement element : ELEMENTS.values()) {
-			RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
-			int offset = element.render(guiGraphics, mc, deltaTracker, TARGET_ENTITY, hudOpacity, false);
+			int offset = element.render(renderContext, mc, deltaTracker, TARGET_ENTITY, hudOpacity);
 
 			if (offset > 0)
-				poseStack.translate(0, 2 + offset, 0);
+				poseStack.translate(0, 2 + offset);
 		}
 
-		RenderSystem.setShaderColor(1, 1, 1, 1);
-		poseStack.popPose();
+		poseStack.popMatrix();
 	}
 
 	public static void renderInWorld(PoseStack poseStack, LivingEntity entity, DeltaTracker deltaTracker) {
@@ -166,44 +173,46 @@ public class TESHud {
 
 		entityState.markActive();
 
-		if (!TESAPI.getConfig().inWorldBarsEnabled() ||
-				(entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf()) ||
-				!TESAPI.getConfig().inWorldHUDActivation().test(entityState) ||
-				(!TESAPI.getConfig().inWorldHudBossesEnabled() && TESConstants.UTILS.isBossEntity(TARGET_ENTITY)))
+		Minecraft mc = Minecraft.getInstance();
+		TESConfig config = TESAPI.getConfig();
+
+		if (!config.inWorldBarsEnabled() ||
+				(entity.getSelfAndPassengers().anyMatch(passenger -> passenger == mc.player) && !config.inWorldHudForSelf()) ||
+				!config.inWorldHUDActivation().test(entityState) ||
+				(!config.inWorldHudBossesEnabled() && TESConstants.UTILS.isBossEntity(TARGET_ENTITY)))
 			return;
 
 		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
-		float hudOpacity = TESAPI.getConfig().inWorldHudOpacity();
-		Minecraft mc = Minecraft.getInstance();
+		float hudOpacity = config.inWorldHudOpacity();
 		EntityRenderer<? super LivingEntity, EntityRenderState> renderer = (EntityRenderer)mc.getEntityRenderDispatcher().getRenderer(entity);
 		Vec3 position = entity.getPosition(partialTick)
 				.subtract(mc.gameRenderer.getMainCamera().getPosition())
 				.add(renderer.getRenderOffset(renderer.createRenderState(entity, partialTick)));
 
+		Vec3 nameTagOffset = entity.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));
+
+		if (nameTagOffset == null)
+			nameTagOffset = new Vec3(0, entity.getBbHeight(), 0);
+
+		nameTagOffset = nameTagOffset.add(0, 0.5f, 0);
+
 		poseStack.pushPose();
 		poseStack.translate(position.x, position.y, position.z);
-		poseStack.translate(0, entity.getBbHeight() + 0.5f, 0);
-		poseStack.translate(0, TESConstants.CONFIG.inWorldHudManualVerticalOffset(), 0);
+		poseStack.translate(nameTagOffset);
+		poseStack.translate(0, config.inWorldHudManualVerticalOffset(), 0);
 
-		TESClientUtil.positionFacingCamera(poseStack);
-		poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+		TESRenderUtil.positionFacingCamera(poseStack);
 		poseStack.scale(0.02f, 0.02f, 0.02f);
-		RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
 
-		GuiGraphics guiGraphics = TESClientUtil.createInlineGuiGraphics(poseStack, mc.renderBuffers().bufferSource());
-
-		guiGraphics.pose().pushPose();
+		TESHudRenderContext renderContext = TESHudRenderContext.inWorldContext(poseStack, mc.renderBuffers().bufferSource(), mc.getEntityRenderDispatcher().getRenderer(entity).getPackedLightCoords(entity, partialTick));
 
 		for (TESHudElement element : INVERSE_ELEMENTS) {
-			int offset = element.render(guiGraphics, mc, deltaTracker, entity, hudOpacity, true);
+			int offset = element.render(renderContext, mc, deltaTracker, entity, hudOpacity);
 
 			if (offset > 0)
-				guiGraphics.pose().translate(0, -(2 + offset), 0);
+				poseStack.translate(0, -(2 + offset), 0);
 		}
 
-		guiGraphics.flush();
-		guiGraphics.pose().popPose();
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		poseStack.popPose();
 	}
 

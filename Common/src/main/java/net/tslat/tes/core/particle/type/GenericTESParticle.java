@@ -2,7 +2,7 @@ package net.tslat.tes.core.particle.type;
 
 import net.minecraft.client.Minecraft;
 import net.tslat.tes.api.TESConstants;
-import net.tslat.tes.api.TESParticle;
+import net.tslat.tes.api.object.TESParticle;
 import net.tslat.tes.core.state.EntityState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
