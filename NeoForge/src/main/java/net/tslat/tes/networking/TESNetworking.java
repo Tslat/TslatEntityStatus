@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tslat.tes.TES;
 import net.tslat.tes.core.networking.packet.*;
@@ -35,6 +36,12 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 			}, task -> {
 				if (context.flow().isServerbound())
 					context.finishCurrentTask(task);
+			})), (packet, context) -> packet.handleTask(new MultiloaderConfigurationPacket.TaskHandler(reply -> {
+				if (context.flow().isClientbound())
+					context.reply(reply);
+			}, task -> {
+				if (context.flow().isServerbound())
+					context.finishCurrentTask(task);
 			})));
 		}
 	}
@@ -44,13 +51,13 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 		switch (direction) {
 			case CLIENTBOUND -> TES.packetRegistrar.playToClient(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
 			case SERVERBOUND -> TES.packetRegistrar.playToServer(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
-            case BIDIRECTIONAL -> TES.packetRegistrar.playBidirectional(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
+            case BIDIRECTIONAL -> TES.packetRegistrar.playBidirectional(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork), (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
         }
 	}
 
 	@Override
 	public void requestEffectsSync(int entityId) {
-		PacketDistributor.sendToServer(new RequestEffectsPacket(entityId));
+		ClientPacketDistributor.sendToServer(new RequestEffectsPacket(entityId));
 	}
 
 	@Override
