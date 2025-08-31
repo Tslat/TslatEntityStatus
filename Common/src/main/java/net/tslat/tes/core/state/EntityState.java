@@ -93,6 +93,10 @@ public class EntityState {
 
 	public void tick() {
 		LivingEntity entity = getEntity();
+
+		if (entity == null)
+			return;
+
 		this.currentHealth = Math.min(entity.getHealth(), entity.getMaxHealth());
 
 		if (this.currentHealth != this.lastHealth && entity.tickCount > 2) {
