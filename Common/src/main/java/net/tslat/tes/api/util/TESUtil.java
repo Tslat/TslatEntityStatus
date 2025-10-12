@@ -124,11 +124,11 @@ public interface TESUtil {
 		return isRangedMobHardcoded(entity);
 	}
 
-	static boolean isVisibleToPlayer(LivingEntity entity, Player player) {
-		return !entity.isInvisibleTo(player) || entity.isCurrentlyGlowing();
+	static boolean isVisibleToPlayer(Entity entity, Player player) {
+		return !entity.isInvisibleTo(player) || (TESConstants.UTILS.getLivingEntityIfPossible(entity) instanceof LivingEntity livingEntity && livingEntity.isCurrentlyGlowing());
 	}
 
-	static boolean shouldTESHandleEntity(LivingEntity entity, Player player) {
+	static boolean shouldTESHandleEntity(Entity entity, Player player) {
 		return !entity.getType().is(TESConstants.NO_TES_HANDLING) && isVisibleToPlayer(entity, player);
 	}
 

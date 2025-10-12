@@ -22,6 +22,6 @@ public final class TESClientUtil {
 	 */
 	@Nullable
 	public static Entity getClientCamera() {
-		return Minecraft.getInstance().cameraEntity;
+		return Minecraft.getInstance().getCameraEntity();
 	}
 }

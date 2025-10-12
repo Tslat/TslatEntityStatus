@@ -65,7 +65,7 @@ public class TextureRenderHelper {
     }
 
     public static TextureRenderHelper ofSprite(ResourceLocation texture) {
-        return of(TESRenderUtil.getAtlasSprite(texture));
+        return of(TESRenderUtil.getGuiAtlasSprite(texture));
     }
 
     public static TextureRenderHelper of(TextureAtlasSprite sprite) {

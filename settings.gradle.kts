@@ -1,7 +1,7 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-		
+
 		// Fabric
         exclusiveContent {
             forRepository {
@@ -11,11 +11,11 @@ pluginManagement {
                 }
             }
             filter {
-                includeGroup("net.fabricmc")
+                includeGroupAndSubgroups("net.fabricmc")
                 includeGroup("fabric-loom")
             }
         }
-		
+
 		// NeoForge
         exclusiveContent {
             forRepository {
@@ -29,7 +29,7 @@ pluginManagement {
                 includeGroup("codechicken")
             }
         }
-		
+
 		// Forge
         exclusiveContent {
             forRepository {
@@ -42,7 +42,7 @@ pluginManagement {
                 includeGroupAndSubgroups("net.minecraftforge")
             }
         }
-		
+
 		// Mixin
         exclusiveContent {
             forRepository {

@@ -26,7 +26,7 @@ public class TES {
 	public static PayloadRegistrar packetRegistrar = null;
 
 	public TES(ModContainer modContainer, IEventBus modBus) {
-		if (FMLEnvironment.dist == Dist.CLIENT) {
+		if (FMLEnvironment.getDist() == Dist.CLIENT) {
 			modContainer.registerConfig(ModConfig.Type.CLIENT, TESConfig.init());
 			modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 		}

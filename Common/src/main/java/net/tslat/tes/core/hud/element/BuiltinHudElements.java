@@ -93,10 +93,10 @@ public final class BuiltinHudElements {
 			float transitionPercent = entityState.getLastTransitionHealth() / entity.getMaxHealth();
 			boolean doSegmentsOverlay = inWorldHud ? config.inWorldBarsSegments() : config.hudHealthBarSegments();
 			TESEntityType entityType = TESConstants.UTILS.getEntityType(entity);
-			TextureAtlasSprite emptyBar = TESRenderUtil.getAtlasSprite(entityType.backgroundTexture());
-			TextureAtlasSprite filledBar = TESRenderUtil.getAtlasSprite(entityType.overlayTexture());
-			TextureAtlasSprite barBackground = TESRenderUtil.getAtlasSprite(TESTextures.BAR_EMPTY);
-			TextureAtlasSprite barOverlay = doSegmentsOverlay ? TESRenderUtil.getAtlasSprite(TESTextures.BAR_OVERLAY_SEGMENTS) : null;
+			TextureAtlasSprite emptyBar = TESRenderUtil.getGuiAtlasSprite(entityType.backgroundTexture());
+			TextureAtlasSprite filledBar = TESRenderUtil.getGuiAtlasSprite(entityType.overlayTexture());
+			TextureAtlasSprite barBackground = TESRenderUtil.getGuiAtlasSprite(TESTextures.BAR_EMPTY);
+			TextureAtlasSprite barOverlay = doSegmentsOverlay ? TESRenderUtil.getGuiAtlasSprite(TESTextures.BAR_OVERLAY_SEGMENTS) : null;
 
 			TESRenderUtil.renderBar(renderContext, 0, 0, barWidth, filledPercent, transitionPercent, opacity, barBackground, emptyBar, filledBar, barOverlay);
 		}

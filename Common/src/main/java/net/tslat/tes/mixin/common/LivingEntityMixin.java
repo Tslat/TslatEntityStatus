@@ -25,7 +25,7 @@ public class LivingEntityMixin {
 
 	@Inject(method = "onEffectsRemoved", at = @At("HEAD"))
 	private void tes$syncRemovedEffect(Collection<MobEffectInstance> effects, CallbackInfo ci) {
-		if (!((LivingEntity)(Object)this).level().isClientSide) {
+		if (!((LivingEntity)(Object)this).level().isClientSide()) {
 			Set<Holder<MobEffect>> currentEffects = new ObjectOpenHashSet<>(effects.size());
 
 			for (MobEffectInstance instance : effects) {

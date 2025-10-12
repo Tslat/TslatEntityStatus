@@ -6,9 +6,11 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
+import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.particle.TESParticleManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,12 +23,15 @@ public final class TESEntityTracking {
 
 	public static void accountForEntity(LivingEntity entity) {
 		ENTITY_STATES.compute(entity.getId(), (key, value) -> {
-			if (entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf())
+            Minecraft mc = Minecraft.getInstance();
+
+			if (entity.getSelfAndPassengers().anyMatch(passenger -> passenger == mc.player) && !TESAPI.getConfig().inWorldHudForSelf())
 				return null;
 
 			double trackingDist = TESAPI.getConfig().getEntityTrackingDistance();
+            Entity cameraEntity = TESClientUtil.getClientCamera();
 
-			if (entity.distanceToSqr((Minecraft.getInstance().cameraEntity == null ? Minecraft.getInstance().player : Minecraft.getInstance().cameraEntity)) > trackingDist * trackingDist)
+			if (entity.distanceToSqr((cameraEntity == null ? mc.player : cameraEntity)) > trackingDist * trackingDist)
 				return null;
 
 			if (entity.getType().is(TESConstants.NO_TES_HANDLING))

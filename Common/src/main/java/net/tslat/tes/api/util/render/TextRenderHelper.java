@@ -1,6 +1,5 @@
 package net.tslat.tes.api.util.render;
 
-import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
@@ -9,7 +8,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.font.glyphs.BakedGlyph;
+import net.minecraft.client.gui.font.TextRenderable;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.GuiTextRenderState;
 import net.minecraft.client.renderer.LightTexture;
@@ -119,7 +118,7 @@ public class TextRenderHelper {
     }
 
     public TextRenderHelper secondaryColour(int colour) {
-        this.textColour = colour;
+        this.secondaryColour = colour;
 
         return this;
     }
@@ -258,12 +257,12 @@ public class TextRenderHelper {
                                                                                                int colour, int secondaryColour, int backgroundColour, int packedLight,
                                                                                                Either<Matrix3x2f, Matrix4f> pose, @Nullable ScreenRectangle scissor, @Nullable MultiBufferSource.BufferSource bufferSource) {
             final Font.PreparedTextBuilder outlineText = configurablePreparedText(font, 0, 0, secondaryColour, 0, backgroundColour, false);
-            final boolean filterFishyGlyphs = font.filterFishyGlyphs;
+            //final boolean filterFishyGlyphs = font.filterFishyGlyphs;
             final float outlineWeight = 0.6f;
 
             for (int xO = -1; xO <= 1; xO++) {
                 for (int yO = -1; yO <= 1; yO++) {
-                    if (xO != 0 || yO != 0) {
+                    if (xO != 0 || yO != 0) {/*
                         float[] cumulativeXOffset = new float[] {x};
                         int xOffset = xO;
                         int yOffset = yO;
@@ -276,7 +275,7 @@ public class TextRenderHelper {
                             cumulativeXOffset[0] += glyphInfo.getAdvance(style.isBold());
 
                             return outlineText.accept(charIndex, style.withColor(backgroundColour), character);
-                        });
+                        });*/
                     }
                 }
             }
@@ -303,7 +302,7 @@ public class TextRenderHelper {
                 }
 
                 return List.of(Pair.of(outlineText, bounds), Pair.of(text, bounds2));
-            }, pose3d -> {
+            }, pose3d -> {/*
                 Font.GlyphVisitor glyphVisitor = getWorldspaceGlyphVisitor(bufferSource, pose3d, Font.DisplayMode.NORMAL, packedLight, false);
 
                 for (BakedGlyph.GlyphInstance glyph : outlineText.glyphs) {
@@ -312,7 +311,7 @@ public class TextRenderHelper {
 
                 charSequence.accept(text);
                 text.visit(getWorldspaceGlyphVisitor(bufferSource, pose3d, Font.DisplayMode.POLYGON_OFFSET, packedLight, false));
-
+*/
                 return List.of();
             }));
         }
@@ -352,7 +351,7 @@ public class TextRenderHelper {
             }
 
             @Override
-            public void visit(Font.GlyphVisitor glyphVisitor) {
+            public void visit(Font.GlyphVisitor glyphVisitor) {/*
                 BakedGlyph bakedGlyph = null;
 
                 if (ARGB.alpha(this.backgroundColor) != 0) {
@@ -373,7 +372,7 @@ public class TextRenderHelper {
                     for (BakedGlyph.Effect effect : this.effects) {
                         glyphVisitor.acceptEffect(bakedGlyph, effect);
                     }
-                }
+                }*/
             }
         };
     }
@@ -381,22 +380,21 @@ public class TextRenderHelper {
     static Font.GlyphVisitor getWorldspaceGlyphVisitor(MultiBufferSource bufferSource, Matrix4f pose, Font.DisplayMode displayMode, int packedLight, boolean dropShadow) {
         return new Font.GlyphVisitor() {
             @Override
-            public void acceptGlyph(BakedGlyph.GlyphInstance glyph) {
-                BakedGlyph bakedGlyph = glyph.glyph();
-                VertexConsumer vertexconsumer = bufferSource.getBuffer(bakedGlyph.renderType(displayMode));
+            public void acceptGlyph(TextRenderable glyph) {
+                VertexConsumer vertexconsumer = bufferSource.getBuffer(glyph.renderType(displayMode));
 
-                renderDropShadowFriendlyGlyph(bakedGlyph, glyph, vertexconsumer, pose, packedLight, dropShadow);
+                renderDropShadowFriendlyGlyph(glyph, vertexconsumer, pose, packedLight, dropShadow);
             }
 
             @Override
-            public void acceptEffect(BakedGlyph bakedGlyph, BakedGlyph.Effect glyphEffect) {
-                VertexConsumer vertexconsumer = bufferSource.getBuffer(bakedGlyph.renderType(displayMode));
+            public void acceptEffect(TextRenderable glyphEffect) {
+                VertexConsumer vertexconsumer = bufferSource.getBuffer(glyphEffect.renderType(displayMode));
 
-                bakedGlyph.renderEffect(glyphEffect, pose, vertexconsumer, packedLight, dropShadow);
+                glyphEffect.render(pose, vertexconsumer, packedLight, dropShadow);
             }
 
             // Because Mojang didn't build glyph shadows for 3d worldspace
-            private static void renderDropShadowFriendlyGlyph(BakedGlyph glyph, BakedGlyph.GlyphInstance glyphInstance, VertexConsumer buffer, Matrix4f pose, int packedLight, boolean dropShadow) {
+            private static void renderDropShadowFriendlyGlyph(TextRenderable glyphInstance, VertexConsumer buffer, Matrix4f pose, int packedLight, boolean dropShadow) {/*
                 net.minecraft.network.chat.Style style = glyphInstance.style();
                 boolean italic = style.isItalic();
                 boolean bold = style.isBold();
@@ -423,7 +421,7 @@ public class TextRenderHelper {
                 glyph.render(italic, x, y, zDepth, pose, buffer, colour, bold, packedLight);
 
                 if (bold)
-                    glyph.render(italic, x + glyphInstance.boldOffset(), y, zDepth + dropShadowOffset, pose, buffer, colour, true, packedLight);
+                    glyph.render(italic, x + glyphInstance.boldOffset(), y, zDepth + dropShadowOffset, pose, buffer, colour, true, packedLight);*/
             }
         };
     }

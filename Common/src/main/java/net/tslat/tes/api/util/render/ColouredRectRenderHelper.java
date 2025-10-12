@@ -144,11 +144,11 @@ public class ColouredRectRenderHelper {
         }
 
         @Override
-        public void buildVertices(VertexConsumer vertexConsumer, float depth) {
-            vertexConsumer.addVertexWith2DPose(pose(), x0(), y0(), depth).setColor(this.colour1);
-            vertexConsumer.addVertexWith2DPose(pose(), x0(), y1(), depth).setColor(this.colour2);
-            vertexConsumer.addVertexWith2DPose(pose(), x1(), y1(), depth).setColor(this.colour3);
-            vertexConsumer.addVertexWith2DPose(pose(), x1(), y0(), depth).setColor(this.colour4);
+        public void buildVertices(VertexConsumer vertexConsumer) {
+            vertexConsumer.addVertexWith2DPose(this.pose(), (float)this.x0(), (float)this.y0()).setColor(this.colour1);
+            vertexConsumer.addVertexWith2DPose(this.pose(), (float)this.x0(), (float)this.y1()).setColor(this.colour2);
+            vertexConsumer.addVertexWith2DPose(this.pose(), (float)this.x1(), (float)this.y1()).setColor(this.colour3);
+            vertexConsumer.addVertexWith2DPose(this.pose(), (float)this.x1(), (float)this.y0()).setColor(this.colour4);
         }
 
         @Nullable

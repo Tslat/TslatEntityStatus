@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
@@ -29,9 +30,11 @@ import java.util.function.BiConsumer;
 public final class TESRenderUtil {
     /**
      * Get the TextureAtlasSprite instance for the given texture location
+     * <p>
+     * <b><u>NOTE:</u></b> Only supports GUI sprites. Other atlases must be retrieved manually
      */
-    public static TextureAtlasSprite getAtlasSprite(ResourceLocation texture) {
-        return Minecraft.getInstance().getGuiSprites().getSprite(texture);
+    public static TextureAtlasSprite getGuiAtlasSprite(ResourceLocation texture) {
+        return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.GUI).getSprite(texture);
     }
 
     /**
