@@ -1,12 +1,11 @@
 package net.tslat.tes.core.particle.type;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
+import net.tslat.tes.api.object.TESHudRenderContext;
 import net.tslat.tes.api.util.render.TextRenderHelper;
 import net.tslat.tes.core.state.EntityState;
 import org.jetbrains.annotations.Nullable;
@@ -38,8 +37,8 @@ public class ComponentParticle extends GenericTESParticle<Component> {
 	}
 
 	@Override
-	public void render(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Minecraft mc, Font fontRenderer, float partialTick) {
-		defaultedTextRender(mc, poseStack, this.prevPos, this.pos, partialTick, () ->
-				TextRenderHelper.of(this.contents).centered().style(TESAPI.getConfig().particleFontStyle()).renderInWorld(poseStack, bufferSource, 0, -4));
+	public void submitRender(TESHudRenderContext.InWorldArgs renderArgs, Minecraft mc, Font fontRenderer) {
+		defaultedTextRender(mc, renderArgs.poseStack(), this.prevPos, this.pos, renderArgs.partialTick(), () ->
+				TextRenderHelper.of(this.contents).centered().style(TESAPI.getConfig().particleFontStyle()).renderInWorld(renderArgs, 0, -4));
 	}
 }

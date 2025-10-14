@@ -3,8 +3,8 @@ package net.tslat.tes.api.object;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import org.apache.commons.lang3.function.TriConsumer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import org.joml.Matrix3x2fStack;
 
 import java.util.function.Consumer;
@@ -12,24 +12,26 @@ import java.util.function.Consumer;
 /**
  * Container class for rendering elements that may render in either a GUI context or in-world context.
  * <p>
- * To use, chain calls of {@link #forGui(Consumer)} and {@link #forInWorld(TriConsumer)} to render in the appropriate context.
+ * To use, chain calls of {@link #forGui(Consumer)} and {@link #forInWorld(Consumer)} to render in the appropriate context.
  */
-public record TESHudRenderContext(Either<GuiGraphics, InWorldArgs> args) {
+public record TESHudRenderContext(Either<InGuiArgs, InWorldArgs> args) {
     /**
      * Create a new RenderContext for GUI rendering.
      */
-    public static TESHudRenderContext guiContext(GuiGraphics guiGraphics) {
-        return new TESHudRenderContext(Either.left(guiGraphics));
+    public static TESHudRenderContext guiContext(GuiGraphics guiGraphics, float partialTick) {
+        return new TESHudRenderContext(Either.left(new InGuiArgs(guiGraphics, partialTick)));
     }
 
     /**
      * Create a new RenderContext for in-world rendering.
      */
-    public static TESHudRenderContext inWorldContext(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, int packedLight) {
-        return new TESHudRenderContext(Either.right(new InWorldArgs(poseStack, bufferSource, packedLight)));
+    public static TESHudRenderContext inWorldContext(PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState, float partialTick, int packedLight) {
+        return new TESHudRenderContext(Either.right(new InWorldArgs(poseStack, renderTasks, cameraRenderState, partialTick, packedLight)));
     }
 
-    public record InWorldArgs(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, int packedLight) {}
+    public record InGuiArgs(GuiGraphics guiGraphics, float partialTick) {}
+
+    public record InWorldArgs(PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState, float partialTick, int packedLight) {}
 
     /**
      * Returns whether this render context is for in-world rendering.
@@ -41,7 +43,7 @@ public record TESHudRenderContext(Either<GuiGraphics, InWorldArgs> args) {
     /**
      * Apply the given consumer if the current render context is GUI
      */
-    public TESHudRenderContext forGui(Consumer<GuiGraphics> guiConsumer) {
+    public TESHudRenderContext forGui(Consumer<InGuiArgs> guiConsumer) {
         this.args.ifLeft(guiConsumer);
 
         return this;
@@ -50,8 +52,8 @@ public record TESHudRenderContext(Either<GuiGraphics, InWorldArgs> args) {
     /**
      * Apply the given consumer if the current render context is in-world
      */
-    public TESHudRenderContext forInWorld(TriConsumer<PoseStack, MultiBufferSource.BufferSource, Integer> inWorldConsumer) {
-        this.args.ifRight(inWorldArgs -> inWorldConsumer.accept(inWorldArgs.poseStack, inWorldArgs.bufferSource, inWorldArgs.packedLight));
+    public TESHudRenderContext forInWorld(Consumer<InWorldArgs> inWorldConsumer) {
+        this.args.ifRight(inWorldConsumer);
 
         return this;
     }
@@ -60,24 +62,16 @@ public record TESHudRenderContext(Either<GuiGraphics, InWorldArgs> args) {
      * Push the current matrix pose onto the stack, regardless of the current render context.
      */
     public void pushMatrix() {
-        if (this.isInWorld()) {
-            this.args.right().get().poseStack.pushPose();
-        }
-        else {
-            this.args().left().get().pose().pushMatrix();
-        }
+        this.args.ifLeft(inGuiArgs -> inGuiArgs.guiGraphics.pose().pushMatrix())
+                .ifRight(inWorldArgs -> inWorldArgs.poseStack.pushPose());
     }
 
     /**
      * Pop the current matrix pose from the stack, regardless of the current render context.
      */
     public void popMatrix() {
-        if (this.isInWorld()) {
-            this.args.right().get().poseStack.popPose();
-        }
-        else {
-            this.args().left().get().pose().popMatrix();
-        }
+        this.args.ifLeft(inGuiArgs -> inGuiArgs.guiGraphics.pose().popMatrix())
+                .ifRight(inWorldArgs -> inWorldArgs.poseStack.popPose());
     }
 
     /**
@@ -89,12 +83,8 @@ public record TESHudRenderContext(Either<GuiGraphics, InWorldArgs> args) {
      * @see Matrix3x2fStack#translate(float, float)
      */
     public void translate(float x, float y, float z) {
-        if (this.isInWorld()) {
-            this.args.right().get().poseStack.translate(x, y, z);
-        }
-        else {
-            this.args().left().get().pose().translate(x, y);
-        }
+        this.args.ifLeft(inGuiArgs -> inGuiArgs.guiGraphics.pose().translate(x, y))
+                .ifRight(inWorldArgs -> inWorldArgs.poseStack.translate(x, y, z));
     }
 
     /**
@@ -106,12 +96,15 @@ public record TESHudRenderContext(Either<GuiGraphics, InWorldArgs> args) {
      * @see Matrix3x2fStack#scale(float, float)
      */
     public void scale(float x, float y, float z) {
-        if (this.isInWorld()) {
-            this.args.right().get().poseStack.scale(x, y, z);
-        }
-        else {
-            this.args().left().get().pose().scale(x, y);
-        }
+        this.args.ifLeft(inGuiArgs -> inGuiArgs.guiGraphics.pose().scale(x, y))
+                .ifRight(inWorldArgs -> inWorldArgs.poseStack.scale(x, y, z));
+    }
+
+    /**
+     * Returns the partial tick value for the current render context.
+     */
+    public float getPartialTick() {
+        return this.args.map(InGuiArgs::partialTick, InWorldArgs::partialTick);
     }
 
     /**
@@ -123,7 +116,7 @@ public record TESHudRenderContext(Either<GuiGraphics, InWorldArgs> args) {
         if (isInWorld())
             throw new IllegalStateException("Cannot get GuiGraphics from in-world render context");
 
-        return this.args.left().get();
+        return this.args.left().get().guiGraphics();
     }
 
     /**
@@ -136,18 +129,6 @@ public record TESHudRenderContext(Either<GuiGraphics, InWorldArgs> args) {
             throw new IllegalStateException("Cannot get PoseStack from in-world render context");
 
         return this.args.right().get().poseStack;
-    }
-
-    /**
-     * Shortcut method to return the BufferSource instance this RenderContext holds.
-     * <p>
-     * <b><u>NOTE: </u></b> This method WILL crash if called inside of a GUI context.
-     */
-    public MultiBufferSource.BufferSource getBufferSource() {
-        if (!isInWorld())
-            throw new IllegalStateException("Cannot get BufferSource from in-world render context");
-
-        return this.args.right().get().bufferSource;
     }
 
     /**

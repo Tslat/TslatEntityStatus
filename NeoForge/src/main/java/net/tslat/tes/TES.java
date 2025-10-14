@@ -6,7 +6,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -31,7 +30,6 @@ public class TES {
 			modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 		}
 
-		modBus.addListener(TES::clientInit);
 		modBus.addListener(TES::serverHandshake);
 		modBus.addListener(TES::networkingInit);
 		NeoForge.EVENT_BUS.addListener(TES::serverStart);
@@ -41,10 +39,6 @@ public class TES {
 		final ServerConfigurationPacketListener listener = ev.getListener();
 
 		ev.register(new ServerConnectionAckTask(() -> listener.hasChannel(ServerConnectionAckPacket.TYPE)));
-	}
-
-	private static void clientInit(final FMLClientSetupEvent ev) {
-		TESConstants.setIsClient();
 	}
 
 	private static void networkingInit(final RegisterPayloadHandlersEvent ev) {

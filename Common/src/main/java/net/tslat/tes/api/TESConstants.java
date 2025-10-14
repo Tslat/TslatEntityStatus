@@ -20,6 +20,7 @@ public final class TESConstants {
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
 	private static final ResourceLocation BASE_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, "");
+    public static final ResourceLocation HUD_LAYER_ID = id("main_hud");
 
 	public static TESConfig CONFIG = null;
 
@@ -27,7 +28,6 @@ public final class TESConstants {
 	public static TESNetworking NETWORKING = ServiceLoader.load(TESNetworking.class).findFirst().get();
 
 	public static boolean IS_SERVER_SIDE = true;
-	public static boolean HAS_SERVER_CONNECTION = false;
 
 	public static final TagKey<EntityType<?>> NO_TES_HANDLING = TagKey.create(Registries.ENTITY_TYPE, id("no_tes_handling"));
 

@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.util.TESRenderUtil;
 import org.joml.Vector3f;
@@ -22,11 +21,11 @@ public interface TESParticle<D> {
 	void updateData(D data);
 
 	/**
-	 * Render the particle.<br>
+	 * Submit the render operation for the particle.<br>
 	 * The implementing class is responsible for positioning and validating the particle prior to rendering.<br>
 	 * The {@link PoseStack} has already been transformed relative to the player's camera at this stage.
 	 */
-	void render(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Minecraft mc, Font fontRenderer, float partialTick);
+	void submitRender(TESHudRenderContext.InWorldArgs renderArgs, Minecraft mc, Font fontRenderer);
 
 	/**
 	 * Tick the particle (if required).<br>

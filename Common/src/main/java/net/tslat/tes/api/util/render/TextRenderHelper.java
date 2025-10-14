@@ -1,6 +1,5 @@
 package net.tslat.tes.api.util.render;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
@@ -9,10 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.font.TextRenderable;
+import net.minecraft.client.gui.font.glyphs.BakedGlyph;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.GuiTextRenderState;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
@@ -140,17 +141,11 @@ public class TextRenderHelper {
     }
 
     public void render(TESHudRenderContext renderContext, float x, float y) {
-        if (renderContext.isInWorld()) {
-            TESHudRenderContext.InWorldArgs args = renderContext.args().right().get();
-
-            renderInWorld(args.poseStack(), args.bufferSource(), x, y);
-        }
-        else {
-            renderForHud(renderContext.getGuiGraphics(), x, y);
-        }
+        renderContext.forGui(args -> renderForHud(args, x, y))
+                .forInWorld(args -> renderInWorld(args, x, y));
     }
 
-    public void renderForHud(GuiGraphics guiGraphics, float x, float y) {
+    public void renderForHud(TESHudRenderContext.InGuiArgs args, float x, float y) {
         if (ARGB.alpha(this.textColour) == 0 && ARGB.alpha(this.secondaryColour) == 0)
             return;
 
@@ -161,6 +156,7 @@ public class TextRenderHelper {
         final int posX = Mth.floor(x) - (this.centered ? width / 2 : 0);
         final int posY = Mth.floor(y);
         final FormattedCharSequence charSequence = this.component.getVisualOrderText();
+        final GuiGraphics guiGraphics = args.guiGraphics();
         final Matrix3x2f pose = new Matrix3x2f(guiGraphics.pose());
 
         for (Pair<Font.PreparedText, @Nullable ScreenRectangle> text : style.renderFunction.prepare(this.font, charSequence, posX, posY, this.textColour, shadowColour, this.backdropColour,
@@ -173,7 +169,7 @@ public class TextRenderHelper {
         }
     }
 
-    public void renderInWorld(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, float x, float y) {
+    public void renderInWorld(TESHudRenderContext.InWorldArgs args, float x, float y) {
         if (ARGB.alpha(this.textColour) == 0 && ARGB.alpha(this.secondaryColour) == 0)
             return;
 
@@ -185,8 +181,10 @@ public class TextRenderHelper {
         final int posY = Mth.floor(y);
         final FormattedCharSequence charSequence = this.component.getVisualOrderText();
 
-        style.renderFunction.prepare(this.font, charSequence, posX, posY, this.textColour, shadowColour, this.backdropColour,
-                                     this.packedLight, Either.right(poseStack.last().pose()), null, bufferSource);
+        args.renderTasks().submitCustomGeometry(args.poseStack(), RenderType.textBackgroundSeeThrough(), (pose, vertexConsumer) -> {
+            style.renderFunction.prepare(this.font, charSequence, posX, posY, this.textColour, shadowColour, this.backdropColour,
+                                         this.packedLight, Either.right(pose.pose()), null, Minecraft.getInstance().renderBuffers().bufferSource());
+        });
     }
 
     public enum Style {
@@ -257,25 +255,24 @@ public class TextRenderHelper {
                                                                                                int colour, int secondaryColour, int backgroundColour, int packedLight,
                                                                                                Either<Matrix3x2f, Matrix4f> pose, @Nullable ScreenRectangle scissor, @Nullable MultiBufferSource.BufferSource bufferSource) {
             final Font.PreparedTextBuilder outlineText = configurablePreparedText(font, 0, 0, secondaryColour, 0, backgroundColour, false);
-            //final boolean filterFishyGlyphs = font.filterFishyGlyphs;
             final float outlineWeight = 0.6f;
 
             for (int xO = -1; xO <= 1; xO++) {
                 for (int yO = -1; yO <= 1; yO++) {
-                    if (xO != 0 || yO != 0) {/*
+                    if (xO != 0 || yO != 0) {
                         float[] cumulativeXOffset = new float[] {x};
                         int xOffset = xO;
                         int yOffset = yO;
 
                         charSequence.accept((charIndex, style, character) -> {
-                            GlyphInfo glyphInfo = font.getFontSet(style.getFont()).getGlyphInfo(character, filterFishyGlyphs);
-                            float shadowOffset = glyphInfo.getShadowOffset() * outlineWeight;
+                            BakedGlyph glyph = font.getGlyph(character, style);
+                            float shadowOffset = glyph.info().getShadowOffset() * outlineWeight;
                             outlineText.x = cumulativeXOffset[0] + xOffset * shadowOffset;
                             outlineText.y = y + yOffset * shadowOffset;
-                            cumulativeXOffset[0] += glyphInfo.getAdvance(style.isBold());
+                            cumulativeXOffset[0] += glyph.info().getAdvance(style.isBold());
 
                             return outlineText.accept(charIndex, style.withColor(backgroundColour), character);
-                        });*/
+                        });
                     }
                 }
             }
@@ -302,16 +299,16 @@ public class TextRenderHelper {
                 }
 
                 return List.of(Pair.of(outlineText, bounds), Pair.of(text, bounds2));
-            }, pose3d -> {/*
+            }, pose3d -> {
                 Font.GlyphVisitor glyphVisitor = getWorldspaceGlyphVisitor(bufferSource, pose3d, Font.DisplayMode.NORMAL, packedLight, false);
 
-                for (BakedGlyph.GlyphInstance glyph : outlineText.glyphs) {
+                for (TextRenderable glyph : outlineText.glyphs) {
                     glyphVisitor.acceptGlyph(glyph);
                 }
 
                 charSequence.accept(text);
                 text.visit(getWorldspaceGlyphVisitor(bufferSource, pose3d, Font.DisplayMode.POLYGON_OFFSET, packedLight, false));
-*/
+
                 return List.of();
             }));
         }
@@ -351,46 +348,42 @@ public class TextRenderHelper {
             }
 
             @Override
-            public void visit(Font.GlyphVisitor glyphVisitor) {/*
-                BakedGlyph bakedGlyph = null;
-
+            public void visit(Font.GlyphVisitor glyphVisitor) {
                 if (ARGB.alpha(this.backgroundColor) != 0) {
-                    BakedGlyph.Effect effect = new BakedGlyph.Effect(this.backgroundLeft, this.backgroundTop, this.backgroundRight, this.backgroundBottom, -0.02f, this.backgroundColor);
-                    bakedGlyph = font.getFontSet(net.minecraft.network.chat.Style.DEFAULT_FONT).whiteGlyph();
-
-                    glyphVisitor.acceptEffect(bakedGlyph, effect);
+                    glyphVisitor.acceptEffect(font.provider.effect().createEffect(this.backgroundLeft, this.backgroundTop, this.backgroundRight, this.backgroundBottom, -0.01f, this.backgroundColor, 0, 0));
                 }
 
-                for (BakedGlyph.GlyphInstance glyph : this.glyphs) {
-                    glyphVisitor.acceptGlyph(glyph);
+                for (TextRenderable renderable : this.glyphs) {
+                    glyphVisitor.acceptGlyph(renderable);
                 }
 
                 if (this.effects != null) {
-                    if (bakedGlyph == null)
-                        bakedGlyph = font.getFontSet(net.minecraft.network.chat.Style.DEFAULT_FONT).whiteGlyph();
-
-                    for (BakedGlyph.Effect effect : this.effects) {
-                        glyphVisitor.acceptEffect(bakedGlyph, effect);
+                    for (TextRenderable effect : this.effects) {
+                        glyphVisitor.acceptEffect(effect);
                     }
-                }*/
+                }
             }
         };
     }
 
     static Font.GlyphVisitor getWorldspaceGlyphVisitor(MultiBufferSource bufferSource, Matrix4f pose, Font.DisplayMode displayMode, int packedLight, boolean dropShadow) {
+        if (true)
+        return Font.GlyphVisitor.forMultiBufferSource(bufferSource, pose, displayMode, packedLight);
+
+
         return new Font.GlyphVisitor() {
             @Override
-            public void acceptGlyph(TextRenderable glyph) {
-                VertexConsumer vertexconsumer = bufferSource.getBuffer(glyph.renderType(displayMode));
+            public void acceptGlyph(TextRenderable renderable) {
+                /*VertexConsumer vertexConsumer = bufferSource.getBuffer(renderable.renderType(displayMode));
 
-                renderDropShadowFriendlyGlyph(glyph, vertexconsumer, pose, packedLight, dropShadow);
+                renderDropShadowFriendlyGlyph(renderable, vertexConsumer, pose, packedLight, dropShadow);*/
             }
 
             @Override
-            public void acceptEffect(TextRenderable glyphEffect) {
-                VertexConsumer vertexconsumer = bufferSource.getBuffer(glyphEffect.renderType(displayMode));
+            public void acceptEffect(TextRenderable renderable) {
+                VertexConsumer vertexConsumer = bufferSource.getBuffer(renderable.renderType(displayMode));
 
-                glyphEffect.render(pose, vertexconsumer, packedLight, dropShadow);
+                renderable.render(pose, vertexConsumer, packedLight, dropShadow);
             }
 
             // Because Mojang didn't build glyph shadows for 3d worldspace

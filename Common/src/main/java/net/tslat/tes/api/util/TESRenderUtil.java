@@ -2,9 +2,13 @@ package net.tslat.tes.api.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.DeltaTracker;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.data.AtlasIds;
@@ -23,11 +27,21 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * Helper class for various rendering-related tasks.
  */
 public final class TESRenderUtil {
+    /**
+     * Custom RenderType implementation to support layered GUI elements in-world
+     */
+    public static final Function<ResourceLocation, RenderType> RENDER_TYPE_GUI_TRANSLUCENT = Util.memoize(texture -> {
+        RenderType.CompositeState composite = RenderType.CompositeState.builder().setTextureState(new RenderStateShard.TextureStateShard(texture, false)).setLightmapState(RenderStateShard.LIGHTMAP).setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING_FORWARD).createCompositeState(false);
+
+        return RenderType.create("tes_gui_translucent", 1536, false, false, RenderPipelines.GUI_TEXTURED, composite);
+    });
+
     /**
      * Get the TextureAtlasSprite instance for the given texture location
      * <p>
@@ -96,10 +110,6 @@ public final class TESRenderUtil {
 
         if (overlayBar != null) {
             renderContext.translate(0, 0, 0.01f);
-
-            if (renderContext.isInWorld())
-                renderContext.getBufferSource().endLastBatch();
-
             renderBarLayer(renderContext, x, y, overlayBar, barWidth, 1f, 0.75f * opacity);
         }
     }
@@ -133,28 +143,29 @@ public final class TESRenderUtil {
                 barRight.lightLevel(packedLight);
         }
 
-        barLeft.render(renderContext, x, y);
+        barLeft.render(renderContext, RenderPipelines.GUI_TEXTURED, RENDER_TYPE_GUI_TRANSLUCENT, x, y);
 
         if (barMiddle != null)
-            barMiddle.render(renderContext, x + 5, y);
+            barMiddle.render(renderContext, RenderPipelines.GUI_TEXTURED, RENDER_TYPE_GUI_TRANSLUCENT, x + 5, y);
 
         if (barRight != null)
-            barRight.render(renderContext, x + 5 + midBarWidth, y);
+            barRight.render(renderContext, RenderPipelines.GUI_TEXTURED, RENDER_TYPE_GUI_TRANSLUCENT, x + 5 + midBarWidth, y);
     }
 
     /**
      * Render a statically-positioned view of an {@link LivingEntity entity} instance, optionally including the frame TES usually renders with
      */
-    public static void renderEntityIcon(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean includeFrame) {
-        TESConfig config = TESAPI.getConfig();
-        float scale = 0.04f * (float)Math.pow(Math.min(30 / entity.getBbWidth(), 40 / entity.getBbHeight()), 0.95f) * -20;
-        boolean scissor = config.hudPreventEntityOverflow();
+    public static void renderEntityIcon(TESHudRenderContext.InGuiArgs args, Minecraft mc, LivingEntity entity, float opacity, boolean includeFrame) {
+        final TESConfig config = TESAPI.getConfig();
+        final float scale = 0.04f * (float)Math.pow(Math.min(30 / entity.getBbWidth(), 40 / entity.getBbHeight()), 0.95f) * -20;
+        final boolean scissor = config.hudPreventEntityOverflow();
+        final GuiGraphics guiGraphics = args.guiGraphics();
 
         if (scissor)
             guiGraphics.enableScissor(2, 2, 36, 47);
 
         if (includeFrame)
-            TextureRenderHelper.ofSprite(TESTextures.ENTITY_ICON_FRAME).colour(ARGB.white(0.5f * opacity)).renderForHud(guiGraphics, 2, 2);
+            TextureRenderHelper.ofSprite(TESTextures.ENTITY_ICON_FRAME).colour(ARGB.white(0.5f * opacity)).renderForHud(args, 2, 2);
 
         float yBodyRotPrev = entity.yBodyRot;
         float yRotPrev = entity.getYRot();
@@ -178,6 +189,7 @@ public final class TESRenderUtil {
 
         EntityRenderState renderState = mc.getEntityRenderDispatcher().getRenderer(entity).createRenderState(entity, 1f);
         renderState.hitboxesRenderState = null;
+        renderState.lightCoords = LightTexture.FULL_BRIGHT;
 
         guiGraphics.submitEntityRenderState(renderState, scale / entity.getScale(), new Vector3f(0, entity.getBbHeight() * -0.5f, 0),
                                             new Quaternionf(), null, 2, 2, 36, 47);

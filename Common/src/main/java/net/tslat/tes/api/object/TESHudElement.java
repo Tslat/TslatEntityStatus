@@ -1,6 +1,5 @@
 package net.tslat.tes.api.object;
 
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESConfig;
@@ -15,12 +14,11 @@ public interface TESHudElement {
 	 * Render the HUD element.<br>
 	 * The PoseStack has already been transformed to the correct position.
 	 *
-	 * @param renderContext Either the gui rendering context, or the in-world PoseStack, depending on whether the current render context is HUD or in-world
+	 * @param renderContext Either the gui rendering context, or in-world render arguments, depending on whether the current render context is HUD or in-world
 	 * @param mc The Minecraft instance, provided for convenience
-	 * @param deltaTracker The Timer instance for tracking partialTick time with relevance to paused game states
 	 * @param entity      The target entity to render the info for
 	 * @param opacity     The global base opacity for all elements in the TES HUD, as configured by the user in the TES Config. Any elements with built-in transparency should multiply their alpha value by this
 	 * @return How tall (in pixels) your element rendered, so that the next element can be given space for rendering
 	 */
-	int render(TESHudRenderContext renderContext, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity);
+	int render(TESHudRenderContext renderContext, Minecraft mc, LivingEntity entity, float opacity);
 }

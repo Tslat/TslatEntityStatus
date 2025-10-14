@@ -2,8 +2,6 @@ package net.tslat.tes.api.util.render;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,7 +18,6 @@ import net.minecraft.util.Mth;
 import net.tslat.tes.api.object.TESHudRenderContext;
 import net.tslat.tes.api.util.TESRenderUtil;
 import org.joml.Matrix3x2f;
-import org.joml.Matrix4f;
 
 import java.util.function.Function;
 
@@ -172,19 +169,15 @@ public class TextureRenderHelper {
     }
 
     public void render(TESHudRenderContext renderContext, RenderPipeline renderPipeline, Function<ResourceLocation, RenderType> renderTypeFunction, float x, float y) {
-        if (renderContext.isInWorld()) {
-            renderInWorld(renderTypeFunction, renderContext.getPoseStack(), x, y);
-        }
-        else {
-            renderForHud(renderContext.getGuiGraphics(), renderPipeline, x, y);
-        }
+        renderContext.forGui(args -> renderForHud(args, renderPipeline, x, y))
+                .forInWorld(args -> renderInWorld(args, renderTypeFunction, x, y));
     }
 
-    public void renderForHud(GuiGraphics guiGraphics, float x, float y) {
-        renderForHud(guiGraphics, RenderPipelines.GUI_TEXTURED, x, y);
+    public void renderForHud(TESHudRenderContext.InGuiArgs args, float x, float y) {
+        renderForHud(args, RenderPipelines.GUI_TEXTURED, x, y);
     }
 
-    public void renderForHud(GuiGraphics guiGraphics, RenderPipeline renderPipeline, float x, float y) {
+    public void renderForHud(TESHudRenderContext.InGuiArgs args, RenderPipeline renderPipeline, float x, float y) {
         if (ARGB.alpha(this.colour) == 0)
             return;
 
@@ -196,6 +189,7 @@ public class TextureRenderHelper {
         float uMax = (this.uMin + this.uWidth) * this.uScale;
         float vMin = this.vMin * this.vScale;
         float vMax = (this.vMin + this.vHeight) * this.vScale;
+        final GuiGraphics guiGraphics = args.guiGraphics();
 
         if (this.sprite != null) {
             uMin = this.sprite.getU(uMin);
@@ -210,11 +204,11 @@ public class TextureRenderHelper {
                                                                         this.colour, guiGraphics.scissorStack.peek()));
     }
 
-    public void renderInWorld(PoseStack poseStack, float x, float y) {
-        renderInWorld(RenderType::entityTranslucent, poseStack, x, y);
+    public void renderInWorld(TESHudRenderContext.InWorldArgs args, float x, float y) {
+        renderInWorld(args, RenderType::entityTranslucent, x, y);
     }
 
-    public void renderInWorld(Function<ResourceLocation, RenderType> renderTypeFunction, PoseStack poseStack, float x, float y) {
+    public void renderInWorld(TESHudRenderContext.InWorldArgs args, Function<ResourceLocation, RenderType> renderTypeFunction, float x, float y) {
         if (ARGB.alpha(this.colour) == 0)
             return;
 
@@ -222,24 +216,24 @@ public class TextureRenderHelper {
         final int yMin = Mth.floor(y);
         final int xMax = Math.round(xMin + this.width);
         final int yMax = Math.round(yMin + this.height);
-        float uMin = this.uMin * this.uScale;
-        float uMax = (this.uMin + this.uWidth) * this.uScale;
-        float vMin = this.vMin * this.vScale;
-        float vMax = (this.vMin + this.vHeight) * this.vScale;
 
-        if (this.sprite != null) {
-            uMin = this.sprite.getU(uMin);
-            uMax = this.sprite.getU(uMax);
-            vMin = this.sprite.getV(vMin);
-            vMax = this.sprite.getV(vMax);
-        }
+        args.renderTasks().submitCustomGeometry(args.poseStack(), renderTypeFunction.apply(this.texture), (pose, vertexConsumer) -> {
+            float uMin = this.uMin * this.uScale;
+            float uMax = (this.uMin + this.uWidth) * this.uScale;
+            float vMin = this.vMin * this.vScale;
+            float vMax = (this.vMin + this.vHeight) * this.vScale;
 
-        final Matrix4f pose = poseStack.last().pose();
-        final VertexConsumer buffer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(renderTypeFunction.apply(this.texture));
+            if (this.sprite != null) {
+                uMin = this.sprite.getU(uMin);
+                uMax = this.sprite.getU(uMax);
+                vMin = this.sprite.getV(vMin);
+                vMax = this.sprite.getV(vMax);
+            }
 
-        buffer.addVertex(pose, xMin, yMin, 0).setUv(uMin, vMin).setColor(this.colour).setLight(this.lightLevel).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 1, 0);
-        buffer.addVertex(pose, xMin, yMax, 0).setUv(uMin, vMax).setColor(this.colour).setLight(this.lightLevel).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 1, 0);
-        buffer.addVertex(pose, xMax, yMax, 0).setUv(uMax, vMax).setColor(this.colour).setLight(this.lightLevel).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 1, 0);
-        buffer.addVertex(pose, xMax, yMin, 0).setUv(uMax, vMin).setColor(this.colour).setLight(this.lightLevel).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 1, 0);
+            vertexConsumer.addVertex(pose, xMin, yMin, 0).setUv(uMin, vMin).setColor(this.colour).setLight(this.lightLevel).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 1, 0);
+            vertexConsumer.addVertex(pose, xMin, yMax, 0).setUv(uMin, vMax).setColor(this.colour).setLight(this.lightLevel).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 1, 0);
+            vertexConsumer.addVertex(pose, xMax, yMax, 0).setUv(uMax, vMax).setColor(this.colour).setLight(this.lightLevel).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 1, 0);
+            vertexConsumer.addVertex(pose, xMax, yMin, 0).setUv(uMax, vMin).setColor(this.colour).setLight(this.lightLevel).setOverlay(OverlayTexture.NO_OVERLAY).setNormal(0, 1, 0);
+        });
     }
 }

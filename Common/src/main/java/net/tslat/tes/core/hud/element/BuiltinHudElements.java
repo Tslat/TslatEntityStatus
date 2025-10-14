@@ -1,7 +1,6 @@
 package net.tslat.tes.core.hud.element;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -36,7 +35,7 @@ import java.util.List;
  * Built-in HUD handles for the default rendering capabilities for the mod
  */
 public final class BuiltinHudElements {
-	public static int renderEntityName(TESHudRenderContext renderContext, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity) {
+	public static int renderEntityName(TESHudRenderContext renderContext, Minecraft mc, LivingEntity entity, float opacity) {
 		TESConfig config = TESAPI.getConfig();
 
 		if (renderContext.isInWorld() ? !config.inWorldHudEntityName() && (!config.inWorldHudNameOverride() || !entity.hasCustomName()) : !config.hudEntityName())
@@ -74,7 +73,7 @@ public final class BuiltinHudElements {
 		return lineHeight;
 	}
 
-	public static int renderEntityHealth(TESHudRenderContext renderContext, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity) {
+	public static int renderEntityHealth(TESHudRenderContext renderContext, Minecraft mc, LivingEntity entity, float opacity) {
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
 
 		if (entityState == null)
@@ -123,7 +122,7 @@ public final class BuiltinHudElements {
 		return mc.font.lineHeight;
 	}
 
-	public static int renderEntityStats(TESHudRenderContext renderContext, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity) {
+	public static int renderEntityStats(TESHudRenderContext renderContext, Minecraft mc, LivingEntity entity, float opacity) {
 		TESConfig config = TESAPI.getConfig();
 
 		if (renderContext.isInWorld() ? !config.inWorldHudStats() : !config.hudStats())
@@ -184,7 +183,7 @@ public final class BuiltinHudElements {
 		return mc.font.lineHeight;
 	}
 
-	public static int renderEntityIcons(TESHudRenderContext renderContext, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity) {
+	public static int renderEntityIcons(TESHudRenderContext renderContext, Minecraft mc, LivingEntity entity, float opacity) {
 		TESConfig config = TESAPI.getConfig();
 
 		if (renderContext.isInWorld() ? !config.inWorldHudEntityIcons() : !config.hudEntityIcons())
@@ -212,7 +211,7 @@ public final class BuiltinHudElements {
 		return toRender.isEmpty() ? 0 : 8;
 	}
 
-	public static int renderEntityEffects(TESHudRenderContext renderContext, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity) {
+	public static int renderEntityEffects(TESHudRenderContext renderContext, Minecraft mc, LivingEntity entity, float opacity) {
 		TESConfig config = TESAPI.getConfig();
 
 		if (renderContext.isInWorld() ? !config.inWorldHudPotionIcons() : !config.hudPotionIcons())
@@ -262,7 +261,7 @@ public final class BuiltinHudElements {
 		return (int)Math.ceil(effectsSize / (float)iconsPerRow) * 9;
 	}
 
-	public static int renderHorseStats(TESHudRenderContext renderContext, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity) {
+	public static int renderHorseStats(TESHudRenderContext renderContext, Minecraft mc, LivingEntity entity, float opacity) {
 		TESConfig config = TESAPI.getConfig();
 
 		if (renderContext.isInWorld() ? !config.inWorldHudHorseStats() : !config.hudHorseStats())

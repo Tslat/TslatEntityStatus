@@ -6,10 +6,13 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.tslat.tes.api.TESAPI;
+import net.tslat.tes.api.object.TESHudRenderContext;
 import net.tslat.tes.api.object.TESParticle;
 import net.tslat.tes.core.state.EntityState;
 
@@ -117,10 +120,12 @@ public final class TESParticleManager {
 		NEW_CLAIMS.clear();
 	}
 
-	public static void render(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, float partialTick) {
-		Minecraft mc = Minecraft.getInstance();
-		Font fontRenderer = mc.font;
+	public static void render(PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState) {
+		final Minecraft mc = Minecraft.getInstance();
+		final Font fontRenderer = mc.font;
+        final float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        final TESHudRenderContext.InWorldArgs args = new TESHudRenderContext.InWorldArgs(poseStack, renderTasks, cameraRenderState, partialTick, LightTexture.FULL_BRIGHT);
 
-		PARTICLES.forEach(particle -> particle.render(poseStack, bufferSource, mc, fontRenderer, partialTick));
+		PARTICLES.forEach(particle -> particle.submitRender(args, mc, fontRenderer));
 	}
 }

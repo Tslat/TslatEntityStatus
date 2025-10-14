@@ -8,8 +8,10 @@ import net.minecraft.Util;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -34,6 +36,7 @@ import net.tslat.tes.core.hud.element.BuiltinHudElements;
 import net.tslat.tes.core.hud.element.TESHudEntityIcon;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2fStack;
 
 import java.util.Collection;
@@ -121,7 +124,7 @@ public class TESHud {
 		ENTITY_ICONS.add(icon);
 	}
 
-	public static void renderForHud(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker) {
+	public static void submitHudRenderTasks(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker) {
 		if (TARGET_ENTITY == null)
 			return;
 
@@ -138,13 +141,14 @@ public class TESHud {
 
 		float hudOpacity = config.hudOpacity();
 		Matrix3x2fStack poseStack = guiGraphics.pose();
+        TESHudRenderContext renderContext = TESHudRenderContext.guiContext(guiGraphics, deltaTracker.getGameTimeDeltaTicks());
 
 		poseStack.pushMatrix();
 		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
 		config.hudRenderPosition().adjustRenderForHudPosition(guiGraphics);
 
 		if (TESAPI.getConfig().hudEntityRender()) {
-			TESRenderUtil.renderEntityIcon(guiGraphics, mc, deltaTracker, TARGET_ENTITY, hudOpacity, true);
+			TESRenderUtil.renderEntityIcon(renderContext.args().left().get(), mc, TARGET_ENTITY, hudOpacity, true);
 
 			poseStack.translate(40, 0);
 		}
@@ -153,10 +157,8 @@ public class TESHud {
 
 		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
 
-		TESHudRenderContext renderContext = TESHudRenderContext.guiContext(guiGraphics);
-
 		for (TESHudElement element : ELEMENTS.values()) {
-			int offset = element.render(renderContext, mc, deltaTracker, TARGET_ENTITY, hudOpacity);
+			int offset = element.render(renderContext, mc, TARGET_ENTITY, hudOpacity);
 
 			if (offset > 0)
 				poseStack.translate(0, 2 + offset);
@@ -165,7 +167,7 @@ public class TESHud {
 		poseStack.popMatrix();
 	}
 
-	public static void renderInWorld(PoseStack poseStack, LivingEntity entity, DeltaTracker deltaTracker) {
+	public static void submitWorldRenderTasks(PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState, LivingEntity entity, DeltaTracker deltaTracker) {
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
 
 		if (entityState == null || !entityState.isValid())
@@ -204,10 +206,10 @@ public class TESHud {
 		TESRenderUtil.positionFacingCamera(poseStack);
 		poseStack.scale(0.02f, 0.02f, 0.02f);
 
-		TESHudRenderContext renderContext = TESHudRenderContext.inWorldContext(poseStack, mc.renderBuffers().bufferSource(), mc.getEntityRenderDispatcher().getRenderer(entity).getPackedLightCoords(entity, partialTick));
+		TESHudRenderContext renderContext = TESHudRenderContext.inWorldContext(poseStack, renderTasks, cameraRenderState, partialTick, renderer.getPackedLightCoords(entity, partialTick));
 
 		for (TESHudElement element : INVERSE_ELEMENTS) {
-			int offset = element.render(renderContext, mc, deltaTracker, entity, hudOpacity);
+			int offset = element.render(renderContext, mc, entity, hudOpacity);
 
 			if (offset > 0)
 				poseStack.translate(0, -(2 + offset), 0);
@@ -216,7 +218,7 @@ public class TESHud {
 		poseStack.popPose();
 	}
 
-	public static void pickNewEntity(float partialTick) {
+	public static void pickNewEntity(float partialTick, @Nullable Entity crosshairTarget) {
 		Minecraft mc = Minecraft.getInstance();
 
 		if (mc.crosshairPickEntity != null) {

@@ -1,9 +1,7 @@
 package net.tslat.tes.api.util.render;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
@@ -15,7 +13,6 @@ import net.minecraft.util.Mth;
 import net.tslat.tes.api.object.TESHudRenderContext;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
-import org.joml.Matrix4f;
 
 /**
  * Factory-based class used for rendering coloured regions
@@ -98,15 +95,11 @@ public class ColouredRectRenderHelper {
     }
 
     public void render(TESHudRenderContext renderContext, float x, float y) {
-        if (renderContext.isInWorld()) {
-            renderInWorld(renderContext.getPoseStack(), x, y);
-        }
-        else {
-            renderForHud(renderContext.getGuiGraphics(), x, y);
-        }
+        renderContext.forGui(args -> renderForHud(args, x, y))
+                .forInWorld(args -> renderInWorld(args, x, y));
     }
 
-    public void renderForHud(GuiGraphics guiGraphics, float x, float y) {
+    public void renderForHud(TESHudRenderContext.InGuiArgs args, float x, float y) {
         if (ARGB.alpha(this.colour0) == 0 && ARGB.alpha(this.colour1) == 0 && ARGB.alpha(this.colour2) == 0 && ARGB.alpha(this.colour3) == 0)
             return;
 
@@ -114,12 +107,13 @@ public class ColouredRectRenderHelper {
         final int yMin = Mth.floor(y);
         final int xMax = Math.round(xMin + this.width);
         final int yMax = Math.round(yMin + this.height);
+        final GuiGraphics guiGraphics = args.guiGraphics();
 
         guiGraphics.guiRenderState.submitGuiElement(new RenderState(this.renderPipeline, TextureSetup.noTexture(), new Matrix3x2f(guiGraphics.pose()), xMin, yMin, xMax, yMax,
                                                                     this.colour0, this.colour1, this.colour2, this.colour3, guiGraphics.scissorStack.peek()));
     }
 
-    public void renderInWorld(PoseStack poseStack, float x, float y) {
+    public void renderInWorld(TESHudRenderContext.InWorldArgs args, float x, float y) {
         if (ARGB.alpha(this.colour0) == 0 && ARGB.alpha(this.colour1) == 0 && ARGB.alpha(this.colour2) == 0 && ARGB.alpha(this.colour3) == 0)
             return;
 
@@ -127,13 +121,13 @@ public class ColouredRectRenderHelper {
         final int yMin = Mth.floor(y);
         final int xMax = Math.round(xMin + this.width);
         final int yMax = Math.round(yMin + this.height);
-        final Matrix4f pose = poseStack.last().pose();
-        final VertexConsumer buffer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.textBackgroundSeeThrough());
 
-        buffer.addVertex(pose, xMin, yMin, 0).setColor(this.colour0);
-        buffer.addVertex(pose, xMin, yMax, 0).setColor(this.colour1);
-        buffer.addVertex(pose, xMax, yMax, 0).setColor(this.colour2);
-        buffer.addVertex(pose, xMax, yMin, 0).setColor(this.colour3);
+        args.renderTasks().submitCustomGeometry(args.poseStack(), RenderType.textBackgroundSeeThrough(), (pose, vertexConsumer) -> {
+            vertexConsumer.addVertex(pose, xMin, yMin, 0).setColor(ColouredRectRenderHelper.this.colour0);
+            vertexConsumer.addVertex(pose, xMin, yMax, 0).setColor(ColouredRectRenderHelper.this.colour1);
+            vertexConsumer.addVertex(pose, xMax, yMax, 0).setColor(ColouredRectRenderHelper.this.colour2);
+            vertexConsumer.addVertex(pose, xMax, yMin, 0).setColor(ColouredRectRenderHelper.this.colour3);
+        });
     }
 
     record RenderState(RenderPipeline pipeline, TextureSetup textureSetup, Matrix3x2f pose, int x0, int y0, int x1, int y1, int colour1, int colour2, int colour3, int colour4,

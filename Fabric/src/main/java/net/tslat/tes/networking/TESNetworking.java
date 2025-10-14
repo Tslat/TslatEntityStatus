@@ -48,7 +48,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 	public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, Direction direction) {
 		if (direction != Direction.CLIENTBOUND) {
 			PayloadTypeRegistry.playC2S().register(packetType, (StreamCodec<FriendlyByteBuf, P>) codec);
-			ServerPlayNetworking.registerGlobalReceiver(packetType, (packet, context) -> packet.receiveMessage(context.player(), context.player().getServer()::execute));
+			ServerPlayNetworking.registerGlobalReceiver(packetType, (packet, context) -> packet.receiveMessage(context.player(), context.player().level().getServer()::execute));
 		}
 
 		if (direction != Direction.SERVERBOUND) {
