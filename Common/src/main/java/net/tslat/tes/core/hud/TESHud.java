@@ -230,7 +230,7 @@ public class TESHud {
 		else {
 			double targetingRange = TESAPI.getConfig().hudTargetDistance();
 			Entity cameraEntity = TESClientUtil.getClientCamera();
-			Vec3 cameraPos = cameraEntity.getEyePosition(partialTick);
+			Vec3 cameraPos = TESClientUtil.getCameraPosition();
 			Vec3 cameraView = cameraEntity.getViewVector(partialTick);
 			Vec3 rayEnd = cameraPos.add(cameraView.multiply(targetingRange, targetingRange, targetingRange));
 			AABB hitBounds = cameraEntity.getBoundingBox().expandTowards(cameraView.scale(targetingRange)).inflate(1, 1, 1);

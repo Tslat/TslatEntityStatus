@@ -26,6 +26,7 @@
   "config.tes.hud.targetGracePeriod": "HUD Target Grace Period",
   "config.tes.hud.topOffset": "HUD Position Top Offset",
   "config.tes.inWorldHud.activation": "In-World HUD Activation",
+  "config.tes.inWorldHud.activationDistance": "In-World HUD Activation Distance",
   "config.tes.inWorldHud.armour": "In-World HUD Armour",
   "config.tes.inWorldHud.armour.fontStyle": "Armour Font Style",
   "config.tes.inWorldHud.barLength": "In-World Bars Length",
