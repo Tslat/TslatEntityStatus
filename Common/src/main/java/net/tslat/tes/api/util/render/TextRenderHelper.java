@@ -238,12 +238,10 @@ public class TextRenderHelper {
             return Either.unwrap(pose.mapBoth(pose2d -> {
                 ScreenRectangle region = preparedText.bounds();
 
-                if (region == null)
-                    return null;
+                if (region != null)
+                    region = region.transformMaxBounds(pose2d);
 
-                region = region.transformMaxBounds(pose2d);
-
-                return List.of(Pair.of(preparedText, scissor != null ? scissor.intersection(region) : region));
+                return List.of(Pair.of(preparedText, scissor != null && region != null ? scissor.intersection(region) : null));
             }, pose3d -> {
                 preparedText.visit(getWorldspaceGlyphVisitor(bufferSource, pose3d, Font.DisplayMode.POLYGON_OFFSET, packedLight, dropShadow));
 
