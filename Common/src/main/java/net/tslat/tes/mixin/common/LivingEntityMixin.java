@@ -20,19 +20,24 @@ import java.util.Set;
 public class LivingEntityMixin {
 	@Inject(method = "onEffectAdded", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffect;addAttributeModifiers(Lnet/minecraft/world/entity/ai/attributes/AttributeMap;I)V"))
 	private void tes$syncAddedEffect(MobEffectInstance effectInstance, @Nullable Entity entity, CallbackInfo callback) {
-		TESConstants.NETWORKING.sendEffectsSync((LivingEntity)(Object)this, Set.of(effectInstance.getEffect()), Set.of());
+        final LivingEntity self = (LivingEntity)(Object)this;
+
+        if (!self.level().isClientSide())
+		    TESConstants.NETWORKING.sendEffectsSync(self, Set.of(effectInstance.getEffect()), Set.of());
 	}
 
 	@Inject(method = "onEffectsRemoved", at = @At("HEAD"))
 	private void tes$syncRemovedEffect(Collection<MobEffectInstance> effects, CallbackInfo ci) {
-		if (!((LivingEntity)(Object)this).level().isClientSide()) {
+        final LivingEntity self = (LivingEntity)(Object)this;
+
+		if (!self.level().isClientSide()) {
 			Set<Holder<MobEffect>> currentEffects = new ObjectOpenHashSet<>(effects.size());
 
 			for (MobEffectInstance instance : effects) {
 				currentEffects.add(instance.getEffect());
 			}
 
-			TESConstants.NETWORKING.sendEffectsSync((LivingEntity)(Object)this, Set.of(), currentEffects);
+			TESConstants.NETWORKING.sendEffectsSync(self, Set.of(), currentEffects);
 		}
 	}
 }
