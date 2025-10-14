@@ -1,6 +1,7 @@
 package net.tslat.tes.api.object;
 
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.hud.TESHud;
@@ -13,13 +14,13 @@ import java.util.function.Predicate;
  */
 public enum TESHUDActivation {
 	ALWAYS(state -> true),
-	NEARBY_ONLY(state -> state.getEntity().distanceToSqr(TESClientUtil.getCameraPosition()) < Mth.square(TESConstants.CONFIG.inWorldHUDActivationDistance())),
-	DAMAGED_ONLY(state -> state.getHealth() < state.getEntity().getMaxHealth()),
+	NEARBY_ONLY(state -> state.getEntity().filter(entity -> entity.distanceToSqr(TESClientUtil.getCameraPosition()) < Mth.square(TESConstants.CONFIG.inWorldHUDActivationDistance())).isPresent()),
+	DAMAGED_ONLY(state -> state.getHealth() < state.getEntity().map(LivingEntity::getMaxHealth).orElse(0f)),
 	DAMAGED_AND_NEARBY(state -> NEARBY_ONLY.test(state) && DAMAGED_ONLY.test(state)),
-	LOOKING_AT(state -> state.getEntity() == TESHud.getTargetEntity()),
+	LOOKING_AT(state -> state.getEntity().filter(entity -> entity == TESHud.getTargetEntity()).isPresent()),
 	LOOKING_AT_AND_DAMAGED(state -> LOOKING_AT.test(state) && DAMAGED_ONLY.test(state)),
 	LOOKING_AT_NEARBY_AND_DAMAGED(state -> LOOKING_AT.test(state) && DAMAGED_AND_NEARBY.test(state)),
-	NOT_LOOKING_AT(state -> state.getEntity() != TESHud.getTargetEntity()),
+	NOT_LOOKING_AT(state -> state.getEntity().filter(entity -> entity != TESHud.getTargetEntity()).isPresent()),
 	NOT_LOOKING_AT_AND_DAMAGED(state -> NOT_LOOKING_AT.test(state) && DAMAGED_ONLY.test(state)),
 	NOT_LOOKING_AT_NEARBY_AND_DAMAGED(state -> NOT_LOOKING_AT.test(state) && DAMAGED_AND_NEARBY.test(state));
 

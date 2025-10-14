@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.object.TESHudRenderContext;
 import net.tslat.tes.api.object.TESParticle;
@@ -78,7 +80,7 @@ public final class TESParticleManager {
 	}
 
 	public static float handleParticleClaims(EntityState entityState, float healthDelta, Consumer<TESParticle<?>> particleAdder, boolean checkSourceHandlers) {
-		for (Pair<ResourceLocation, Optional<CompoundTag>> pair : CLAIMS.getOrDefault(entityState.getEntity().getId(), List.of())) {
+		for (Pair<ResourceLocation, Optional<CompoundTag>> pair : CLAIMS.getOrDefault(entityState.getEntity().map(Entity::getId).orElse(-1), List.of())) {
 			healthDelta = CLAIMANTS.getOrDefault(pair.getFirst(), (state, delta, data, adder) -> delta).checkClaim(entityState, healthDelta, pair.getSecond(), particleAdder);
 
 			if (healthDelta == 0)
@@ -87,7 +89,7 @@ public final class TESParticleManager {
 
 		if (checkSourceHandlers && healthDelta < 0) {
 			for (TESParticleSourceHandler handler : HANDLERS) {
-				if (handler.checkIncomingDamage(entityState, -healthDelta, entityState.getEntity().getLastDamageSource(), particleAdder)) {
+				if (handler.checkIncomingDamage(entityState, -healthDelta, entityState.getEntity().map(LivingEntity::getLastDamageSource).orElse(null), particleAdder)) {
 					healthDelta = 0;
 
 					break;

@@ -18,6 +18,7 @@ import net.tslat.tes.core.particle.type.HealParticle;
 import org.joml.Vector3f;
 
 import java.lang.ref.WeakReference;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -48,8 +49,8 @@ public class EntityState {
 			TESConstants.NETWORKING.requestEffectsSync(entity.getId());
 	}
 
-	public LivingEntity getEntity() {
-		return this.entity.get();
+	public Optional<LivingEntity> getEntity() {
+		return Optional.ofNullable(this.entity.get());
 	}
 
 	public float getHealth() {
@@ -84,17 +85,20 @@ public class EntityState {
 	}
 
 	public void markActive() {
-		this.lastRenderTick = getEntity().tickCount;
+		this.lastRenderTick = getEntity().map(entity -> entity.tickCount).orElse(0);
 	}
 	
 	public boolean isValid() {
-		LivingEntity entity = getEntity();
-
-		return entity != null && !entity.isRemoved() && entity.level() == Minecraft.getInstance().level && (this.lastRenderTick < 0 || this.lastRenderTick >= entity.tickCount - 200);
+        return getEntity()
+                .map(entity ->
+                             !entity.isRemoved() &&
+                             entity.level() == Minecraft.getInstance().level &&
+                             (this.lastRenderTick < 0 || this.lastRenderTick >= entity.tickCount - 200))
+                .orElse(false);
 	}
 
 	public void tick() {
-		LivingEntity entity = getEntity();
+		LivingEntity entity = getEntity().orElse(null);
 
 		if (entity == null)
 			return;
@@ -121,9 +125,10 @@ public class EntityState {
 	}
 
 	protected void handleHealthChange() {
-		if (TESAPI.getConfig().particlesEnabled()) {
+        final LivingEntity entity = getEntity().orElse(null);
+
+		if (entity != null && TESAPI.getConfig().particlesEnabled()) {
 			TESParticle<?> particle;
-			LivingEntity entity = getEntity();
 			float healthDelta = this.currentHealth - this.lastHealth;
 			boolean damageSourceAccurate = entity.getLastDamageSource() != null && this.lastDamageSource != null && this.lastDamageSource.get() != entity.getLastDamageSource();
 

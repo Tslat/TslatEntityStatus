@@ -39,6 +39,7 @@ import net.tslat.tes.core.state.TESEntityTracking;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2fStack;
 
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -71,22 +72,36 @@ public class TESHud {
 				TESHudEntityIcon.makeGeneric(TESTextures.ENTITY_TYPE_UNDEAD, entity -> entity.getType().is(EntityTypeTags.UNDEAD))));
 	});
 	private static TESHudElement[] INVERSE_ELEMENTS = buildInverseElementArray(ELEMENTS.values());
-	private static LivingEntity TARGET_ENTITY = null;
+	private static WeakReference<@Nullable LivingEntity> TARGET_ENTITY = new WeakReference<>(null);
 	private static long TARGET_EXPIRY_TIME = -1L;
 
 	/**
 	 * Set the current target entity for HUD rendering
 	 */
 	public static void setTargetEntity(LivingEntity entity) {
-		TARGET_ENTITY = entity;
+		TARGET_ENTITY = new WeakReference<>(entity);
 		TARGET_EXPIRY_TIME = Mth.floor(Blaze3D.getTime() * 20) + 1 + TESAPI.getConfig().hudTargetGracePeriod();
 	}
 
 	/**
 	 * Get the current target entity for HUD rendering
 	 */
+    @Nullable
 	public static LivingEntity getTargetEntity() {
-		return TARGET_ENTITY;
+        final LivingEntity target = TARGET_ENTITY.get();
+
+        if (target != null) {
+            if (target.isRemoved() ||
+                target.level() != Minecraft.getInstance().level ||
+                Mth.floor(Blaze3D.getTime() * 20) > TARGET_EXPIRY_TIME) {
+                TARGET_ENTITY = new WeakReference<>(null);
+
+                return null;
+            }
+        }
+
+
+		return target;
 	}
 
 	/**
@@ -125,18 +140,14 @@ public class TESHud {
 	}
 
 	public static void submitHudRenderTasks(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker) {
-		if (TARGET_ENTITY == null)
-			return;
+        final LivingEntity target = getTargetEntity();
 
-		if (TARGET_ENTITY.isRemoved() || TARGET_ENTITY.level() != mc.level || Mth.floor(Blaze3D.getTime() * 20) > TARGET_EXPIRY_TIME) {
-			TARGET_ENTITY = null;
+        if (target == null)
+            return;
 
-			return;
-		}
+		final TESConfig config = TESAPI.getConfig();
 
-		TESConfig config = TESAPI.getConfig();
-
-		if (!config.hudEnabled() || Minecraft.getInstance().options.hideGui || (!config.hudBossesEnabled() && TESConstants.UTILS.isBossEntity(TARGET_ENTITY)))
+		if (!config.hudEnabled() || Minecraft.getInstance().options.hideGui || (!config.hudBossesEnabled() && TESConstants.UTILS.isBossEntity(target)))
 			return;
 
 		float hudOpacity = config.hudOpacity();
@@ -148,7 +159,7 @@ public class TESHud {
 		config.hudRenderPosition().adjustRenderForHudPosition(guiGraphics);
 
 		if (TESAPI.getConfig().hudEntityRender()) {
-			TESRenderUtil.renderEntityIcon(renderContext.args().left().get(), mc, TARGET_ENTITY, hudOpacity, true);
+			TESRenderUtil.renderEntityIcon(renderContext.args().left().get(), mc, target, hudOpacity, true);
 
 			poseStack.translate(40, 0);
 		}
@@ -158,7 +169,7 @@ public class TESHud {
 		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
 
 		for (TESHudElement element : ELEMENTS.values()) {
-			int offset = element.render(renderContext, mc, TARGET_ENTITY, hudOpacity);
+			int offset = element.render(renderContext, mc, target, hudOpacity);
 
 			if (offset > 0)
 				poseStack.translate(0, 2 + offset);
@@ -168,9 +179,10 @@ public class TESHud {
 	}
 
 	public static void submitWorldRenderTasks(PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState, LivingEntity entity, DeltaTracker deltaTracker) {
-		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
+		final EntityState entityState = TESEntityTracking.getStateForEntity(entity);
+        final LivingEntity target = getTargetEntity();
 
-		if (entityState == null || !entityState.isValid())
+		if (target == null || entityState == null || !entityState.isValid())
 			return;
 
 		entityState.markActive();
@@ -181,7 +193,7 @@ public class TESHud {
 		if (!config.inWorldBarsEnabled() ||
 				(entity.getSelfAndPassengers().anyMatch(passenger -> passenger == mc.player) && !config.inWorldHudForSelf()) ||
 				!config.inWorldHUDActivation().test(entityState) ||
-				(!config.inWorldHudBossesEnabled() && TESConstants.UTILS.isBossEntity(TARGET_ENTITY)))
+				(!config.inWorldHudBossesEnabled() && TESConstants.UTILS.isBossEntity(target)))
 			return;
 
 		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
