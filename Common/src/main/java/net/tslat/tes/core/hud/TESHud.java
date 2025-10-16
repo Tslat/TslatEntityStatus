@@ -180,9 +180,8 @@ public class TESHud {
 
 	public static void submitWorldRenderTasks(PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState, LivingEntity entity, DeltaTracker deltaTracker) {
 		final EntityState entityState = TESEntityTracking.getStateForEntity(entity);
-        final LivingEntity target = getTargetEntity();
 
-		if (target == null || entityState == null || !entityState.isValid())
+		if (entityState == null || !entityState.isValid())
 			return;
 
 		entityState.markActive();
@@ -193,7 +192,7 @@ public class TESHud {
 		if (!config.inWorldBarsEnabled() ||
 				(entity.getSelfAndPassengers().anyMatch(passenger -> passenger == mc.player) && !config.inWorldHudForSelf()) ||
 				!config.inWorldHUDActivation().test(entityState) ||
-				(!config.inWorldHudBossesEnabled() && TESConstants.UTILS.isBossEntity(target)))
+				(!config.inWorldHudBossesEnabled() && TESConstants.UTILS.isBossEntity(entity)))
 			return;
 
 		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!entity.level().tickRateManager().isEntityFrozen(entity));
