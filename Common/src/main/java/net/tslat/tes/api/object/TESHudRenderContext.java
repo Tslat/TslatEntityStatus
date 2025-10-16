@@ -3,7 +3,8 @@ package net.tslat.tes.api.object;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import org.joml.Matrix3x2fStack;
 
@@ -25,13 +26,13 @@ public record TESHudRenderContext(Either<InGuiArgs, InWorldArgs> args) {
     /**
      * Create a new RenderContext for in-world rendering.
      */
-    public static TESHudRenderContext inWorldContext(PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState, float partialTick, int packedLight) {
+    public static TESHudRenderContext inWorldContext(PoseStack poseStack, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraRenderState, float partialTick, int packedLight) {
         return new TESHudRenderContext(Either.right(new InWorldArgs(poseStack, renderTasks, cameraRenderState, partialTick, packedLight)));
     }
 
     public record InGuiArgs(GuiGraphics guiGraphics, float partialTick) {}
 
-    public record InWorldArgs(PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState, float partialTick, int packedLight) {}
+    public record InWorldArgs(PoseStack poseStack, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraRenderState, float partialTick, int packedLight) {}
 
     /**
      * Returns whether this render context is for in-world rendering.
@@ -98,6 +99,30 @@ public record TESHudRenderContext(Either<InGuiArgs, InWorldArgs> args) {
     public void scale(float x, float y, float z) {
         this.args.ifLeft(inGuiArgs -> inGuiArgs.guiGraphics.pose().scale(x, y))
                 .ifRight(inWorldArgs -> inWorldArgs.poseStack.scale(x, y, z));
+    }
+
+    /**
+     * Return a copy of this RenderContext with the given render order index for in-world rendering
+     * <p>
+     * This is really only used for rendering layers on the same element to avoid z-clipping/fighting<br>
+     * Does nothing if not in world-context
+     * <p>
+     * Subsequent <code>withRenderOrder</code> calls cannot be made on the returned object, so ensure this is only being passed to places where
+     * only the direct rendering will take place
+     *
+     * @param index The render index. Smaller numbers render first
+     * @see SubmitNodeStorage#order(int)
+     */
+    public TESHudRenderContext withRenderOrder(int index) {
+        if (!isInWorld())
+            return this;
+
+        final InWorldArgs args = this.args.right().get();
+
+        if (!(args.renderTasks instanceof SubmitNodeStorage storage))
+            return this;
+
+        return TESHudRenderContext.inWorldContext(args.poseStack, storage.order(index), args.cameraRenderState, args.partialTick, args.packedLight);
     }
 
     /**

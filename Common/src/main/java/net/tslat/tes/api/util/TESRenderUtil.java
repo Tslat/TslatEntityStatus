@@ -2,12 +2,10 @@ package net.tslat.tes.api.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -27,21 +25,11 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 /**
  * Helper class for various rendering-related tasks.
  */
 public final class TESRenderUtil {
-    /**
-     * Custom RenderType implementation to support layered GUI elements in-world
-     */
-    public static final Function<ResourceLocation, RenderType> RENDER_TYPE_GUI_TRANSLUCENT = Util.memoize(texture -> {
-        RenderType.CompositeState composite = RenderType.CompositeState.builder().setTextureState(new RenderStateShard.TextureStateShard(texture, false)).setLightmapState(RenderStateShard.LIGHTMAP).setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING_FORWARD).createCompositeState(false);
-
-        return RenderType.create("tes_gui_translucent", 1536, false, false, RenderPipelines.GUI_TEXTURED, composite);
-    });
-
     /**
      * Get the TextureAtlasSprite instance for the given texture location
      * <p>
@@ -103,14 +91,15 @@ public final class TESRenderUtil {
     public static void renderBar(TESHudRenderContext renderContext, int x, int y, int barWidth, float completionPercentage, float transitionPercentage, float opacity,
                                  TextureAtlasSprite background, TextureAtlasSprite emptyBar, TextureAtlasSprite filledBar, @Nullable TextureAtlasSprite overlayBar) {
         renderBarLayer(renderContext, x, y, background, barWidth, 1f, opacity);
+
         renderContext.translate(0, 0, 0.01f);
-        renderBarLayer(renderContext, x, y, emptyBar, barWidth, transitionPercentage, opacity);
+        renderBarLayer(renderContext.withRenderOrder(1), x, y, emptyBar, barWidth, transitionPercentage, opacity);
         renderContext.translate(0, 0, 0.01f);
-        renderBarLayer(renderContext, x, y, filledBar, barWidth, completionPercentage, opacity);
+        renderBarLayer(renderContext.withRenderOrder(2), x, y, filledBar, barWidth, completionPercentage, opacity);
 
         if (overlayBar != null) {
             renderContext.translate(0, 0, 0.01f);
-            renderBarLayer(renderContext, x, y, overlayBar, barWidth, 1f, 0.75f * opacity);
+            renderBarLayer(renderContext.withRenderOrder(3), x, y, overlayBar, barWidth, 1f, 0.75f * opacity);
         }
     }
 
@@ -143,13 +132,13 @@ public final class TESRenderUtil {
                 barRight.lightLevel(packedLight);
         }
 
-        barLeft.render(renderContext, RenderPipelines.GUI_TEXTURED, RENDER_TYPE_GUI_TRANSLUCENT, x, y);
+        barLeft.render(renderContext, RenderPipelines.GUI_TEXTURED, RenderType::entityTranslucent, x, y);
 
         if (barMiddle != null)
-            barMiddle.render(renderContext, RenderPipelines.GUI_TEXTURED, RENDER_TYPE_GUI_TRANSLUCENT, x + 5, y);
+            barMiddle.render(renderContext, RenderPipelines.GUI_TEXTURED, RenderType::entityTranslucent, x + 5, y);
 
         if (barRight != null)
-            barRight.render(renderContext, RenderPipelines.GUI_TEXTURED, RENDER_TYPE_GUI_TRANSLUCENT, x + 5 + midBarWidth, y);
+            barRight.render(renderContext, RenderPipelines.GUI_TEXTURED, RenderType::entityTranslucent, x + 5 + midBarWidth, y);
     }
 
     /**

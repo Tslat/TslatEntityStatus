@@ -31,14 +31,3 @@ accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MIN_JUMP_
 accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MAX_JUMP_STRENGTH F
 accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MIN_HEALTH F
 accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MAX_HEALTH F
-
-accessible field net/minecraft/client/renderer/RenderStateShard VIEW_OFFSET_Z_LAYERING_FORWARD Lnet/minecraft/client/renderer/RenderStateShard$LayeringStateShard;
-accessible field net/minecraft/client/renderer/RenderStateShard LIGHTMAP Lnet/minecraft/client/renderer/RenderStateShard$LightmapStateShard;
-accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder createCompositeState (Z)Lnet/minecraft/client/renderer/RenderType$CompositeState;
-accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setLayeringState (Lnet/minecraft/client/renderer/RenderStateShard$LayeringStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
-accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setLightmapState (Lnet/minecraft/client/renderer/RenderStateShard$LightmapStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
-accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setTextureState (Lnet/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
-accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
-accessible method net/minecraft/client/renderer/RenderType$CompositeState <init> (Lnet/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard;Lnet/minecraft/client/renderer/RenderStateShard$LightmapStateShard;Lnet/minecraft/client/renderer/RenderStateShard$OverlayStateShard;Lnet/minecraft/client/renderer/RenderStateShard$LayeringStateShard;Lnet/minecraft/client/renderer/RenderStateShard$OutputStateShard;Lnet/minecraft/client/renderer/RenderStateShard$TexturingStateShard;Lnet/minecraft/client/renderer/RenderStateShard$LineStateShard;Lnet/minecraft/client/renderer/RenderType$OutlineProperty;)V
-accessible class net/minecraft/client/renderer/RenderType$CompositeState
-accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;IZZLcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
