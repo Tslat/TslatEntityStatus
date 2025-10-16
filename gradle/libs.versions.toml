@@ -1,6 +1,6 @@
 [versions]
 # TES
-    tes = "1.9.1"
+    tes = "1.9.2"
 
 # Common
     minecraft-range = "[1.21.10,)"
