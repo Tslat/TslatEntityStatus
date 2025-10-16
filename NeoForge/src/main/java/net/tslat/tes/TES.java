@@ -1,20 +1,14 @@
 package net.tslat.tes;
 
 import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.tslat.tes.api.TESConfig;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.core.networking.ServerConnectionAckTask;
 import net.tslat.tes.core.networking.TESNetworking;
@@ -25,11 +19,6 @@ public class TES {
 	public static PayloadRegistrar packetRegistrar = null;
 
 	public TES(ModContainer modContainer, IEventBus modBus) {
-		if (FMLEnvironment.getDist() == Dist.CLIENT) {
-			modContainer.registerConfig(ModConfig.Type.CLIENT, TESConfig.init());
-			modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-		}
-
 		modBus.addListener(TES::serverHandshake);
 		modBus.addListener(TES::networkingInit);
 		NeoForge.EVENT_BUS.addListener(TES::serverStart);
