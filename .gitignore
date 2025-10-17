@@ -22,6 +22,9 @@ eclipse
 run
 logs
 libs/*
+/fabric/runs/*
+/forge/runs/*
+/neoforge/runs/*
 
 # Files from Forge MDK
 forge*changelog.txt
