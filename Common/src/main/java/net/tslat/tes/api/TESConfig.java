@@ -162,6 +162,11 @@ public interface TESConfig {
 	 */
 	TESHUDActivation inWorldHUDActivation();
 
+    /**
+     * How far away the activation range is for In-World HUD activation checks
+     */
+    double inWorldHUDActivationDistance();
+
 	/**
 	 * How opaque the in-world TES entity status HUD should be
 	 */

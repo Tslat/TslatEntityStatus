@@ -517,6 +517,28 @@ public final class TESClientUtil {
 		return Minecraft.getInstance().player;
 	}
 
+    /**
+     * Get the client's camera position.
+     * <p>
+     * This is typically more accurate than getting the camera entity's position.
+     */
+    public static Vec3 getCameraPosition() {
+        return Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+    }
+
+    /**
+     * Get the closest position to the camera for the provided entity
+     * <p>
+     * This allows for more accurate detection, particularly on larger entities
+     */
+    public static Vec3 getClosestEntityPosition(Entity entity) {
+        final Vec3 cameraPos = getCameraPosition();
+        final Vec3 angle = getClientPlayer().getLookAngle();
+
+        return entity.getBoundingBox().clip(cameraPos, cameraPos.add(angle.scale(500)))
+                .orElseGet(() -> new Vec3(Mth.cos((float)angle.x) * entity.getBbWidth() * 0.5f, Mth.clamp(cameraPos.y, entity.getY(), entity.getY(1)), Mth.sin((float)angle.z) * entity.getBbWidth() * 0.5f));
+    }
+
 	/**
 	 * Create a new {@link GuiGraphics} instance from the provided {@link net.minecraft.client.renderer.MultiBufferSource.BufferSource BufferSource}, pre-multiplying the {@link PoseStack} in line with the current pose
 	 */

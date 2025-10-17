@@ -156,6 +156,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "In-World HUD Activation")
 	public static TESHUDActivation inWorldHUDActivation = TESHUDActivation.DAMAGED_AND_NEARBY;
 
+	@Comment public static final String inWorldHUDActivationDistanceComment = "Set the distance in which you can be for the 'NEARBY' config activation values to take effect.";
+	@Entry(name = "In-World HUD Activation Distance", min = 0, max = 1024d)
+	public static double inWorldHUDActivationDistance = 16d;
+
 	@Comment public static final String inWorldHudOpacityComment = "How opaque the TES in-world entity HUD should be.";
 	@Entry(name = "In-World HUD Opacity", isSlider = true, min = 0f, max = 1f)
 	public static float inWorldHudOpacity = 1f;
@@ -428,7 +432,12 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 		return inWorldHUDActivation;
 	}
 
-	@Override
+    @Override
+    public double inWorldHUDActivationDistance() {
+        return inWorldHUDActivationDistance;
+    }
+
+    @Override
 	public float inWorldHudOpacity() {
 		return inWorldHudOpacity;
 	}

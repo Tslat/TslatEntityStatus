@@ -15,6 +15,7 @@ import net.tslat.tes.core.particle.TESParticleManager;
 import net.tslat.tes.core.particle.type.ComponentParticle;
 import net.tslat.tes.core.particle.type.DamageParticle;
 import net.tslat.tes.core.particle.type.HealParticle;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.lang.ref.WeakReference;
@@ -46,6 +47,7 @@ public class EntityState {
 			TESConstants.NETWORKING.requestEffectsSync(entity.getId());
 	}
 
+    @Nullable
 	public LivingEntity getEntity() {
 		return this.entity.get();
 	}
@@ -119,9 +121,10 @@ public class EntityState {
 	}
 
 	protected void handleHealthChange() {
-		if (TESAPI.getConfig().particlesEnabled()) {
+        final LivingEntity entity = getEntity();
+
+		if (entity != null && TESAPI.getConfig().particlesEnabled()) {
 			TESParticle<?> particle;
-			LivingEntity entity = getEntity();
 			float healthDelta = this.currentHealth - this.lastHealth;
 			boolean damageSourceAccurate = entity.getLastDamageSource() != null && this.lastDamageSource != null && this.lastDamageSource.get() != entity.getLastDamageSource();
 

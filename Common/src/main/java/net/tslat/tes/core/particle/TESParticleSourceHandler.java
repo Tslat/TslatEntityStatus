@@ -3,6 +3,7 @@ package net.tslat.tes.core.particle;
 import net.minecraft.world.damagesource.DamageSource;
 import net.tslat.tes.api.TESParticle;
 import net.tslat.tes.core.state.EntityState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -19,5 +20,5 @@ public interface TESParticleSourceHandler {
 	 * @param particleAdder Helper function for adding particles to TES to handle
 	 * @return Whether you have handled the event or not. Returning true prevents other handlers and TES itself from generating more particles for this tick
 	 */
-	boolean checkIncomingDamage(EntityState entityState, float damageAmount, DamageSource damageSource, Consumer<TESParticle<?>> particleAdder);
+	boolean checkIncomingDamage(EntityState entityState, float damageAmount, @Nullable DamageSource damageSource, Consumer<TESParticle<?>> particleAdder);
 }

@@ -1,6 +1,7 @@
 package net.tslat.tes.api;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
+import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.hud.TESHud;
 import net.tslat.tes.core.state.EntityState;
 
@@ -11,7 +12,7 @@ import java.util.function.Predicate;
  */
 public enum TESHUDActivation {
 	ALWAYS(state -> true),
-	NEARBY_ONLY(state -> state.getEntity().distanceToSqr(Minecraft.getInstance().getCameraEntity()) < 256),
+    NEARBY_ONLY(state -> state.getEntity().distanceToSqr(TESClientUtil.getCameraPosition()) < Mth.square(TESConstants.CONFIG.inWorldHUDActivationDistance())),
 	DAMAGED_ONLY(state -> state.getHealth() < state.getEntity().getMaxHealth()),
 	DAMAGED_AND_NEARBY(state -> NEARBY_ONLY.test(state) && DAMAGED_ONLY.test(state)),
 	LOOKING_AT(state -> state.getEntity() == TESHud.getTargetEntity()),

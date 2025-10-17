@@ -42,6 +42,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.BooleanValue inWorldBarsEnabled;
 	private final ForgeConfigSpec.BooleanValue inWorldHudForSelf;
 	private final ForgeConfigSpec.EnumValue<TESHUDActivation> inWorldHUDActivation;
+	private final ForgeConfigSpec.DoubleValue inWorldHUDActivationDistance;
 	private final ForgeConfigSpec.FloatValue inWorldHudOpacity;
 	private final ForgeConfigSpec.EnumValue<TESHud.BarRenderType> inWorldBarsRenderType;
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudHealthFontStyle;
@@ -239,6 +240,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 						"NOT_LOOKING_AT_NEARBY_AND_DAMAGED - Only if not the currently targeted entity, it is nearby and has less than full health")
 				.translation("config.tes.inWorldHud.activation")
 				.defineEnum("inWorldHudActivation", TESHUDActivation.DAMAGED_AND_NEARBY);
+
+        this.inWorldHUDActivationDistance = config
+                .comment("Set the distance in which you can be for the 'NEARBY' config activation values to take effect")
+                .translation("config.tes.inWorldHud.activationDistance")
+                .defineInRange("inWorldHUDActivationDistance", 16d, 0d, 1024);
 
 		this.inWorldBarsRenderType = config
 				.comment("Select the bar render type for the in-game TES entity status HUD",
@@ -521,6 +527,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	public TESHUDActivation inWorldHUDActivation() {
 		return this.inWorldHUDActivation.get();
 	}
+
+    @Override
+    public double inWorldHUDActivationDistance() {
+        return inWorldHUDActivationDistance.get();
+    }
 
 	@Override
 	public float inWorldHudOpacity() {
