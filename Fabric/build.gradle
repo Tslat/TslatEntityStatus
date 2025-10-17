@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.9.+'
+    id 'fabric-loom' version '1.11-SNAPSHOT'
     id 'idea'
     id 'io.github.CDAGaming.cursegradle' version '1.6.1'
     id "com.modrinth.minotaur" version "2.+"
@@ -123,6 +123,6 @@ modrinth {
     loaders = ["fabric"]
     dependencies {
         required.project "fabric-api"
-        optional.version "midnightlib", "1.5.0-fabric"
+        optional.version "midnightlib", "1.4.1-fabric"
     }
 }
