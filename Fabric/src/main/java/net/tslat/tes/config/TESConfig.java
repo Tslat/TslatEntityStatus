@@ -77,6 +77,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Entry(name = "HUD Entity Name")
 	public static boolean hudEntityName = true;
 
+    @Comment public static final String hudEntityNamespaceComment = "Whether the TES HUD should render the entity's mod ID under its name";
+    @Entry(name = "HUD Entity Namespace")
+    public static boolean hudEntityNamespace = false;
+
 	@Comment public static final String hudEntityNameFontRenderStyleComment = "What style TES font should render in for entity names in the HUD";
 	@Comment public static final String hudEntityNameFontRenderStyleComment2 = "Options:";
 	@Comment public static final String hudEntityNameFontRenderStyleComment3 = "NORMAL - Only the text with no additional stylings";
@@ -180,6 +184,10 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 	@Comment public static final String inWorldHudEntityNameComment = "Whether the in-world entity status HUD should render the entity's name";
 	@Entry(name = "In-World HUD Entity Name")
 	public static boolean inWorldHudEntityName = false;
+
+    @Comment public static final String inWorldHudEntityNamespaceComment = "Whether the in-world entity status HUD should render the entity's mod ID under its name";
+    @Entry(name = "In-World HUD Entity Namespace")
+    public static boolean inWorldHudEntityNamespace = false;
 
 	@Comment public static final String inWorldHudEntityNameFontStyleComment = "What style TES font should render in for entity names in the in-world HUD";
 	@Comment public static final String inWorldHudEntityNameFontStyleComment2 = "Options:";
@@ -318,7 +326,12 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 		return hudEntityName;
 	}
 
-	@Override
+    @Override
+    public boolean hudEntityNamespace() {
+        return hudEntityNamespace;
+    }
+
+    @Override
 	public TESClientUtil.TextRenderType hudEntityNameFontStyle() {
 		return hudEntityNameFontStyle;
 	}
@@ -428,7 +441,12 @@ public final class TESConfig extends MidnightConfig implements net.tslat.tes.api
 		return inWorldHudEntityName;
 	}
 
-	@Override
+    @Override
+    public boolean inWorldHudEntityNamespace() {
+        return inWorldHudEntityNamespace;
+    }
+
+    @Override
 	public TESClientUtil.TextRenderType inWorldHudEntityNameFontStyle() {
 		return inWorldHudEntityNameFontStyle;
 	}

@@ -64,6 +64,11 @@ public interface TESConfig {
 	 */
 	boolean hudEntityName();
 
+    /**
+     * Whether the TES HUD Should render the entity's name
+     */
+    boolean hudEntityNamespace();
+
 	/**
 	 * What style TES font should render in for entity names in the HUD
 	 */
@@ -187,6 +192,11 @@ public interface TESConfig {
 	 * Whether the in-world TES entity status HUD should include the entity's name
 	 */
 	boolean inWorldHudEntityName();
+
+    /**
+     * Whether the in-world TES entity status HUD should include the entity's mod ID under its name
+     */
+    boolean inWorldHudEntityNamespace();
 
 	/**
 	 * What style TES font should render in for entity names in the in-world HUD

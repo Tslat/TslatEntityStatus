@@ -27,6 +27,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.IntValue hudHealthBarLength;
 	private final ForgeConfigSpec.BooleanValue hudEntityDamageTint;
 	private final ForgeConfigSpec.BooleanValue hudEntityName;
+    private final ForgeConfigSpec.BooleanValue hudEntityNamespace;
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> hudEntityNameFontStyle;
 	private final ForgeConfigSpec.BooleanValue hudBossesEnabled;
 	private final ForgeConfigSpec.BooleanValue hudArmour;
@@ -46,6 +47,7 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 	private final ForgeConfigSpec.IntValue inWorldBarsLength;
 	private final ForgeConfigSpec.BooleanValue inWorldBarsSegments;
 	private final ForgeConfigSpec.BooleanValue inWorldHudEntityName;
+    private final ForgeConfigSpec.BooleanValue inWorldHudEntityNamespace;
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudEntityNameFontStyle;
 	private final ForgeConfigSpec.BooleanValue inWorldHudArmour;
 	private final ForgeConfigSpec.EnumValue<TESClientUtil.TextRenderType> inWorldHudArmourFontStyle;
@@ -149,6 +151,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Whether the TES HUD should render the entity's name")
 				.translation("config.tes.hud.entityName")
 				.define("hudEntityName", true);
+
+        this.hudEntityNamespace = config
+                .comment("Whether the TES HUD should render the entity's mod ID under its name")
+                .translation("config.tes.hud.entityNamespace")
+                .define("hudEntityNamespace", false);
 
 		this.hudEntityNameFontStyle = config
 				.comment("What style TES font should render in for entity names in the HUD")
@@ -257,6 +264,11 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 				.comment("Whether the in-world entity status HUD should render the entity's name")
 				.translation("config.tes.inWorldHud.entityName")
 				.define("inWorldHudEntityName", false);
+
+        this.inWorldHudEntityNamespace = config
+                .comment("Whether the in-world entity status HUD should render the entity's mod ID under its name")
+                .translation("config.tes.inWorldHud.entityNamespace")
+                .define("inWorldHudEntityNamespace", false);
 
 		this.inWorldHudEntityNameFontStyle = config
 				.comment("What style TES font should render in for entity names in the in-world HUD")
@@ -400,7 +412,12 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 		return this.hudEntityName.get();
 	}
 
-	@Override
+    @Override
+    public boolean hudEntityNamespace() {
+        return this.hudEntityNamespace.get();
+    }
+
+    @Override
 	public TESClientUtil.TextRenderType hudEntityNameFontStyle() {
 		return this.hudEntityNameFontStyle.get();
 	}
@@ -510,7 +527,12 @@ public final class TESConfig implements net.tslat.tes.api.TESConfig {
 		return this.inWorldHudEntityName.get();
 	}
 
-	@Override
+    @Override
+    public boolean inWorldHudEntityNamespace() {
+        return this.inWorldHudEntityNamespace.get();
+    }
+
+    @Override
 	public TESClientUtil.TextRenderType inWorldHudEntityNameFontStyle() {
 		return this.inWorldHudEntityNameFontStyle.get();
 	}

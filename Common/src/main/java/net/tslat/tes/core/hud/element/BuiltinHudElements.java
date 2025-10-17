@@ -30,23 +30,35 @@ public final class BuiltinHudElements {
 	private static final ResourceLocation ICONS_TEXTURE = new ResourceLocation(TESConstants.MOD_ID, "textures/gui/tes_icons.png");
 
 	public static int renderEntityName(GuiGraphics guiGraphics, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
+        int lineHeight = mc.font.lineHeight;
+
 		if (inWorldHud) {
 			if (!TESAPI.getConfig().inWorldHudEntityName() && (!TESConstants.CONFIG.inWorldHudNameOverride() || !entity.hasCustomName()))
 				return 0;
 
 			TESClientUtil.centerTextForRender(entity.getDisplayName(), 0, 0, (x, y) -> TESAPI.getConfig().inWorldHudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), x, y, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource()));
+
+            if (TESAPI.getConfig().inWorldHudEntityNamespace()) {
+                TESClientUtil.centerTextForRender(Component.literal("(" + BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getNamespace() + ")"), 0, lineHeight, (x, y) -> TESAPI.getConfig().inWorldHudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), x, y, FastColor.ARGB32.color((int) (opacity * 255f), 200, 200, 200), guiGraphics.bufferSource()));
+                lineHeight += mc.font.lineHeight;
+            }
 		}
 		else {
 			if (!TESAPI.getConfig().hudEntityName())
 				return 0;
 
 			TESAPI.getConfig().hudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), entity.getDisplayName(), 0, 0, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource());
+
+            if (TESAPI.getConfig().hudEntityNamespace()) {
+                TESAPI.getConfig().hudEntityNameFontStyle().render(mc.font, guiGraphics.pose(), Component.literal("(" + BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getNamespace() + ")"), 0, lineHeight, FastColor.ARGB32.color(255, 200, 200, 200), guiGraphics.bufferSource());
+                lineHeight += mc.font.lineHeight;
+            }
 		}
 
 		TESEntityTracking.markNameRendered(entity);
 		guiGraphics.bufferSource().endLastBatch();
 
-		return mc.font.lineHeight;
+		return lineHeight;
 	}
 
 	public static int renderEntityHealth(GuiGraphics guiGraphics, Minecraft mc, float partialTick, LivingEntity entity, float opacity, boolean inWorldHud) {
