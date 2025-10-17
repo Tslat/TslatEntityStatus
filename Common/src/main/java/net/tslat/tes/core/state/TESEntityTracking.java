@@ -4,31 +4,32 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
+import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.particle.TESParticleManager;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public final class TESEntityTracking {
 	private static final Int2ObjectOpenHashMap<EntityState> ENTITY_STATES = new Int2ObjectOpenHashMap<>(50);
 	private static List<LivingEntity> ENTITIES_TO_RENDER = new ObjectArrayList<>();
-	private static IntSet RENDERED_NAMES = new IntOpenHashSet();
+	private static final IntSet RENDERED_NAMES = new IntOpenHashSet();
 
 	public static void accountForEntity(LivingEntity entity) {
 		ENTITY_STATES.compute(entity.getId(), (key, value) -> {
 			if (entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf())
 				return null;
 
-			double trackingDist = TESAPI.getConfig().getEntityTrackingDistance();
+            if (entity.getType().is(TESConstants.NO_TES_HANDLING))
+                return null;
 
-			if (entity.distanceToSqr((Minecraft.getInstance().cameraEntity == null ? Minecraft.getInstance().player : Minecraft.getInstance().cameraEntity)) > trackingDist * trackingDist)
-				return null;
-
-			if (entity.getType().is(TESConstants.NO_TES_HANDLING))
+            if (TESClientUtil.getClosestEntityPosition(entity).distanceToSqr(TESClientUtil.getCameraPosition()) > Mth.square(TESAPI.getConfig().getEntityTrackingDistance()))
 				return null;
 
 			return value == null ? new EntityState(entity) : value;
@@ -37,11 +38,18 @@ public final class TESEntityTracking {
 
 	public static void tick() {
 		TESParticleManager.clearClaims();
-		ENTITY_STATES.values().forEach(EntityState::tick);
 
-		if (Minecraft.getInstance().level.getGameTime() % TESAPI.getConfig().getCacheCleanFrequency() == 0)
-			ENTITY_STATES.values().removeIf(state -> !state.isValid());
+        for (ObjectIterator<EntityState> iterator = ENTITY_STATES.values().iterator(); iterator.hasNext();) {
+            EntityState state = iterator.next();
 
+            if (!state.isValid()) {
+                iterator.remove();
+
+                continue;
+            }
+
+            state.tick();
+        }
 	}
 
 	public static void addEntityToRender(LivingEntity entity) {

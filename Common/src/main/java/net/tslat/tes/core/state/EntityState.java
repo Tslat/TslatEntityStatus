@@ -14,6 +14,7 @@ import net.tslat.tes.core.particle.TESParticleManager;
 import net.tslat.tes.core.particle.type.ComponentParticle;
 import net.tslat.tes.core.particle.type.DamageParticle;
 import net.tslat.tes.core.particle.type.HealParticle;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.Set;
@@ -41,6 +42,7 @@ public class EntityState {
 		TESConstants.NETWORKING.requestEffectsSync(this.entity.getId());
 	}
 
+    @Nullable
 	public LivingEntity getEntity() {
 		return this.entity;
 	}
@@ -103,10 +105,12 @@ public class EntityState {
 	}
 
 	protected void handleHealthChange() {
-		if (TESAPI.getConfig().particlesEnabled()) {
+        final LivingEntity entity = getEntity();
+
+		if (entity != null && TESAPI.getConfig().particlesEnabled()) {
 			TESParticle<?> particle;
 			float healthDelta = this.currentHealth - this.lastHealth;
-			boolean damageSourceAccurate = this.entity.getLastDamageSource() != null && this.lastDamageSource != this.entity.getLastDamageSource();
+			boolean damageSourceAccurate = entity.getLastDamageSource() != null && this.lastDamageSource != entity.getLastDamageSource();
 
 			if (healthDelta != 0)
 				healthDelta = TESParticleManager.handleParticleClaims(this, healthDelta, TESParticleManager::addParticle, damageSourceAccurate);
@@ -114,17 +118,17 @@ public class EntityState {
 			if (healthDelta == 0)
 				return;
 
-			Vector3f particlePos = new Vector3f((float)this.entity.getX(), (float)this.entity.getEyeY(), (float)this.entity.getZ());
+			Vector3f particlePos = new Vector3f((float)entity.getX(), (float)entity.getEyeY(), (float)entity.getZ());
 
 			if (healthDelta < 0) {
-				this.lastTransitionTime = this.entity.level().getGameTime();
+				this.lastTransitionTime = entity.level().getGameTime();
 				int colour = TESAPI.getConfig().getDamageParticleColour();
 
 				if (this.lastTransitionHealth == 0)
 					this.lastTransitionHealth = this.lastHealth;
 
 				if (damageSourceAccurate && TESAPI.getConfig().teamBasedDamageParticleColours()) {
-					if (this.entity.getLastDamageSource().getEntity() instanceof LivingEntity attacker) {
+					if (entity.getLastDamageSource().getEntity() instanceof LivingEntity attacker) {
 						int teamColour = attacker.getTeamColor();
 
 						if (teamColour != 0xFFFFFF)
@@ -132,7 +136,7 @@ public class EntityState {
 					}
 				}
 
-				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth <= 0 && this.lastHealth >= this.entity.getMaxHealth()) {
+				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth <= 0 && this.lastHealth >= entity.getMaxHealth()) {
 					particle = new ComponentParticle(this, particlePos, TESParticle.Animation.POP_OFF, Component.translatable("config.tes.particle.verbal.instakill").setStyle(Style.EMPTY.withColor(colour)));
 				}
 				else {
@@ -140,7 +144,7 @@ public class EntityState {
 				}
 			}
 			else {
-				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth >= this.entity.getMaxHealth() && this.lastHealth <= this.entity.getMaxHealth() * 0.05f) {
+				if (TESAPI.getConfig().verbalHealthParticles() && this.currentHealth >= entity.getMaxHealth() && this.lastHealth <= entity.getMaxHealth() * 0.05f) {
 					particle = new ComponentParticle(this, particlePos, TESParticle.Animation.RISE, Component.translatable("config.tes.particle.verbal.fullHeal").setStyle(Style.EMPTY.withColor(TESAPI.getConfig().getHealParticleColour())));
 				}
 				else {

@@ -1,5 +1,6 @@
 package net.tslat.tes.core.hud;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -7,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -24,7 +26,9 @@ import net.tslat.tes.api.util.TESUtil;
 import net.tslat.tes.core.hud.element.BuiltinHudElements;
 import net.tslat.tes.core.state.EntityState;
 import net.tslat.tes.core.state.TESEntityTracking;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -43,22 +47,35 @@ public class TESHud {
 			map.put("Effects", BuiltinHudElements::renderEntityEffects);
 	});
 	private static TESHudElement[] INVERSE_ELEMENTS = buildInverseElementArray(ELEMENTS.values());
-	private static LivingEntity TARGET_ENTITY = null;
+    private static WeakReference<LivingEntity> TARGET_ENTITY = new WeakReference<>(null);
 	private static long TARGET_EXPIRY_TIME = -1L;
 
 	/**
 	 * Set the current target entity for HUD rendering
 	 */
 	public static void setTargetEntity(LivingEntity entity) {
-		TARGET_ENTITY = entity;
+        TARGET_ENTITY = new WeakReference<>(entity);
 		TARGET_EXPIRY_TIME = Minecraft.getInstance().level.getGameTime() + 1 + TESAPI.getConfig().hudTargetGracePeriod();
 	}
 
 	/**
 	 * Get the current target entity for HUD rendering
 	 */
+    @Nullable
 	public static LivingEntity getTargetEntity() {
-		return TARGET_ENTITY;
+        final LivingEntity target = TARGET_ENTITY.get();
+
+        if (target != null) {
+            if (target.isRemoved() ||
+                target.level() != Minecraft.getInstance().level ||
+                Mth.floor(Blaze3D.getTime() * 20) > TARGET_EXPIRY_TIME) {
+                TARGET_ENTITY = new WeakReference<>(null);
+
+                return null;
+            }
+        }
+
+        return target;
 	}
 
 	/**
@@ -88,16 +105,12 @@ public class TESHud {
 	}
 
 	public static void renderForHud(GuiGraphics guiGraphics, Minecraft mc, float partialTick) {
-		if (TARGET_ENTITY == null)
-			return;
+        final LivingEntity target = getTargetEntity();
 
-		if (!TARGET_ENTITY.isAlive() || TARGET_ENTITY.level() != mc.level || mc.level.getGameTime() > TARGET_EXPIRY_TIME) {
-			TARGET_ENTITY = null;
+        if (target == null)
+            return;
 
-			return;
-		}
-
-		if (!TESAPI.getConfig().hudEnabled() || (!TESAPI.getConfig().hudBossesEnabled() && TESConstants.UTILS.getEntityType(TARGET_ENTITY) == TESEntityType.BOSS))
+		if (!TESAPI.getConfig().hudEnabled() || (!TESAPI.getConfig().hudBossesEnabled() && TESConstants.UTILS.getEntityType(target) == TESEntityType.BOSS))
 			return;
 
 		float hudOpacity = TESAPI.getConfig().hudOpacity();
@@ -109,7 +122,7 @@ public class TESHud {
 
 		if (TESAPI.getConfig().hudEntityRender()) {
 			RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
-			TESClientUtil.renderEntityIcon(guiGraphics, mc, partialTick, TARGET_ENTITY, hudOpacity, true);
+			TESClientUtil.renderEntityIcon(guiGraphics, mc, partialTick, target, hudOpacity, true);
 
 			poseStack.translate(40, 0, 0);
 		}
@@ -118,7 +131,7 @@ public class TESHud {
 
 		for (TESHudElement element : ELEMENTS.values()) {
 			RenderSystem.setShaderColor(1, 1, 1, hudOpacity);
-			int offset = element.render(guiGraphics, mc, partialTick, TARGET_ENTITY, hudOpacity, false);
+			int offset = element.render(guiGraphics, mc, partialTick, target, hudOpacity, false);
 
 			if (offset > 0)
 				poseStack.translate(0, 2 + offset, 0);
@@ -145,7 +158,7 @@ public class TESHud {
 
 		poseStack.pushPose();
 		poseStack.translate(position.x, position.y, position.z);
-		poseStack.translate(0, entity.getBbHeight() + 0.5f, 0);
+        poseStack.translate(0, entity.getBbHeight() + 0.5f, 0);
 		poseStack.translate(0, TESConstants.CONFIG.inWorldHudManualVerticalOffset(), 0);
 
 		TESClientUtil.positionFacingCamera(poseStack);
@@ -185,7 +198,7 @@ public class TESHud {
 		else {
 			double targetingRange = TESAPI.getConfig().getHudTargetDistance();
 			Entity cameraEntity = mc.getCameraEntity();
-			Vec3 cameraPos = cameraEntity.getEyePosition(partialTick);
+			Vec3 cameraPos = TESClientUtil.getCameraPosition();
 			Vec3 cameraView = cameraEntity.getViewVector(partialTick);
 			Vec3 rayEnd = cameraPos.add(cameraView.multiply(targetingRange, targetingRange, targetingRange));
 			AABB hitBounds = cameraEntity.getBoundingBox().expandTowards(cameraView.scale(targetingRange)).inflate(1, 1, 1);
