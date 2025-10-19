@@ -1,6 +1,5 @@
 package net.tslat.tes.core.hud;
 
-import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -8,7 +7,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -68,7 +66,7 @@ public class TESHud {
         if (target != null) {
             if (target.isRemoved() ||
                 target.level() != Minecraft.getInstance().level ||
-                Mth.floor(Blaze3D.getTime() * 20) > TARGET_EXPIRY_TIME) {
+                Minecraft.getInstance().level.getGameTime() > TARGET_EXPIRY_TIME) {
                 TARGET_ENTITY = new WeakReference<>(null);
 
                 return null;
