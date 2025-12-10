@@ -29,7 +29,7 @@ base {
 }
 
 minecraft {
-    mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}-${mcVersion}")
+    mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
 
     accessTransformers {
         project(":common").file("src/main/resources/META-INF/accesstransformer.cfg")
@@ -59,7 +59,7 @@ minecraft {
 
 dependencies {
     compileOnly(project(":common"))
-
+    implementation(minecraft.dependency(libs.forge))
     implementation(libs.forgeconfigapiport.forge)
 }
 
