@@ -55,8 +55,6 @@ dependencies {
 loom {
     accessWidenerPath = file("src/main/resources/${modId}.accesswidener")
 
-    mixin.defaultRefmapName.set("${modId}.refmap.json")
-
     runs {
         named("client") {
             configName = "Fabric Client"
@@ -91,7 +89,7 @@ tasks.withType<Javadoc>().configureEach {
 
 tasks.withType<ProcessResources>().configureEach {
     from(project(":common").sourceSets.getByName("main").resources)
-    exclude("**/accesstransformer-nf.cfg")
+    exclude("**/accesstransformer.cfg")
 }
 
 modrinth {

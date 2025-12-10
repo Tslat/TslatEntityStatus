@@ -24,10 +24,3 @@ accessible field net/minecraft/client/gui/Font provider Lnet/minecraft/client/gu
 accessible method net/minecraft/client/gui/Font getGlyph (ILnet/minecraft/network/chat/Style;)Lnet/minecraft/client/gui/font/glyphs/BakedGlyph;
 
 accessible field net/minecraft/client/renderer/LevelRenderer targets Lnet/minecraft/client/renderer/LevelTargetBundle;
-
-accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MIN_MOVEMENT_SPEED F
-accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MAX_MOVEMENT_SPEED F
-accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MIN_JUMP_STRENGTH F
-accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MAX_JUMP_STRENGTH F
-accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MIN_HEALTH F
-accessible field net/minecraft/world/entity/animal/horse/AbstractHorse MAX_HEALTH F
