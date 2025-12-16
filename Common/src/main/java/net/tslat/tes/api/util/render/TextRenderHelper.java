@@ -1,6 +1,5 @@
 package net.tslat.tes.api.util.render;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
@@ -13,7 +12,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.GuiTextRenderState;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
@@ -22,6 +21,7 @@ import net.tslat.tes.api.object.TESHudRenderContext;
 import net.tslat.tes.api.object.TextRenderStyle;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
+import org.joml.Matrix3x2fc;
 import org.joml.Matrix4f;
 
 import java.util.List;
@@ -181,7 +181,7 @@ public class TextRenderHelper {
         final int posY = Mth.floor(y);
         final FormattedCharSequence charSequence = this.component.getVisualOrderText();
 
-        args.renderTasks().submitCustomGeometry(args.poseStack(), RenderType.textBackgroundSeeThrough(), (pose, vertexConsumer) -> {
+        args.renderTasks().submitCustomGeometry(args.poseStack(), RenderTypes.textBackgroundSeeThrough(), (pose, vertexConsumer) -> {
             style.renderFunction.prepare(this.font, charSequence, posX, posY, this.textColour, shadowColour, this.backdropColour,
                                          this.packedLight, Either.right(pose.pose()), null, Minecraft.getInstance().renderBuffers().bufferSource());
         });
@@ -304,7 +304,7 @@ public class TextRenderHelper {
             }, pose3d -> {
                 Font.GlyphVisitor glyphVisitor = getWorldspaceGlyphVisitor(bufferSource, pose3d, Font.DisplayMode.NORMAL, packedLight, false);
 
-                for (TextRenderable glyph : outlineText.glyphs) {
+                for (TextRenderable.Styled glyph : outlineText.glyphs) {
                     glyphVisitor.acceptGlyph(glyph);
                 }
 
@@ -317,9 +317,9 @@ public class TextRenderHelper {
     }
 
     static class RenderState extends GuiTextRenderState {
-        public RenderState(Font.PreparedText preparedText, Font font, FormattedCharSequence charSequence, Matrix3x2f pose,
+        public RenderState(Font.PreparedText preparedText, Font font, FormattedCharSequence charSequence, Matrix3x2fc pose,
                            int x, int y, int colour, int secondaryColour, @Nullable ScreenRectangle scissor) {
-            super(font, charSequence, pose, x, y, colour, secondaryColour, false, scissor);
+            super(font, charSequence, pose, x, y, colour, secondaryColour, false, false, scissor);
 
             this.preparedText = preparedText;
         }
@@ -331,7 +331,7 @@ public class TextRenderHelper {
     }
 
     static Font.PreparedTextBuilder configurablePreparedText(Font font, float x, float y, int colour, int shadowColour, int backgroundColour, boolean dropShadow) {
-        return font.new PreparedTextBuilder(x, y, colour, backgroundColour, dropShadow) {
+        return font.new PreparedTextBuilder(x, y, colour, backgroundColour, dropShadow, false) {
             @Override
             public int getShadowColor(net.minecraft.network.chat.Style textStyle, int textColour) {
                 if (dropShadow && shadowColour != 0)
@@ -355,7 +355,7 @@ public class TextRenderHelper {
                     glyphVisitor.acceptEffect(font.provider.effect().createEffect(this.backgroundLeft, this.backgroundTop, this.backgroundRight, this.backgroundBottom, -0.01f, this.backgroundColor, 0, 0));
                 }
 
-                for (TextRenderable renderable : this.glyphs) {
+                for (TextRenderable.Styled renderable : this.glyphs) {
                     glyphVisitor.acceptGlyph(renderable);
                 }
 
@@ -369,16 +369,15 @@ public class TextRenderHelper {
     }
 
     static Font.GlyphVisitor getWorldspaceGlyphVisitor(MultiBufferSource bufferSource, Matrix4f pose, Font.DisplayMode displayMode, int packedLight, boolean dropShadow) {
-        if (true)
         return Font.GlyphVisitor.forMultiBufferSource(bufferSource, pose, displayMode, packedLight);
 
 
-        return new Font.GlyphVisitor() {
+        /*return new Font.GlyphVisitor() {
             @Override
             public void acceptGlyph(TextRenderable renderable) {
-                /*VertexConsumer vertexConsumer = bufferSource.getBuffer(renderable.renderType(displayMode));
+                *//*VertexConsumer vertexConsumer = bufferSource.getBuffer(renderable.renderType(displayMode));
 
-                renderDropShadowFriendlyGlyph(renderable, vertexConsumer, pose, packedLight, dropShadow);*/
+                renderDropShadowFriendlyGlyph(renderable, vertexConsumer, pose, packedLight, dropShadow);*//*
             }
 
             @Override
@@ -389,7 +388,7 @@ public class TextRenderHelper {
             }
 
             // Because Mojang didn't build glyph shadows for 3d worldspace
-            private static void renderDropShadowFriendlyGlyph(TextRenderable glyphInstance, VertexConsumer buffer, Matrix4f pose, int packedLight, boolean dropShadow) {/*
+            private static void renderDropShadowFriendlyGlyph(TextRenderable glyphInstance, VertexConsumer buffer, Matrix4f pose, int packedLight, boolean dropShadow) {*//*
                 net.minecraft.network.chat.Style style = glyphInstance.style();
                 boolean italic = style.isItalic();
                 boolean bold = style.isBold();
@@ -416,8 +415,8 @@ public class TextRenderHelper {
                 glyph.render(italic, x, y, zDepth, pose, buffer, colour, bold, packedLight);
 
                 if (bold)
-                    glyph.render(italic, x + glyphInstance.boldOffset(), y, zDepth + dropShadowOffset, pose, buffer, colour, true, packedLight);*/
+                    glyph.render(italic, x + glyphInstance.boldOffset(), y, zDepth + dropShadowOffset, pose, buffer, colour, true, packedLight);*//*
             }
-        };
+        };*/
     }
 }

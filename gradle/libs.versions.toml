@@ -18,10 +18,10 @@
     fabric-api-range = "0.139.0+1.21.11"
 
 # Forge
-    forge-fml-range = "[60,)"
-    forge-range = "[60.0.0,)"
-    forge = "60.0.4"
-    forge-mc = "1.21.10-60.0.4"
+    forge-fml-range = "[61,)"
+    forge-range = "[61.0.2,)"
+    forge = "61.0.2"
+    forge-mc = "1.21.11-61.0.2"
     forge-eventbusvalidator = "7.0-beta.10"
 
 # Neoforge
@@ -33,9 +33,9 @@
     mixin = "0.8.7"
     mixinextras = "0.5.0"
     mixinextras-range = "[0.5.0,)"
-    forgeconfigapiport = "21.10.0"
-    forgeconfigapiport-range = "[21.10.0,)"
-    forgeconfigapiport-forge = "21.10.0"
+    forgeconfigapiport = "21.11.1"
+    forgeconfigapiport-range = "[21.11.0,)"
+    forgeconfigapiport-forge = "21.11.1"
 
 # Plugins
     plugin-moddevgradle = "2.0.123"
@@ -44,8 +44,7 @@
     plugin-idea-ext = "1.3"
     plugin-forge-gradle = "[7.0.0-alpha.46,)"
     plugin-forge-at = "[5.0.1,)"
-    plugin-mixin = "0.7.+"
-    plugin-parchment-forge-gradle = "1.+"
+    plugin-forge-eventbusvalidator = "7.0-beta.10"
     plugin-loom = "1.14-SNAPSHOT"
 
 [libraries]
@@ -74,9 +73,9 @@
 # Platform
     moddevgradle = { id = "net.neoforged.moddev", version.ref = "plugin-moddevgradle" }
     forgegradle = { id = "net.minecraftforge.gradle", version.ref = "plugin-forge-gradle" }
+    forge-at = { id = "net.minecraftforge.accesstransformers", version.ref = "plugin-forge-at" }
+    forge-eventbusvalidator = { id = "net.minecraftforge.eventbus-validator", version.ref = "plugin-forge-eventbusvalidator" }
     loom = { id = "fabric-loom", version.ref = "plugin-loom" }
 
 # Misc
     ideaext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "plugin-idea-ext" }
-    forge-at = { id = "net.minecraftforge.accesstransformers", version.ref = "plugin-forge-at" }
-    forge-eventbusvalidator = { id = "net.minecraftforge.eventbus-validator", version.ref = "forge-eventbusvalidator" }

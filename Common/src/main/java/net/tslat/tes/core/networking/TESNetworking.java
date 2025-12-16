@@ -6,7 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -94,7 +94,7 @@ public interface TESNetworking {
 	 * @param targetedEntity The entity for the claim
 	 * @param additionalData Optional additional data for the claim
 	 */
-	void sendParticleClaim(ResourceLocation claimantId, LivingEntity targetedEntity, Optional<CompoundTag> additionalData);
+	void sendParticleClaim(Identifier claimantId, LivingEntity targetedEntity, Optional<CompoundTag> additionalData);
 
 	// <-- Internal methods --> //
 

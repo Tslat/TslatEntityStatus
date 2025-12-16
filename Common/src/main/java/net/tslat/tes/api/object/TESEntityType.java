@@ -1,6 +1,6 @@
 package net.tslat.tes.api.object;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.tslat.tes.api.TESConstants;
 
 /**
@@ -16,12 +16,12 @@ public interface TESEntityType {
 	/**
 	 * @return The texture location of the background (empty) texture for this bar type
 	 */
-	ResourceLocation backgroundTexture();
+	Identifier backgroundTexture();
 
 	/**
 	 * @return The texture location of the foreground/progress (filled) texture for this bar type
 	 */
-	ResourceLocation overlayTexture();
+	Identifier overlayTexture();
 
-	record Impl(ResourceLocation backgroundTexture, ResourceLocation overlayTexture) implements TESEntityType {}
+	record Impl(Identifier backgroundTexture, Identifier overlayTexture) implements TESEntityType {}
 }

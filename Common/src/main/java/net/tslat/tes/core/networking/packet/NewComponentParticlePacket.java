@@ -6,7 +6,6 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.tslat.tes.api.TESAPI;
@@ -15,10 +14,11 @@ import net.tslat.tes.core.particle.TESParticleManager;
 import net.tslat.tes.core.particle.type.ComponentParticle;
 import net.tslat.tes.core.state.EntityState;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.function.Consumer;
 
-public record NewComponentParticlePacket(int entityId, Component contents, Vector3f position) implements MultiloaderPacket {
+public record NewComponentParticlePacket(int entityId, Component contents, Vector3fc position) implements MultiloaderPacket {
 	public static final CustomPacketPayload.Type<NewComponentParticlePacket> TYPE = new Type<>(TESConstants.id("new_component_particle"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, NewComponentParticlePacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,
@@ -33,7 +33,7 @@ public record NewComponentParticlePacket(int entityId, Component contents, Vecto
 		this(entity.getId(), contents, new Vector3f((float)entity.getX(), (float)entity.getEyeY(), (float)entity.getZ()));
 	}
 
-	public NewComponentParticlePacket(final Vector3f position, final Component contents) {
+	public NewComponentParticlePacket(final Vector3fc position, final Component contents) {
 		this(-1, contents, position);
 	}
 
@@ -46,13 +46,13 @@ public record NewComponentParticlePacket(int entityId, Component contents, Vecto
 	public void receiveMessage(Player sender, Consumer<Runnable> workQueue) {
 		workQueue.accept(() -> {
 			if (this.entityId == -1) {
-				TESParticleManager.addParticle(new ComponentParticle(null, this.position, this.contents));
+				TESParticleManager.addParticle(new ComponentParticle(null, new Vector3f(this.position), this.contents));
 			}
 			else {
 				EntityState entityState = TESAPI.getTESDataForEntity(this.entityId);
 
 				if (entityState != null)
-					TESParticleManager.addParticle(new ComponentParticle(entityState, this.position, this.contents));
+					TESParticleManager.addParticle(new ComponentParticle(entityState, new Vector3f(this.position), this.contents));
 			}
 		});
 	}

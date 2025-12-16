@@ -13,7 +13,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -105,7 +105,7 @@ public class TESNetworking implements net.tslat.tes.core.networking.TESNetworkin
 	}
 
 	@Override
-	public void sendParticleClaim(ResourceLocation claimantId, LivingEntity targetedEntity, Optional<CompoundTag> additionalData) {
+	public void sendParticleClaim(Identifier claimantId, LivingEntity targetedEntity, Optional<CompoundTag> additionalData) {
 		for (ServerPlayer player : PlayerLookup.tracking(targetedEntity)) {
 			ServerPlayNetworking.send(player, new ParticleClaimPacket(targetedEntity.getId(), claimantId, additionalData));
 		}

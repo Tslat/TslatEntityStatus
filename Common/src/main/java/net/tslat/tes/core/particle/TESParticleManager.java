@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
@@ -30,8 +30,8 @@ import java.util.function.Consumer;
  */
 public final class TESParticleManager {
 	private static final ConcurrentLinkedQueue<TESParticle<?>> PARTICLES = new ConcurrentLinkedQueue<>();
-	private static final Object2ObjectOpenHashMap<ResourceLocation, TESParticleClaimant> CLAIMANTS = new Object2ObjectOpenHashMap<>();
-	private static final ConcurrentMap<Integer, List<Pair<ResourceLocation, Optional<CompoundTag>>>> CLAIMS = new ConcurrentHashMap<>();
+	private static final Object2ObjectOpenHashMap<Identifier, TESParticleClaimant> CLAIMANTS = new Object2ObjectOpenHashMap<>();
+	private static final ConcurrentMap<Integer, List<Pair<Identifier, Optional<CompoundTag>>>> CLAIMS = new ConcurrentHashMap<>();
 	private static final ObjectArrayList<TESParticleSourceHandler> HANDLERS = new ObjectArrayList<>();
 	private static final ObjectArrayList<Runnable> NEW_CLAIMS = new ObjectArrayList<>();
 
@@ -48,7 +48,7 @@ public final class TESParticleManager {
 	/**
 	 * Register a {@link TESParticleClaimant} with TES for receiving custom particle claims
 	 */
-	public static void registerParticleClaimant(ResourceLocation id, TESParticleClaimant claimant) {
+	public static void registerParticleClaimant(Identifier id, TESParticleClaimant claimant) {
 		synchronized (CLAIMANTS) {
 			CLAIMANTS.put(id, claimant);
 		}
@@ -70,7 +70,7 @@ public final class TESParticleManager {
 	 * @param claimantId The id of the claimant responsible for the claim
 	 * @param data Optional additional data relevant to the claim
 	 */
-	public static void addParticleClaim(int entityId, ResourceLocation claimantId, Optional<CompoundTag> data) {
+	public static void addParticleClaim(int entityId, Identifier claimantId, Optional<CompoundTag> data) {
 		if (!TESAPI.getConfig().particlesEnabled())
 			return;
 
@@ -80,7 +80,7 @@ public final class TESParticleManager {
 	}
 
 	public static float handleParticleClaims(EntityState entityState, float healthDelta, Consumer<TESParticle<?>> particleAdder, boolean checkSourceHandlers) {
-		for (Pair<ResourceLocation, Optional<CompoundTag>> pair : CLAIMS.getOrDefault(entityState.getEntity().map(Entity::getId).orElse(-1), List.of())) {
+		for (Pair<Identifier, Optional<CompoundTag>> pair : CLAIMS.getOrDefault(entityState.getEntity().map(Entity::getId).orElse(-1), List.of())) {
 			healthDelta = CLAIMANTS.getOrDefault(pair.getFirst(), (state, delta, data, adder) -> delta).checkClaim(entityState, healthDelta, pair.getSecond(), particleAdder);
 
 			if (healthDelta == 0)

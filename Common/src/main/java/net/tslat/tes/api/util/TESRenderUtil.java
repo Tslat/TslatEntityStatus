@@ -6,12 +6,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,7 +35,7 @@ public final class TESRenderUtil {
      * <p>
      * <b><u>NOTE:</u></b> Only supports GUI sprites. Other atlases must be retrieved manually
      */
-    public static TextureAtlasSprite getGuiAtlasSprite(ResourceLocation texture) {
+    public static TextureAtlasSprite getGuiAtlasSprite(Identifier texture) {
         return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.GUI).getSprite(texture);
     }
 
@@ -132,13 +132,13 @@ public final class TESRenderUtil {
                 barRight.lightLevel(packedLight);
         }
 
-        barLeft.render(renderContext, RenderPipelines.GUI_TEXTURED, RenderType::entityTranslucent, x, y);
+        barLeft.render(renderContext, RenderPipelines.GUI_TEXTURED, RenderTypes::entityTranslucent, x, y);
 
         if (barMiddle != null)
-            barMiddle.render(renderContext, RenderPipelines.GUI_TEXTURED, RenderType::entityTranslucent, x + 5, y);
+            barMiddle.render(renderContext, RenderPipelines.GUI_TEXTURED, RenderTypes::entityTranslucent, x + 5, y);
 
         if (barRight != null)
-            barRight.render(renderContext, RenderPipelines.GUI_TEXTURED, RenderType::entityTranslucent, x + 5 + midBarWidth, y);
+            barRight.render(renderContext, RenderPipelines.GUI_TEXTURED, RenderTypes::entityTranslucent, x + 5 + midBarWidth, y);
     }
 
     /**
@@ -177,7 +177,6 @@ public final class TESRenderUtil {
         entity.setCustomName(null);
 
         EntityRenderState renderState = mc.getEntityRenderDispatcher().getRenderer(entity).createRenderState(entity, 1f);
-        renderState.hitboxesRenderState = null;
         renderState.lightCoords = LightTexture.FULL_BRIGHT;
 
         guiGraphics.submitEntityRenderState(renderState, scale / entity.getScale(), new Vector3f(0, entity.getBbHeight() * -0.5f, 0),

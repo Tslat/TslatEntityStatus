@@ -1,6 +1,6 @@
 package net.tslat.tes.core.hud.element;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.object.TESHudRenderContext;
@@ -36,7 +36,7 @@ public interface TESHudEntityIcon {
     /**
      * Builtin renderer for easily rendering an appropriately sized and positioned icon
      */
-    static void genericSpriteRender(TESHudRenderContext renderContext, ResourceLocation sprite, float x, float y, float opacity) {
+    static void genericSpriteRender(TESHudRenderContext renderContext, Identifier sprite, float x, float y, float opacity) {
         TextureRenderHelper renderer = TextureRenderHelper.ofSprite(sprite).colour(ARGB.white(opacity));
 
         if (renderContext.isInWorld())
@@ -45,7 +45,7 @@ public interface TESHudEntityIcon {
         renderer.render(renderContext, x, y);
     }
 
-    static TESHudEntityIcon makeGeneric(ResourceLocation sprite, Predicate<LivingEntity> shouldRender) {
+    static TESHudEntityIcon makeGeneric(Identifier sprite, Predicate<LivingEntity> shouldRender) {
         return new TESHudEntityIcon() {
             @Override
             public boolean shouldRender(LivingEntity entity) {

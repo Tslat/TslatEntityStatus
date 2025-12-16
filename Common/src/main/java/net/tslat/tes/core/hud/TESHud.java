@@ -4,7 +4,6 @@ import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.minecraft.Util;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,6 +13,7 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.entity.LivingEntity;
@@ -199,7 +199,7 @@ public class TESHud {
 		float hudOpacity = config.inWorldHudOpacity();
 		EntityRenderer<? super LivingEntity, EntityRenderState> renderer = (EntityRenderer)mc.getEntityRenderDispatcher().getRenderer(entity);
 		Vec3 position = entity.getPosition(partialTick)
-				.subtract(mc.gameRenderer.getMainCamera().getPosition())
+				.subtract(mc.gameRenderer.getMainCamera().position())
 				.add(renderer.getRenderOffset(renderer.createRenderState(entity, partialTick)));
 
 		Vec3 nameTagOffset = entity.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTick));

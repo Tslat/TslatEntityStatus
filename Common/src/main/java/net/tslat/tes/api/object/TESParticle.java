@@ -48,7 +48,7 @@ public interface TESParticle<D> {
 		Camera camera = mc.gameRenderer.getMainCamera();
 		Vector3f renderPos = prevPos
 				.lerp(pos, partialTick, new Vector3f())
-				.sub(camera.getPosition().toVector3f());
+				.sub(camera.position().toVector3f());
 
 		poseStack.pushPose();
 		poseStack.translate(renderPos.x, renderPos.y, renderPos.z);

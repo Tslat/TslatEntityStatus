@@ -1,7 +1,7 @@
 package net.tslat.tes.api;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.tslat.tes.api.util.TESUtil;
@@ -19,8 +19,8 @@ public final class TESConstants {
 	public static final String MOD_NAME = "TES";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
-	private static final ResourceLocation BASE_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, "");
-    public static final ResourceLocation HUD_LAYER_ID = id("main_hud");
+	private static final Identifier BASE_ID = Identifier.fromNamespaceAndPath(MOD_ID, "");
+    public static final Identifier HUD_LAYER_ID = id("main_hud");
 
 	public static TESConfig CONFIG = null;
 
@@ -39,7 +39,7 @@ public final class TESConstants {
 		IS_SERVER_SIDE = false;
 	}
 
-	public static ResourceLocation id(String path) {
+	public static Identifier id(String path) {
 		return BASE_ID.withPath(path);
 	}
 }

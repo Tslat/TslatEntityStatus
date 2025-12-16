@@ -75,6 +75,10 @@ loom {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    failOnNoDiscoveredTests = false
+}
+
 tasks.withType<JavaCompile>().configureEach {
     source(project(":common").sourceSets.getByName("main").allSource)
 }
@@ -122,7 +126,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java ${javaVersion}")
     mainFile.changelog = modChangelogUrl
-    mainFile.addRelation("forge-config-api-port-fabric", Constants.RELATION_REQUIRED)
+    mainFile.addRelation("forge-config-api-port", Constants.RELATION_REQUIRED)
 
     //debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties

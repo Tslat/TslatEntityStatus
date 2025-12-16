@@ -2,7 +2,7 @@ package net.tslat.tes.api;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.object.TESHudElement;
@@ -49,7 +49,7 @@ public final class TESAPI {
 	 * @param id The id of the element to add
 	 * @param element The element instance to add to the HUD
 	 */
-	public static void addTESHudElement(ResourceLocation id, TESHudElement element) {
+	public static void addTESHudElement(Identifier id, TESHudElement element) {
 		TESHud.addHudElement(id.toString(), element);
 	}
 
@@ -59,7 +59,7 @@ public final class TESAPI {
 	 * @param id The id of the element to remove
 	 * @return true if the element was present
 	 */
-	public static boolean removeTESHudElement(ResourceLocation id) {
+	public static boolean removeTESHudElement(Identifier id) {
 		return TESHud.removeHudElement(id.toString());
 	}
 
@@ -71,7 +71,7 @@ public final class TESAPI {
 	 * @param id The id of the claimant to register
 	 * @param claimant The claimant instance
 	 */
-	public static void registerParticleClaimant(ResourceLocation id, TESParticleClaimant claimant) {
+	public static void registerParticleClaimant(Identifier id, TESParticleClaimant claimant) {
 		TESParticleManager.registerParticleClaimant(id, claimant);
 	}
 
@@ -127,7 +127,7 @@ public final class TESAPI {
 	 * @param targetEntity The entity the claim is for
 	 * @param additionalData Optional additional data passed back to the claimant at the time of the claim
 	 */
-	public static void submitParticleClaim(ResourceLocation id, LivingEntity targetEntity, Optional<CompoundTag> additionalData) {
+	public static void submitParticleClaim(Identifier id, LivingEntity targetEntity, Optional<CompoundTag> additionalData) {
 		if (TESConstants.IS_SERVER_SIDE) {
 			TESConstants.NETWORKING.sendParticleClaim(id, targetEntity, additionalData);
 		}

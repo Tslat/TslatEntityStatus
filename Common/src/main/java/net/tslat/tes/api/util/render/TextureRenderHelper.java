@@ -1,6 +1,8 @@
 package net.tslat.tes.api.util.render;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import net.minecraft.client.Minecraft;
@@ -9,10 +11,11 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.state.BlitRenderState;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.tslat.tes.api.object.TESHudRenderContext;
@@ -25,7 +28,7 @@ import java.util.function.Function;
  * Factory-based class used for rendering textures
  */
 public class TextureRenderHelper {
-    private final ResourceLocation texture;
+    private final Identifier texture;
     private final TextureAtlasSprite sprite;
     private final GpuTextureView textureView;
     private final float uScale;
@@ -39,7 +42,7 @@ public class TextureRenderHelper {
     private float vMin;
     private int colour = 0xFFFFFFFF;
 
-    TextureRenderHelper(ResourceLocation texture) {
+    TextureRenderHelper(Identifier texture) {
         this.texture = texture;
         this.sprite = null;
         this.textureView = Minecraft.getInstance().getTextureManager().getTexture(texture).getTextureView();
@@ -57,11 +60,11 @@ public class TextureRenderHelper {
         this.vScale = 1f / this.height;
     }
 
-    public static TextureRenderHelper of(ResourceLocation texture) {
+    public static TextureRenderHelper of(Identifier texture) {
         return new TextureRenderHelper(texture);
     }
 
-    public static TextureRenderHelper ofSprite(ResourceLocation texture) {
+    public static TextureRenderHelper ofSprite(Identifier texture) {
         return of(TESRenderUtil.getGuiAtlasSprite(texture));
     }
 
@@ -165,10 +168,10 @@ public class TextureRenderHelper {
     }
 
     public void render(TESHudRenderContext renderContext, float x, float y) {
-        render(renderContext, RenderPipelines.GUI_TEXTURED, RenderType::entityTranslucent, x, y);
+        render(renderContext, RenderPipelines.GUI_TEXTURED, RenderTypes::entityTranslucent, x, y);
     }
 
-    public void render(TESHudRenderContext renderContext, RenderPipeline renderPipeline, Function<ResourceLocation, RenderType> renderTypeFunction, float x, float y) {
+    public void render(TESHudRenderContext renderContext, RenderPipeline renderPipeline, Function<Identifier, RenderType> renderTypeFunction, float x, float y) {
         renderContext.forGui(args -> renderForHud(args, renderPipeline, x, y))
                 .forInWorld(args -> renderInWorld(args, renderTypeFunction, x, y));
     }
@@ -198,17 +201,17 @@ public class TextureRenderHelper {
             vMax = this.sprite.getV(vMax);
         }
 
-        guiGraphics.guiRenderState.submitGuiElement(new BlitRenderState(renderPipeline, TextureSetup.singleTexture(this.textureView), new Matrix3x2f(guiGraphics.pose()),
+        guiGraphics.guiRenderState.submitGuiElement(new BlitRenderState(renderPipeline, TextureSetup.singleTexture(this.textureView, RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)), new Matrix3x2f(guiGraphics.pose()),
                                                                         xMin, yMin, xMax, yMax,
                                                                         uMin, uMax, vMin, vMax,
                                                                         this.colour, guiGraphics.scissorStack.peek()));
     }
 
     public void renderInWorld(TESHudRenderContext.InWorldArgs args, float x, float y) {
-        renderInWorld(args, RenderType::entityTranslucent, x, y);
+        renderInWorld(args, RenderTypes::entityTranslucent, x, y);
     }
 
-    public void renderInWorld(TESHudRenderContext.InWorldArgs args, Function<ResourceLocation, RenderType> renderTypeFunction, float x, float y) {
+    public void renderInWorld(TESHudRenderContext.InWorldArgs args, Function<Identifier, RenderType> renderTypeFunction, float x, float y) {
         if (ARGB.alpha(this.colour) == 0)
             return;
 

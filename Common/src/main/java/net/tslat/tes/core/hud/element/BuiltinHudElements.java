@@ -7,14 +7,14 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConfig;
 import net.tslat.tes.api.TESConstants;
@@ -162,8 +162,8 @@ public final class BuiltinHudElements {
 			TextureRenderHelper.ofSprite(TESTextures.STAT_MELEE_DAMAGE).sized(9, 9).colour(colour).render(renderContext, meleeDamageX, 0);
 
 		if (heartsString != null) {
-			TextureRenderHelper.ofSprite(ResourceLocation.withDefaultNamespace("hud/heart/container")).sized(9, 9).colour(colour).render(renderContext, healthX, 0);
-			TextureRenderHelper.ofSprite(ResourceLocation.withDefaultNamespace("hud/heart/full")).sized(9, 9).colour(colour).render(renderContext, healthX, 0);
+			TextureRenderHelper.ofSprite(Identifier.withDefaultNamespace("hud/heart/container")).sized(9, 9).colour(colour).render(renderContext, healthX, 0);
+			TextureRenderHelper.ofSprite(Identifier.withDefaultNamespace("hud/heart/full")).sized(9, 9).colour(colour).render(renderContext, healthX, 0);
 		}
 
 		if (armour > 0)

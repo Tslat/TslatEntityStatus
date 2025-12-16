@@ -78,5 +78,5 @@ plugins {
 rootProject.name = "tslatentitystatus"
 include("common")
 include("fabric")
-include("forge")
+//include("forge")
 include("neoforge")

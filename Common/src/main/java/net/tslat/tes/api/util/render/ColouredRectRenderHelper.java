@@ -7,7 +7,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.state.GuiElementRenderState;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.tslat.tes.api.object.TESHudRenderContext;
@@ -122,7 +122,7 @@ public class ColouredRectRenderHelper {
         final int xMax = Math.round(xMin + this.width);
         final int yMax = Math.round(yMin + this.height);
 
-        args.renderTasks().submitCustomGeometry(args.poseStack(), RenderType.textBackgroundSeeThrough(), (pose, vertexConsumer) -> {
+        args.renderTasks().submitCustomGeometry(args.poseStack(), RenderTypes.textBackgroundSeeThrough(), (pose, vertexConsumer) -> {
             vertexConsumer.addVertex(pose, xMin, yMin, 0).setColor(ColouredRectRenderHelper.this.colour0);
             vertexConsumer.addVertex(pose, xMin, yMax, 0).setColor(ColouredRectRenderHelper.this.colour1);
             vertexConsumer.addVertex(pose, xMax, yMax, 0).setColor(ColouredRectRenderHelper.this.colour2);

@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.core.particle.TESParticleManager;
@@ -12,12 +12,12 @@ import net.tslat.tes.core.particle.TESParticleManager;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public record ParticleClaimPacket(int entityId, ResourceLocation claimantId, Optional<CompoundTag> data) implements MultiloaderPacket {
+public record ParticleClaimPacket(int entityId, Identifier claimantId, Optional<CompoundTag> data) implements MultiloaderPacket {
 	public static final Type<ParticleClaimPacket> TYPE = new Type<>(TESConstants.id("particle_claim"));
 	public static final StreamCodec<FriendlyByteBuf, ParticleClaimPacket> CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,
 			ParticleClaimPacket::entityId,
-			ResourceLocation.STREAM_CODEC,
+			Identifier.STREAM_CODEC,
 			ParticleClaimPacket::claimantId,
 			ByteBufCodecs.OPTIONAL_COMPOUND_TAG,
 			ParticleClaimPacket::data,
