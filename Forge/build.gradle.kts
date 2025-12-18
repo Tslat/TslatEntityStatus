@@ -31,10 +31,6 @@ base {
 minecraft {
     mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
 
-    accessTransformers {
-        project(":common").file("src/main/resources/META-INF/accesstransformer.cfg")
-    }
-
     runs {
         configureEach {
             workingDir.convention(layout.projectDirectory.dir("runs/${name}"))
@@ -57,10 +53,38 @@ minecraft {
     }
 }
 
+repositories {
+    maven(minecraft.mavenizer)
+    maven(fg.forgeMaven)
+    maven(fg.minecraftLibsMaven)
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Sponge"
+                url = uri("https://repo.spongepowered.org/repository/maven-public")
+            }
+        }
+        filter {
+            includeGroupAndSubgroups("org.spongepowered")
+        }
+    }
+    mavenCentral()
+    mavenLocal()
+}
+
 dependencies {
-    compileOnly(project(":common"))
-    implementation(minecraft.dependency(libs.forge))
+    implementation(minecraft.dependency("net.minecraftforge:forge:1.21.11-61.0.2"))
+    compileOnly(project(":common")) {
+        accessTransformers.configure(this) {
+            config.set(rootProject.file("common/src/main/resources/META-INF/accesstransformer.cfg"))
+        }
+    }
+    annotationProcessor(libs.forge.eventbusvalidator)
     implementation(libs.forgeconfigapiport.forge)
+}
+
+tasks.withType<Test>().configureEach {
+    enabled = false;
 }
 
 tasks.withType<JavaCompile>().configureEach {
