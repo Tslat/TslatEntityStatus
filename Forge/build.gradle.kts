@@ -23,7 +23,7 @@ val javaVersion        = libs.versions.java.get()
 val mcVersion          = libs.versions.minecraft.asProvider().get()
 val parchmentMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion   = libs.versions.parchment.asProvider().get()
-val forgeVersion= libs.versions.forge.asProvider().get()
+val forgeVersion       = libs.versions.forge.asProvider().get()
 
 version = modVersion
 
@@ -34,7 +34,7 @@ base {
 minecraft {
     mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
 
-    accessTransformers.register {  }
+    accessTransformers.set(true)
 
     runs {
         configureEach {
