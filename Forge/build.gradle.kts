@@ -1,8 +1,5 @@
 import net.darkhax.curseforgegradle.Constants
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
-import net.minecraftforge.accesstransformers.gradle.AccessTransformersContainer
-import net.minecraftforge.accesstransformers.gradle.AccessTransformersExtension
-import org.gradle.internal.extensions.stdlib.capitalized
 
 plugins {
     id("tes-convention")
@@ -34,7 +31,7 @@ base {
 minecraft {
     mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
 
-    //accessTransformers.set(true)
+    accessTransformer.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
 
     runs {
         configureEach {
@@ -77,11 +74,7 @@ repositories {
 
 dependencies {
     implementation(minecraft.dependency(libs.forge))
-    compileOnly(project(":common")) {
-        accessTransformers.configure(this) {
-            config.set(rootProject.file("common/src/main/resources/META-INF/accesstransformer.cfg"))
-        }
-    }
+    compileOnly(project(":common"))
 
     compileOnly(libs.mixinextras.common)
     annotationProcessor(libs.mixinextras.common)
