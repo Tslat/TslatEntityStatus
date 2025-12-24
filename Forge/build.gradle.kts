@@ -34,7 +34,7 @@ base {
 minecraft {
     mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
 
-    accessTransformers.set(true)
+    //accessTransformers.set(true)
 
     runs {
         configureEach {
@@ -82,6 +82,12 @@ dependencies {
             config.set(rootProject.file("common/src/main/resources/META-INF/accesstransformer.cfg"))
         }
     }
+
+    compileOnly(libs.mixinextras.common)
+    annotationProcessor(libs.mixinextras.common)
+    testCompileOnly(libs.mixinextras.common)
+    runtimeOnly(libs.mixinextras.forge)
+
     annotationProcessor(libs.forge.eventbusvalidator)
     implementation(libs.forgeconfigapiport.forge)
 }
