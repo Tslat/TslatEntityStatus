@@ -1,5 +1,8 @@
 import net.darkhax.curseforgegradle.Constants
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
+import net.minecraftforge.accesstransformers.gradle.AccessTransformersContainer
+import net.minecraftforge.accesstransformers.gradle.AccessTransformersExtension
+import org.gradle.internal.extensions.stdlib.capitalized
 
 plugins {
     id("tes-convention")
@@ -31,25 +34,25 @@ base {
 minecraft {
     mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
 
+    accessTransformers.register {  }
+
     runs {
         configureEach {
             workingDir.convention(layout.projectDirectory.dir("runs/${name}"))
             systemProperty("forge.logging.console.level", "debug")
+
+            args("--mixin.config=${modId}.mixins.json")
         }
 
         register("client") {
             args("--username", "Dev")
-            args("-mixin.config=${modId}.mixins.json")
         }
 
         register("client2") {
             args("--username", "Dev2")
-            args("-mixin.config=${modId}.mixins.json")
         }
 
-        register("server") {
-            args("-mixin.config=${modId}.mixins.json")
-        }
+        register("server") {}
     }
 }
 
@@ -73,7 +76,7 @@ repositories {
 }
 
 dependencies {
-    implementation(minecraft.dependency("net.minecraftforge:forge:1.21.11-61.0.2"))
+    implementation(minecraft.dependency(libs.forge))
     compileOnly(project(":common")) {
         accessTransformers.configure(this) {
             config.set(rootProject.file("common/src/main/resources/META-INF/accesstransformer.cfg"))

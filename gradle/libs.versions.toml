@@ -19,9 +19,9 @@
 
 # Forge
     forge-fml-range = "[61,)"
-    forge-range = "[61.0.2,)"
-    forge = "61.0.2"
-    forge-mc = "1.21.11-61.0.2"
+    forge-range = "[61.0.3,)"
+    forge = "61.0.3"
+    forge-mc = "1.21.11-61.0.3"
     forge-eventbusvalidator = "7.0-beta.10"
 
 # Neoforge
