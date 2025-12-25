@@ -35,8 +35,7 @@ public class LevelRendererMixin {
 
     @Inject(method =
             {
-                 "lambda$addMainPass$1(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/client/renderer/state/LevelRenderState;Lnet/minecraft/util/profiling/ProfilerFiller;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;ZLnet/minecraft/client/renderer/culling/Frustum;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;)V", // Neo/Forge
-                 "method_62214(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/client/renderer/state/LevelRenderState;Lnet/minecraft/util/profiling/ProfilerFiller;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;ZLnet/minecraft/client/renderer/culling/Frustum;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;)V" // Fabric
+                 "lambda$addMainPass$1(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/client/renderer/state/LevelRenderState;Lnet/minecraft/util/profiling/ProfilerFiller;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;ZLnet/minecraft/client/renderer/culling/Frustum;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;)V" // Neo/Forge
             },
             at = @At(
                     value = "INVOKE",
@@ -54,6 +53,27 @@ public class LevelRendererMixin {
         // Will need to, since the entities should be gone by this stage
         // Move to RenderState
         // SIGH, I'm never getting stuff done
+        for (LivingEntity entity : TESEntityTracking.getEntitiesToRender()) {
+            TESHud.submitWorldRenderTasks(poseStack, this.submitNodeStorage, levelRenderState.cameraRenderState, entity, Minecraft.getInstance().getDeltaTracker());
+        }
+    }
+
+    @Inject(method =
+            {
+                 "method_62214(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/client/renderer/state/LevelRenderState;Lnet/minecraft/util/profiling/ProfilerFiller;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;ZLnet/minecraft/client/renderer/culling/Frustum;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;)V" // Fabric
+            },
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V",
+                    ordinal = 2),
+            require = 0)
+    private void tes$renderInWorldHudsFabric(GpuBufferSlice shaderFog, LevelRenderState levelRenderState, ProfilerFiller profiler, Matrix4f frustumMatrix,
+                                             ResourceHandle itemEntityResource, ResourceHandle entityOutlineResource, boolean renderBlockOutline,
+                                             ResourceHandle translucentResource, ResourceHandle mainResource, CallbackInfo callback) {
+        profiler.popPush("tesSubmitInWorldEntities");
+
+        final PoseStack poseStack = new PoseStack();
+
         for (LivingEntity entity : TESEntityTracking.getEntitiesToRender()) {
             TESHud.submitWorldRenderTasks(poseStack, this.submitNodeStorage, levelRenderState.cameraRenderState, entity, Minecraft.getInstance().getDeltaTracker());
         }
