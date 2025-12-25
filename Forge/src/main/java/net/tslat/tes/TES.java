@@ -1,6 +1,7 @@
 package net.tslat.tes;
 
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -34,7 +35,14 @@ public class TES {
 
 			@Override
 			public void start(ConfigurationTaskContext context) {
-				start(context::send);
+				start(packet -> {
+					if (packet instanceof ClientboundCustomPayloadPacket customPayload) {
+						TESNetworking.CHANNEL.send(customPayload.payload(), context.getConnection());
+					}
+					else {
+						context.send(packet);
+					}
+				});
 				context.finish(type());
 			}
 

@@ -6,7 +6,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -51,7 +50,7 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 		payloadFlow.add(packetType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> {
 			packet.handleTask(new MultiloaderConfigurationPacket.TaskHandler(reply -> {
 				if (context.isClientSide())
-					context.getConnection().send(new ServerboundCustomPayloadPacket(reply));
+					CHANNEL.send(reply, context.getConnection());
 			}, type -> {}));
 			context.setPacketHandled(true);
 		});

@@ -76,11 +76,6 @@ dependencies {
     implementation(minecraft.dependency(libs.forge))
     compileOnly(project(":common"))
 
-    compileOnly(libs.mixinextras.common)
-    annotationProcessor(libs.mixinextras.common)
-    testCompileOnly(libs.mixinextras.common)
-    runtimeOnly(libs.mixinextras.forge)
-
     annotationProcessor(libs.forge.eventbusvalidator)
     implementation(libs.forgeconfigapiport.forge)
 }
