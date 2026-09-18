@@ -9,8 +9,8 @@ plugins {
     alias(libs.plugins.moddevgradle)
 }
 
-val modId           = property("modId") as String
-val modDisplayName  = property("modDisplayName") as String
+val modId           = project.property("modId") as String
+val modDisplayName  = project.property("modDisplayName") as String
 
 neoForge {
     version = libs.versions.neoforge.asProvider().get()
@@ -57,7 +57,7 @@ dependencies {
 modrinth {
     token = System.getenv("MODRINTH_TOKEN") ?: "Invalid/No API Token Found"
     uploadFile.set(tasks.named<Jar>("jar"))
-    projectId.set(property("modrinthProjectId") as String)
+    projectId.set(project.property("modrinthProjectId") as String)
     versionName = "NeoForge ${libs.versions.minecraft.asProvider().get()}"
     versionType = "release"
     loaders.set(listOf("neoforge"))
@@ -77,7 +77,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
     apiToken = System.getenv("CURSEFORGE_TOKEN") ?: "Invalid/No API Token Found"
     
-    val mainFile = upload(property("curseforgeProjectId"), tasks.jar)
+    val mainFile = upload(project.property("curseforgeProjectId"), tasks.jar)
     mainFile.displayName = "$modDisplayName NeoForge ${libs.versions.minecraft.asProvider().get()} ${project.version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("NeoForge")
