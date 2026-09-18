@@ -53,7 +53,7 @@ tasks.withType<ProcessResources>().configureEach {
 modrinth {
     token = System.getenv("MODRINTH_TOKEN") ?: "Invalid/No API Token Found"
     uploadFile.set(tasks.jar)
-    projectId.set(properties["modrinthProjectId"] as String)
+    projectId.set(project.property("modrinthProjectId") as String)
     versionName = "Fabric ${libs.versions.minecraft.asProvider().get()}"
     versionType = "release"
     loaders.set(listOf("fabric"))
@@ -77,7 +77,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
     apiToken = System.getenv("CURSEFORGE_TOKEN") ?: "Invalid/No API Token Found"
     
-    val mainFile = upload(properties["curseforgeProjectId"], tasks.jar)
+    val mainFile = upload(project.property("curseforgeProjectId"), tasks.jar)
     mainFile.displayName = "$modDisplayName Fabric ${libs.versions.minecraft.asProvider().get()} ${project.version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Fabric")
