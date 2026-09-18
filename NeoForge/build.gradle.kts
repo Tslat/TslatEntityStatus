@@ -1,50 +1,48 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
+import net.neoforged.moddevgradle.dsl.RunModel
 
 plugins {
-    id("tes-convention")
-
+    id("project-setup")
+    
     alias(libs.plugins.minotaur)
     alias(libs.plugins.curseforgegradle)
     alias(libs.plugins.moddevgradle)
 }
 
-val modId              : String by project
-val modDisplayName     : String by project
-val modModrinthId      : String by project
-val modCurseforgeId    : String by project
-val modChangelogUrl    : String by project
-val modVersion         = libs.versions.tes.get()
-val javaVersion        = libs.versions.java.get()
-val mcVersion          = libs.versions.minecraft.asProvider().get()
-val parchmentMcVersion = libs.versions.parchment.minecraft.get()
-val parchmentVersion   = libs.versions.parchment.asProvider().get()
-val neoforgeVersion    = libs.versions.neoforge.asProvider().get()
-
-version = modVersion
-
-base {
-    archivesName = "${modDisplayName}-neoforge-${mcVersion}"
-}
+val modId           = property("modId") as String
+val modDisplayName  = property("modDisplayName") as String
 
 neoForge {
-    version = neoforgeVersion
-
-    accessTransformers.files.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
-    parchment.minecraftVersion.set(parchmentMcVersion)
-    parchment.mappingsVersion.set(parchmentVersion)
-
+    version = libs.versions.neoforge.asProvider().get()
+    
+    project(":common").file("src/main/resources/META-INF/accesstransformer.cfg").takeIf { it.exists() }?.let {
+        accessTransformers.files.setFrom(it)
+        validateAccessTransformers = true
+    }
+    
+    interfaceInjectionData {
+        from(project(":common").file("src/main/resources/META-INF/interface_injections.json"))
+        publish(project(":common").file("src/main/resources/META-INF/interface_injections.json"))
+    }
+    
     runs {
         configureEach {
             logLevel = org.slf4j.event.Level.DEBUG
         }
-
-        mods.create(modId).sourceSet(project.sourceSets.getByName("main"))
-
-        create("client") {
+        
+        mods.create(modId).sourceSet(project.sourceSets.main.get())
+        
+        runConfig(this, "client") {
             client()
+            programArguments.addAll("--username", "Dev")
         }
-
-        create("server") {
+        
+        runConfig(this, "client2") {
+            client()
+            programArguments.addAll("--username", "Player")
+        }
+        
+        runConfig(this, "server") {
             server()
             programArgument("--nogui")
         }
@@ -55,54 +53,47 @@ dependencies {
     compileOnly(project(":common"))
 }
 
-tasks.withType<Test>().configureEach {
-    enabled = false;
-}
-
-tasks.named<JavaCompile>("compileJava").configure {
-    source(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.named<Jar>("sourcesJar").configure {
-    from(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.withType<Javadoc>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allJava)
-}
-
-tasks.withType<ProcessResources>().configureEach {
-    from(project(":common").sourceSets.getByName("main").resources)
-}
-
+//<editor-fold defaultstate="collapsed" desc="<Publishing>">
 modrinth {
-    token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
-    projectId = modModrinthId
-    versionNumber.set(modVersion)
-    versionName = "NeoForge ${mcVersion}"
+    token = System.getenv("MODRINTH_TOKEN") ?: "Invalid/No API Token Found"
     uploadFile.set(tasks.named<Jar>("jar"))
-    changelog = modChangelogUrl
-    gameVersions.set(listOf(mcVersion))
+    projectId.set(property("modrinthProjectId") as String)
+    versionName = "NeoForge ${libs.versions.minecraft.asProvider().get()}"
+    versionType = "release"
     loaders.set(listOf("neoforge"))
-
+    versionNumber.set(project.version.toString())
+    gameVersions.set(listOf(libs.versions.minecraft.asProvider().get()))
+    
+    if (rootProject.file("CHANGELOG.md").exists())
+        changelog = rootProject.file("CHANGELOG.md").readText(Charsets.UTF_8)
+    
+    // Comment out below to enable publishing properly
     //debugMode = true
-    //https://github.com/modrinth/minotaur#available-properties
+    // See below for other properties and info
+    // https://github.com/modrinth/minotaur#available-properties
 }
 
 tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
-    apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
-
-    val mainFile = upload(modCurseforgeId, tasks.jar)
-    mainFile.displayName = "${modDisplayName} NeoForge ${mcVersion} ${version}"
+    apiToken = System.getenv("CURSEFORGE_TOKEN") ?: "Invalid/No API Token Found"
+    
+    val mainFile = upload(property("curseforgeProjectId"), tasks.jar)
+    mainFile.displayName = "$modDisplayName NeoForge ${libs.versions.minecraft.asProvider().get()} ${project.version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("NeoForge")
-    mainFile.addGameVersion(mcVersion)
-    mainFile.addJavaVersion("Java ${javaVersion}")
-    mainFile.changelog = modChangelogUrl
-
+    mainFile.addGameVersion(libs.versions.minecraft.asProvider().get())
+    mainFile.addJavaVersion("Java ${libs.versions.java.get()}")
+    mainFile.addEnvironment("Client", "Server")
+    
+    if (rootProject.file("CHANGELOG.md").exists()) {
+        mainFile.changelog = rootProject.file("CHANGELOG.md").readText(Charsets.UTF_8)
+        mainFile.changelogType = "markdown"
+    }
+    
+    // Comment out below to enable publishing properly
     //debugMode = true
-    //https://github.com/Darkhax/CurseForgeGradle#available-properties
+    // See below for other properties and info
+    // https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
 publishing {
@@ -119,4 +110,10 @@ publishing {
 tasks.named<DefaultTask>("publish").configure {
     finalizedBy("modrinth")
     finalizedBy("publishToCurseForge")
+}
+//</editor-fold>
+
+// Not explicitly needed; but due to Gradle's failure to provide kotlin-dsl reified types for NamedDomainObjectContainer, you'll get a bunch of IDE errors without it
+fun runConfig(container: NamedDomainObjectContainer<RunModel>, name: String, configuration: Action<RunModel>) {
+    configuration.execute(container.create(name));
 }

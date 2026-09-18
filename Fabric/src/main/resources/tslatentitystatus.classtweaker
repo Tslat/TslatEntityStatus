@@ -1,0 +1,38 @@
+classTweaker v1 official
+
+# Interface Injections
+transitive-inject-interface net/minecraft/client/renderer/entity/state/LivingEntityRenderState net/tslat/tslatentitystatus/core/client/TESRenderStateExtension
+transitive-inject-interface net/minecraft/world/entity/LivingEntity net/tslat/tslatentitystatus/core/common/TESEntityStateHolder
+
+# HORSE STATS
+accessible field net/minecraft/world/entity/animal/equine/AbstractHorse MIN_HEALTH F
+accessible field net/minecraft/world/entity/animal/equine/AbstractHorse MAX_HEALTH F
+accessible field net/minecraft/world/entity/animal/equine/AbstractHorse MIN_MOVEMENT_SPEED F
+accessible field net/minecraft/world/entity/animal/equine/AbstractHorse MAX_MOVEMENT_SPEED F
+accessible field net/minecraft/world/entity/animal/equine/AbstractHorse MIN_JUMP_STRENGTH F
+accessible field net/minecraft/world/entity/animal/equine/AbstractHorse MAX_JUMP_STRENGTH F
+
+# GUI RENDERING
+accessible field net/minecraft/client/renderer/state/gui/GuiTextRenderState preparedText Lnet/minecraft/client/gui/Font$PreparedText;
+accessible method net/minecraft/client/gui/Font$PreparedTextBuilder <init> (Lnet/minecraft/client/gui/Font;FFIIZZ)V
+accessible method net/minecraft/client/gui/Font getGlyph (ILnet/minecraft/network/chat/Style;)Lnet/minecraft/client/gui/font/glyphs/BakedGlyph;
+accessible field net/minecraft/client/renderer/state/gui/GuiTextRenderState bounds Lnet/minecraft/client/gui/navigation/ScreenRectangle;
+extendable class net/minecraft/client/renderer/state/gui/GuiTextRenderState
+accessible class net/minecraft/client/gui/Font$PreparedTextBuilder
+accessible field net/minecraft/client/gui/Font provider Lnet/minecraft/client/gui/Font$Provider;
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder glyphs Ljava/util/List;
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder effects Ljava/util/List;
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder backgroundLeft F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder backgroundTop F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder backgroundRight F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder backgroundBottom F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder x F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder y F
+mutable field net/minecraft/client/gui/Font$PreparedTextBuilder x F
+mutable field net/minecraft/client/gui/Font$PreparedTextBuilder y F
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder backgroundColor I
+accessible method net/minecraft/client/gui/Font$PreparedTextBuilder getShadowColor (Lnet/minecraft/network/chat/Style;I)I
+extendable method net/minecraft/client/gui/Font$PreparedTextBuilder getShadowColor (Lnet/minecraft/network/chat/Style;I)I
+accessible field net/minecraft/client/gui/GuiGraphicsExtractor scissorStack Lnet/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack;
+accessible field net/minecraft/client/gui/GuiGraphicsExtractor guiRenderState Lnet/minecraft/client/renderer/state/gui/GuiRenderState;
+accessible class net/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack

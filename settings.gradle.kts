@@ -1,8 +1,9 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-
-		// Fabric
+        mavenCentral()
+        
+        // Fabric
         exclusiveContent {
             forRepository {
                 maven {
@@ -15,8 +16,8 @@ pluginManagement {
                 includeGroup("fabric-loom")
             }
         }
-
-		// NeoForge
+        
+        // NeoForge
         exclusiveContent {
             forRepository {
                 maven {
@@ -29,8 +30,8 @@ pluginManagement {
                 includeGroup("codechicken")
             }
         }
-
-		// Forge
+        
+        // Forge
         exclusiveContent {
             forRepository {
                 maven {
@@ -42,8 +43,8 @@ pluginManagement {
                 includeGroupAndSubgroups("net.minecraftforge")
             }
         }
-
-		// Mixin
+        
+        // Mixin
         exclusiveContent {
             forRepository {
                 maven {
@@ -53,19 +54,6 @@ pluginManagement {
             }
             filter {
                 includeGroupAndSubgroups("org.spongepowered")
-            }
-        }
-
-		// Parchment
-        exclusiveContent {
-            forRepository {
-                maven {
-                    name = "Parchment"
-                    url = uri("https://maven.parchmentmc.org")
-                }
-            }
-            filter {
-                includeGroupAndSubgroups("org.parchmentmc")
             }
         }
     }

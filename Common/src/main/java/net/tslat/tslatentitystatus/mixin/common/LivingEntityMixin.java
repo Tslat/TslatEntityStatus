@@ -1,0 +1,49 @@
+package net.tslat.tslatentitystatus.mixin.common;
+
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.core.Holder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.tslat.tslatentitystatus.api.TESConstants;
+import org.jspecify.annotations.Nullable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Collection;
+import java.util.Set;
+
+@Mixin(LivingEntity.class)
+public class LivingEntityMixin {
+	/// Sync down a new [MobEffect] to the clientside when added for `TES` to track
+	@Inject(
+			method = "onEffectAdded",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/effect/MobEffect;addAttributeModifiers(Lnet/minecraft/world/entity/ai/attributes/AttributeMap;I)V"))
+	private void tes$syncAddedEffect(MobEffectInstance effectInstance, @Nullable Entity entity, CallbackInfo callback) {
+        final LivingEntity self = (LivingEntity)(Object)this;
+
+        if (!self.level().isClientSide())
+		    TESConstants.NETWORKING.sendEffectsSync(self, Set.of(effectInstance.getEffect()), Set.of());
+	}
+
+	/// Sync down the removal of a [MobEffect] to the clientside when added for `TES` to track
+	@Inject(method = "onEffectsRemoved", at = @At("HEAD"))
+	private void tes$syncRemovedEffect(Collection<MobEffectInstance> effects, CallbackInfo ci) {
+        final LivingEntity self = (LivingEntity)(Object)this;
+
+		if (!self.level().isClientSide()) {
+			Set<Holder<MobEffect>> currentEffects = new ObjectOpenHashSet<>(effects.size());
+
+			for (MobEffectInstance instance : effects) {
+				currentEffects.add(instance.getEffect());
+			}
+
+			TESConstants.NETWORKING.sendEffectsSync(self, Set.of(), currentEffects);
+		}
+	}
+}

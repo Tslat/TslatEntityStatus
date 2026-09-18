@@ -1,55 +1,39 @@
-import net.darkhax.curseforgegradle.Constants
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
-    id("tes-convention")
-
+    id("project-setup")
+    
     alias(libs.plugins.minotaur)
     alias(libs.plugins.curseforgegradle)
     alias(libs.plugins.forgegradle)
-    alias(libs.plugins.forge.at)
 }
 
-val modId              : String by project
-val modDisplayName     : String by project
-val modModrinthId      : String by project
-val modCurseforgeId    : String by project
-val modChangelogUrl    : String by project
-val modVersion         = libs.versions.tes.get()
-val javaVersion        = libs.versions.java.get()
-val mcVersion          = libs.versions.minecraft.asProvider().get()
-val parchmentMcVersion = libs.versions.parchment.minecraft.get()
-val parchmentVersion   = libs.versions.parchment.asProvider().get()
-val forgeVersion       = libs.versions.forge.asProvider().get()
-
-version = modVersion
-
-base {
-    archivesName = "${modDisplayName}-forge-${mcVersion}"
-}
+val modId           : String by project
+val modDisplayName  : String by project
 
 minecraft {
-    mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
-
-    accessTransformer.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
-
+    rootProject.file("common/src/main/resources/META-INF/accesstransformer.cfg").takeIf { it.exists() }?.let {
+        accessTransformers.setFrom(it)
+    }
+    facade = files("src/main/resources/$modId.facade.cfg")
+    
     runs {
         configureEach {
             workingDir.convention(layout.projectDirectory.dir("runs/${name}"))
             systemProperty("forge.logging.console.level", "debug")
-
-            args("--mixin.config=${modId}.mixins.json")
+            
+            args("-mixin.config=${modId}.mixins.json")
         }
-
+        
         register("client") {
             args("--username", "Dev")
         }
-
+        
         register("client2") {
             args("--username", "Dev2")
         }
-
-        register("server") {}
+        
+        register("server")
     }
 }
 
@@ -75,72 +59,60 @@ repositories {
 dependencies {
     implementation(minecraft.dependency(libs.forge))
     compileOnly(project(":common"))
-
+    
     annotationProcessor(libs.forge.eventbusvalidator)
     implementation(libs.forgeconfigapiport.forge)
 }
 
-tasks.withType<Test>().configureEach {
-    enabled = false;
-}
-
-tasks.withType<JavaCompile>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.named<Jar>("sourcesJar").configure {
-    from(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.withType<Javadoc>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allJava)
-}
-
-tasks.withType<ProcessResources>().configureEach {
-    from(project(":common").sourceSets.getByName("main").resources)
-}
-
-sourceSets.forEach {
-    val dir = layout.buildDirectory.dir("sourcesSets/${it}.name")
-
-    it.output.setResourcesDir(dir)
-    it.java.destinationDirectory = dir
-}
-
+//<editor-fold defaultstate="collapsed" desc="<Publishing>">
+// Must have your Modrinth API Key as an environment variable under 'MODRINTH_TOKEN'
 modrinth {
-    token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
-    projectId = modModrinthId
-    versionNumber.set(project.version.toString())
-    versionName = "Forge ${mcVersion}"
+    token = System.getenv("MODRINTH_TOKEN") ?: "Invalid/No API Token Found"
     uploadFile.set(tasks.named<Jar>("jar"))
-    changelog.set(modChangelogUrl)
-    gameVersions.set(listOf(mcVersion))
+    projectId.set(properties["modrinthProjectId"] as String)
+    versionName = "Forge ${libs.versions.minecraft.asProvider().get()}"
     versionType = "release"
     loaders.set(listOf("forge"))
-
-    //https://github.com/modrinth/minotaur#available-properties
+    versionNumber.set(project.version.toString())
+    gameVersions.set(listOf(libs.versions.minecraft.asProvider().get()))
+    
+    if (rootProject.file("CHANGELOG.md").exists())
+        changelog.set(rootProject.file("CHANGELOG.md").readText(Charsets.UTF_8))
+    
+    // Comment out below to enable publishing properly
+    //debugMode = true
+    // See below for other properties and info
+    // https://github.com/modrinth/minotaur#available-properties
 }
 
+// Must have your CurseForge API Key as an environment variable under 'CURSEFORGE_TOKEN'
 tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
-    apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
-
-    val mainFile = upload(modCurseforgeId, tasks.jar)
-    mainFile.displayName = "${modDisplayName} Forge ${mcVersion} ${version}"
+    apiToken = System.getenv("CURSEFORGE_TOKEN") ?: "Invalid/No API Token Found"
+    
+    val mainFile = upload(properties["curseforgeProjectId"], tasks.jar)
+    mainFile.displayName = "$modDisplayName Forge ${libs.versions.minecraft.asProvider().get()} ${project.version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
-    mainFile.addGameVersion(mcVersion)
-    mainFile.addJavaVersion("Java ${javaVersion}")
-    mainFile.changelog = modChangelogUrl
-    mainFile.addRelation("forge-config-api-port-fabric", Constants.RELATION_REQUIRED)
-
-    //https://github.com/Darkhax/CurseForgeGradle#available-properties
+    mainFile.addGameVersion(libs.versions.minecraft.asProvider().get())
+    mainFile.addJavaVersion("Java ${libs.versions.java.get()}")
+    mainFile.addEnvironment("Client", "Server")
+    
+    if (rootProject.file("CHANGELOG.md").exists()) {
+        mainFile.changelog = rootProject.file("CHANGELOG.md").readText(Charsets.UTF_8)
+        mainFile.changelogType = "markdown"
+    }
+    
+    // Comment out below to enable publishing properly
+    //debugMode = true
+    // See below for other properties and info
+    // https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
 publishing {
     publishing {
         publications {
-            create<MavenPublication>("tes") {
+            create<MavenPublication>(modId) {
                 from(components["java"])
                 artifactId = base.archivesName.get()
             }
@@ -152,10 +124,11 @@ tasks.named<DefaultTask>("publish").configure {
     finalizedBy("modrinth")
     finalizedBy("publishToCurseForge")
 }
+//</editor-fold>
 
 sourceSets.forEach {
     val dir = layout.buildDirectory.dir("sourcesSets/${it}.name")
-
+    
     it.output.setResourcesDir(dir)
     it.java.destinationDirectory = dir
 }

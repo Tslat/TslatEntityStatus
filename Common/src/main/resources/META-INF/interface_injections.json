@@ -1,0 +1,8 @@
+{
+  "net/minecraft/client/renderer/entity/state/LivingEntityRenderState": [
+    "net/tslat/tslatentitystatus/core/client/TESRenderStateExtension"
+  ],
+  "net/minecraft/world/entity/LivingEntity": [
+    "net/tslat/tslatentitystatus/core/common/TESEntityStateHolder"
+  ]
+}
