@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.monster.breeze.Breeze;
+import net.minecraft.world.entity.monster.cubemob.Slime;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.entity.player.Player;
@@ -99,7 +100,7 @@ public final class TESUtil {
 				return true;
 
 			if (entity instanceof Phantom || entity instanceof EnderDragon || entity instanceof Spider || entity instanceof Slime ||
-			    entity instanceof Endermite || entity instanceof Silverfish)
+				entity instanceof Endermite || entity instanceof Silverfish)
 				return true;
 
 			return false;

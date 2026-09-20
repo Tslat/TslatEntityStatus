@@ -1,10 +1,7 @@
 package net.tslat.tslatentitystatus;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -51,14 +48,14 @@ public class TESNeoForgePlatform implements TESPlatform {
 
 	@Override
 	public TESEntityRelation getTESEntityRelation(LivingEntity entity) {
-		if (entity.getType() != EntityType.PLAYER && entity.isAlliedTo(TESClientUtil.getClientPlayer()))
+		if (entity.getType() != EntityTypes.PLAYER && entity.isAlliedTo(TESClientUtil.getClientPlayer()))
 			return TESEntityRelation.PASSIVE;
 
 		if (entity.is(Tags.EntityTypes.BOATS))
 			return TESEntityRelation.BOSS;
 
 		return ENTITY_RELATIONS.computeIfAbsent(entity.getType(), _ -> switch(entity) {
-			case Player pl when pl.getType() == EntityType.PLAYER -> TESEntityRelation.PLAYER;
+			case Player pl when pl.getType() == EntityTypes.PLAYER -> TESEntityRelation.PLAYER;
 			case Enemy _ -> TESEntityRelation.HOSTILE;
 			case NeutralMob _ -> TESEntityRelation.NEUTRAL;
 			default -> TESEntityRelation.PASSIVE;

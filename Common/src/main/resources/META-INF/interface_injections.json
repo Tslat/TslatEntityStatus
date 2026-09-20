@@ -2,6 +2,10 @@
   "net/minecraft/client/renderer/entity/state/LivingEntityRenderState": [
     "net/tslat/tslatentitystatus/core/client/TESRenderStateExtension"
   ],
+  "net/minecraft/client/renderer/OrderedSubmitNodeCollector": [
+    "net/tslat/tslatentitystatus/api/client/object/renderhelper/CustomRenderSubmitsExtension",
+    "net/tslat/tslatentitystatus/api/client/object/renderhelper/SubmitNodeCollectionPhases"
+  ],
   "net/minecraft/world/entity/LivingEntity": [
     "net/tslat/tslatentitystatus/core/common/TESEntityStateHolder"
   ]

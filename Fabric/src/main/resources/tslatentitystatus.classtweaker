@@ -3,6 +3,8 @@ classTweaker v1 official
 # Interface Injections
 transitive-inject-interface net/minecraft/client/renderer/entity/state/LivingEntityRenderState net/tslat/tslatentitystatus/core/client/TESRenderStateExtension
 transitive-inject-interface net/minecraft/world/entity/LivingEntity net/tslat/tslatentitystatus/core/common/TESEntityStateHolder
+transitive-inject-interface net/minecraft/client/renderer/OrderedSubmitNodeCollector net/tslat/tslatentitystatus/api/client/object/renderhelper/CustomRenderSubmitsExtension
+transitive-inject-interface net/minecraft/client/renderer/OrderedSubmitNodeCollector net/tslat/tslatentitystatus/api/client/object/renderhelper/SubmitNodeCollectionPhases
 
 # HORSE STATS
 accessible field net/minecraft/world/entity/animal/equine/AbstractHorse MIN_HEALTH F
@@ -36,3 +38,7 @@ extendable method net/minecraft/client/gui/Font$PreparedTextBuilder getShadowCol
 accessible field net/minecraft/client/gui/GuiGraphicsExtractor scissorStack Lnet/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack;
 accessible field net/minecraft/client/gui/GuiGraphicsExtractor guiRenderState Lnet/minecraft/client/renderer/state/gui/GuiRenderState;
 accessible class net/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack
+accessible class net/minecraft/client/gui/font/glyphs/BakedSheetGlyph$GlyphInstance
+accessible method net/minecraft/client/gui/font/glyphs/BakedSheetGlyph$GlyphInstance <init> (FFIILnet/minecraft/client/gui/font/glyphs/BakedSheetGlyph;Lnet/minecraft/network/chat/Style;FF)V
+accessible method net/minecraft/client/renderer/feature/RenderTypeFeatureRenderer getVertexBuilder (Lnet/minecraft/client/renderer/rendertype/RenderType;)Lcom/mojang/blaze3d/vertex/VertexConsumer;
+accessible field net/minecraft/client/gui/Font$PreparedTextBuilder emptyAreas Ljava/util/List;

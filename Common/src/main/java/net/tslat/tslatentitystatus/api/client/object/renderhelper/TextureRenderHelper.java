@@ -168,7 +168,7 @@ public class TextureRenderHelper {
     }
 
     public void render(TESHudRenderContext renderContext, float x, float y) {
-        render(renderContext, RenderPipelines.GUI_TEXTURED, RenderTypes::entityTranslucent, x, y);
+        render(renderContext, RenderPipelines.GUI_TEXTURED, RenderTypes::entitySolid, x, y);
     }
 
     public void render(TESHudRenderContext renderContext, RenderPipeline renderPipeline, Function<Identifier, RenderType> renderTypeFunction, float x, float y) {

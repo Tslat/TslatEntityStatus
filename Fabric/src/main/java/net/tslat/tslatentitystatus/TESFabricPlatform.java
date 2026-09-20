@@ -5,6 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalEntityTypeTags;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.monster.Enemy;
@@ -32,14 +33,14 @@ public class TESFabricPlatform implements TESPlatform {
 
 	@Override
 	public TESEntityRelation getTESEntityRelation(LivingEntity entity) {
-		if (entity.getType() != EntityType.PLAYER && entity.isAlliedTo(TESClientUtil.getClientPlayer()))
+		if (entity.getType() != EntityTypes.PLAYER && entity.isAlliedTo(TESClientUtil.getClientPlayer()))
 			return TESEntityRelation.PASSIVE;
 
 		if (entity.is(ConventionalEntityTypeTags.BOSSES))
 			return TESEntityRelation.BOSS;
 
 		return ENTITY_RELATIONS.computeIfAbsent(entity.getType(), _ -> switch(entity) {
-			case Player pl when pl.getType() == EntityType.PLAYER -> TESEntityRelation.PLAYER;
+			case Player pl when pl.getType() == EntityTypes.PLAYER -> TESEntityRelation.PLAYER;
 			case Enemy _ -> TESEntityRelation.HOSTILE;
 			case NeutralMob _ -> TESEntityRelation.NEUTRAL;
 			default -> TESEntityRelation.PASSIVE;

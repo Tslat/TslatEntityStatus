@@ -2,7 +2,7 @@ package net.tslat.tslatentitystatus.core.client.hud;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -224,7 +224,7 @@ public final class BuiltinHudElements {
 			renderContext.translate(0, Mth.floor(effectsSize * 18 / maxX) * -18, 0);
 
 		for (Holder<MobEffect> effect : tesRenderState.effects) {
-			TextureRenderHelper effectRenderer = TextureRenderHelper.ofSprite(Gui.getMobEffectSprite(effect)).sized(18, 18).colour(ARGB.white(opacity));
+			TextureRenderHelper effectRenderer = TextureRenderHelper.ofSprite(Hud.getMobEffectSprite(effect)).sized(18, 18).colour(ARGB.white(opacity));
 
 			if (inWorldHud)
 				effectRenderer.lightLevel(renderContext.getPackedLight());

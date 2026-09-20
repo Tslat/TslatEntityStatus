@@ -59,7 +59,7 @@ public final class TESClientUtil {
 	///
 	/// This is typically more accurate than getting the camera entity's position
 	public static Vec3 getCameraPosition() {
-		return Minecraft.getInstance().gameRenderer.getMainCamera().position();
+		return Minecraft.getInstance().gameRenderer.mainCamera().position();
 	}
 
     /// Get the closest position to the camera for the provided entity

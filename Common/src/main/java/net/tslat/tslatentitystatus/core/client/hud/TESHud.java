@@ -144,7 +144,7 @@ public class TESHud {
 		final TESConfig config = TESConstants.getConfig();
 		final TESEntityState tesEntityState = target.tslatentitystatus$getEntityState();
 
-		if (!config.hudEnabled() || Minecraft.getInstance().options.hideGui || tesEntityState == null)
+		if (!config.hudEnabled() || Minecraft.getInstance().gui.hud.isHidden() || tesEntityState == null)
 			return;
 
 		if (!config.hudBossesEnabled() && TESConstants.PLATFORM.getTESEntityRelation(target) == TESEntityRelation.BOSS)
@@ -157,7 +157,7 @@ public class TESHud {
         final TESHudRenderContext renderContext = TESHudRenderContext.guiContext(guiGraphics, deltaTracker.getGameTimeDeltaTicks());
 
 		poseStack.pushMatrix();
-		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
+		Minecraft.getInstance().gameRenderer.lighting().setupFor(Lighting.Entry.ITEMS_3D);
 		config.hudRenderPosition().adjustRenderForHudPosition(guiGraphics);
 
 		if (TESConstants.getConfig().hudEntityRender()) {
@@ -168,7 +168,7 @@ public class TESHud {
 
 		poseStack.translate(0, 2);
 
-		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
+		Minecraft.getInstance().gameRenderer.lighting().setupFor(Lighting.Entry.ITEMS_3D);
 
 
 
@@ -196,7 +196,7 @@ public class TESHud {
 
 		float hudOpacity = config.inWorldHudOpacity();
 		Vec3 position = new Vec3(renderState.x, renderState.y, renderState.z)
-				.subtract(mc.gameRenderer.getMainCamera().position())
+				.subtract(mc.gameRenderer.mainCamera().position())
 				.add(tesRenderState.entityRenderOffset);
 
 		Vec3 nameTagOffset = renderState.nameTagAttachment;

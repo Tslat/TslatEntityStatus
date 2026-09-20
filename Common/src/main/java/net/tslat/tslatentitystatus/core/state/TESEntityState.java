@@ -39,7 +39,7 @@ public class TESEntityState {
 		this.currentHealth = entity.getHealth();
 		this.lastHealth = this.currentHealth;
 
-		if (TESConstants.getConfig().isSyncingEffects() && TESConstants.PLATFORM.hasServerMod() && entity.level().isClientSide() && entity != TESClientUtil.getClientPlayer())
+		if (TESConstants.getConfig().isSyncingEffects() && TESConstants.PLATFORM.hasServerMod() && entity.level().isClientSide())
 			TESConstants.NETWORKING.requestEffectsSync(entity.getId());
 	}
 

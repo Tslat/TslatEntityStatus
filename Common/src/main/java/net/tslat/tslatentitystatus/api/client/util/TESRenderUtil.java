@@ -68,7 +68,7 @@ public final class TESRenderUtil {
     /// Translate the given [PoseStack] to face the game camera
     public static void positionFacingCamera(PoseStack poseStack) {
         poseStack.scale(-1, -1, -1);
-        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+        poseStack.mulPose(Minecraft.getInstance().gameRenderer.mainCamera().rotation());
         poseStack.mulPose(Axis.YP.rotation(180 * Mth.DEG_TO_RAD));
     }
 

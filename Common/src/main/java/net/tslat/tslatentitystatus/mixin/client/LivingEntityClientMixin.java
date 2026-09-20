@@ -9,8 +9,14 @@ import org.spongepowered.asm.mixin.Unique;
 /// Mostly just a duck injector for [TESEntityStateHolder] for living entities
 @Mixin(LivingEntity.class)
 public class LivingEntityClientMixin implements TESEntityStateHolder {
+    @SuppressWarnings("NotNullFieldNotInitialized")
     @Unique
-    private final TESEntityState tslatentitystatus$entityState = new TESEntityState((LivingEntity)(Object)this);
+    private TESEntityState tslatentitystatus$entityState;
+
+    @Unique
+    public void tslatentitystatus$setEntityState(TESEntityState state) {
+        this.tslatentitystatus$entityState = state;
+    }
 
     @Override
     public TESEntityState tslatentitystatus$getEntityState() {

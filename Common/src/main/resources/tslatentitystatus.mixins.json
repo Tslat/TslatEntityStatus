@@ -7,15 +7,21 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "client.EntityClientMixin",
     "common.LivingEntityMixin"
   ],
   "client": [
     "client.ClientLevelMixin",
     "client.EntityRenderDispatcherMixin",
+    "client.FeatureRenderDispatcher$PreparedFrameMixin",
+    "client.FeatureRenderDispatcherMixin",
     "client.LevelRendererMixin",
     "client.LivingEntityClientMixin",
     "client.LivingEntityRenderStateMixin",
     "client.MinecraftMixin",
-    "client.ParticleEngineMixin"
+    "client.OrderedSubmitNodeCollectorMixin",
+    "client.ParticleEngineMixin",
+    "client.SubmitNodeCollectionMixin",
+    "client.SubmitNodeStorageMixin"
   ]
 }
