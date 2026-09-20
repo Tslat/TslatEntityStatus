@@ -47,6 +47,7 @@ public abstract class FeatureRenderDispatcher$PreparedFrameMixin {
     )
     private void tslatentitystatus$injectCustomTextFeatures(FeatureRenderDispatcher.PreparedFrame instance, FeatureRenderPhase<?> phase, FeatureFrameContext context, Operation<Void> original,
                                                             @Share("tes$capturedCollection") LocalRef<SubmitNodeCollection> tes$capturedCollection) {
+        original.call(instance, phase, context);
         executePhase(tes$capturedCollection.get().tslatentitystatus$getCustomTexts(), context);
     }
 }
