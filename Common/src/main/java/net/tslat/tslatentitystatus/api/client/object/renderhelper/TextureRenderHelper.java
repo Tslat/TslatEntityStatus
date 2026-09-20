@@ -1,9 +1,9 @@
 package net.tslat.tslatentitystatus.api.client.object.renderhelper;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.FilterMode;
-import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.textures.FilterMode;
+import com.mojang.renderpearl.api.textures.GpuTextureView;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -21,15 +21,17 @@ import net.minecraft.util.Mth;
 import net.tslat.tslatentitystatus.api.client.object.TESHudRenderContext;
 import net.tslat.tslatentitystatus.api.client.util.TESRenderUtil;
 import org.joml.Matrix3x2f;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Function;
 
 /**
  * Factory-based class used for rendering textures
  */
+@SuppressWarnings("UnusedReturnValue")
 public class TextureRenderHelper {
     private final Identifier texture;
-    private final TextureAtlasSprite sprite;
+    private final @Nullable TextureAtlasSprite sprite;
     private final GpuTextureView textureView;
     private final float uScale;
     private final float vScale;
@@ -171,8 +173,8 @@ public class TextureRenderHelper {
         render(renderContext, RenderPipelines.GUI_TEXTURED, RenderTypes::entitySolid, x, y);
     }
 
-    public void render(TESHudRenderContext renderContext, RenderPipeline renderPipeline, Function<Identifier, RenderType> renderTypeFunction, float x, float y) {
-        renderContext.forGui(args -> renderForHud(args, renderPipeline, x, y))
+    public void render(TESHudRenderContext renderContext, RenderPipeline guiRenderPipeline, Function<Identifier, RenderType> renderTypeFunction, float x, float y) {
+        renderContext.forGui(args -> renderForHud(args, guiRenderPipeline, x, y))
                 .forInWorld(args -> renderInWorld(args, renderTypeFunction, x, y));
     }
 
@@ -202,9 +204,9 @@ public class TextureRenderHelper {
         }
 
         guiGraphics.guiRenderState.addGuiElement(new BlitRenderState(renderPipeline, TextureSetup.singleTexture(this.textureView, RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)), new Matrix3x2f(guiGraphics.pose()),
-                                                                        xMin, yMin, xMax, yMax,
-                                                                        uMin, uMax, vMin, vMax,
-                                                                        this.colour, guiGraphics.scissorStack.peek()));
+                                                                     xMin, yMin, xMax, yMax,
+                                                                     uMin, uMax, vMin, vMax,
+                                                                     this.colour, guiGraphics.scissorStack.peek()));
     }
 
     public void renderInWorld(TESHudRenderContext.InWorldArgs args, float x, float y) {

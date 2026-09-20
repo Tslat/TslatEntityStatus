@@ -1,7 +1,7 @@
 package net.tslat.tslatentitystatus.api.client.object.renderhelper;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
@@ -11,8 +11,8 @@ import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.tslat.tslatentitystatus.api.client.object.TESHudRenderContext;
-import org.jspecify.annotations.Nullable;
 import org.joml.Matrix3x2f;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory-based class used for rendering coloured regions
@@ -122,7 +122,7 @@ public class ColouredRectRenderHelper {
         final int xMax = Math.round(xMin + this.width);
         final int yMax = Math.round(yMin + this.height);
 
-        args.renderTasks().submitCustomGeometry(args.poseStack(), RenderTypes.textBackgroundSeeThrough(), (pose, vertexConsumer) -> {
+        args.renderTasks().submitCustomGeometry(args.poseStack(), RenderTypes.debugQuads(), (pose, vertexConsumer) -> {
             vertexConsumer.addVertex(pose, xMin, yMin, 0).setColor(ColouredRectRenderHelper.this.colour0);
             vertexConsumer.addVertex(pose, xMin, yMax, 0).setColor(ColouredRectRenderHelper.this.colour1);
             vertexConsumer.addVertex(pose, xMax, yMax, 0).setColor(ColouredRectRenderHelper.this.colour2);

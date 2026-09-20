@@ -19,7 +19,6 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.Brightness;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.SwingAnimationType;
 import net.tslat.tslatentitystatus.api.TESConfig;
 import net.tslat.tslatentitystatus.api.client.constant.TESTextures;
 import net.tslat.tslatentitystatus.api.client.object.TESHudRenderContext;
@@ -68,8 +67,8 @@ public final class TESRenderUtil {
     /// Translate the given [PoseStack] to face the game camera
     public static void positionFacingCamera(PoseStack poseStack) {
         poseStack.scale(-1, -1, -1);
-        poseStack.mulPose(Minecraft.getInstance().gameRenderer.mainCamera().rotation());
-        poseStack.mulPose(Axis.YP.rotation(180 * Mth.DEG_TO_RAD));
+        poseStack.rotate(Minecraft.getInstance().gameRenderer.mainCamera().rotation());
+        poseStack.rotateDegrees(Axis.YP, 180);
     }
 
     /// Render a complete bar, automatically handling all layers and transitions
@@ -173,8 +172,8 @@ public final class TESRenderUtil {
                 livingEntityRenderState.hasRedOverlay = false;
 
             if (renderState instanceof AvatarRenderState avatarRenderState) {
-                avatarRenderState.swingAnimationType = SwingAnimationType.NONE;
-                avatarRenderState.attackTime = 0;
+                avatarRenderState.swingAnimation = 0f;
+                avatarRenderState.currentSwing = null;
             }
         }
 

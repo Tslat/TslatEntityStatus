@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import com.mojang.renderpearl.api.commands.RenderPass;
 import net.minecraft.client.renderer.SubmitNodeCollection;
 import net.minecraft.client.renderer.feature.FeatureFrameContext;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
@@ -18,10 +19,10 @@ import java.util.Iterator;
 @Mixin(FeatureRenderDispatcher.PreparedFrame.class)
 public abstract class FeatureRenderDispatcher$PreparedFrameMixin {
     @Shadow
-    protected abstract void executePhase(FeatureRenderPhase<?> phase, FeatureFrameContext context);
+    private @Nullable FeatureFrameContext context;
 
     @Shadow
-    private @Nullable FeatureFrameContext context;
+    protected abstract void executePhase(FeatureRenderPhase<?> phase, FeatureFrameContext context, RenderPass renderPass);
 
     @WrapOperation(
             method = "executeTranslucent",
@@ -42,11 +43,12 @@ public abstract class FeatureRenderDispatcher$PreparedFrameMixin {
             method = "executeTranslucent",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher$PreparedFrame;executePhase(Lnet/minecraft/client/renderer/feature/phase/FeatureRenderPhase;Lnet/minecraft/client/renderer/feature/FeatureFrameContext;)V",
+                    target = "Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher$PreparedFrame;executePhase(Lnet/minecraft/client/renderer/feature/phase/FeatureRenderPhase;Lnet/minecraft/client/renderer/feature/FeatureFrameContext;Lcom/mojang/renderpearl/api/commands/RenderPass;)V",
                     ordinal = 4)
     )
-    private void tslatentitystatus$injectCustomTextFeatures(FeatureRenderDispatcher.PreparedFrame instance, FeatureRenderPhase<?> phase, FeatureFrameContext context, Operation<Void> original,
-                                                            @Share("tes$capturedCollection") LocalRef<SubmitNodeCollection> tes$capturedCollection) {
-        executePhase(tes$capturedCollection.get().tslatentitystatus$getCustomTexts(), context);
+    private void tslatentitystatus$injectCustomTextFeatures(FeatureRenderDispatcher.PreparedFrame instance, FeatureRenderPhase<?> phase, FeatureFrameContext context, RenderPass renderPass,
+                                                            Operation<Void> original, @Share("tes$capturedCollection") LocalRef<SubmitNodeCollection> tes$capturedCollection) {
+        original.call(instance, phase, context, renderPass);
+        executePhase(tes$capturedCollection.get().tslatentitystatus$getCustomTexts(), context, renderPass);
     }
 }

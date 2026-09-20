@@ -1,37 +1,37 @@
 [versions]
 # Mod
-    mod                             = "1.10"
+    mod                             = "1.10.1"
 
 # Common
-    minecraft-range                 = "[26.2,)"
-    minecraft                       = "26.2"
-    neoform                         = "26.2-1"
+    minecraft-range                 = "[26.3,)"
+    minecraft                       = "26.3"
+    neoform                         = "26.3-1"
     java                            = "25"
 
 # Fabric
     fabric                          = "0.19.5"
     fabric-range                    = "0.19"
-    fabric-api                      = "0.161.0+26.2"
-    fabric-api-range                = "0.155.0+26.2"
+    fabric-api                      = "0.161.0+26.3"
+    fabric-api-range                = "0.161.0+26.3"
 
 # Forge
-    forge                           = "65.1.3"
-    forge-mc                        = "26.2-65.1.3"
-    forge-fml-range                 = "[65,)"
-    forge-range                     = "[65.1.0,)"
+    forge                           = "66.0.2"
+    forge-mc                        = "26.3-66.0.2"
+    forge-fml-range                 = "[66,)"
+    forge-range                     = "[66.0.0,)"
     forge-eventbusvalidator         = "7.0.5"
 
 # Neoforge
     neoforge-loader-range           = "[5,)"
-    neoforge                        = "26.2.0.88"
-    neoforge-range                  = "[26.2.0.0,)"
+    neoforge                        = "26.3.0.7-beta"
+    neoforge-range                  = "[26.3.0.0-beta,)"
 
 # Dependencies
     mixin                           = "0.8.7"
     mixinextras                     = "0.5.5"
     mixinextras-range               = "[0.5.3,)"
-    forgeconfigapiport              = "26.2.1"
-    forgeconfigapiport-range        = "[26.2.1,)"
+    forgeconfigapiport              = "26.3.0"
+    forgeconfigapiport-range        = "[26.3.0,)"
 
 # Plugins
     plugin-moddevgradle             = "2.0.147"
