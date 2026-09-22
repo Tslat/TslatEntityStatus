@@ -12,7 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class EntityClientMixin {
     @Inject(method = "setId", at = @At("TAIL"))
     private void tslatentitystatus$captureLocalPlayer(int id, CallbackInfo ci) {
-        if ((Object)this instanceof LivingEntity livingEntity)
+        //noinspection ConstantValue
+        if ((Object)this instanceof LivingEntity livingEntity && livingEntity.level().isClientSide())
             livingEntity.tslatentitystatus$setEntityState(new TESEntityState(livingEntity));
     }
 }
