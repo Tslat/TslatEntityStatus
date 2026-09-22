@@ -1,6 +1,6 @@
 [versions]
 # Mod
-    mod                             = "1.10.1"
+    mod                             = "1.10.2"
 
 # Common
     minecraft-range                 = "[26.3,)"
@@ -30,8 +30,8 @@
     mixin                           = "0.8.7"
     mixinextras                     = "0.5.5"
     mixinextras-range               = "[0.5.3,)"
-    forgeconfigapiport              = "26.3.0"
-    forgeconfigapiport-range        = "[26.3.0,)"
+    forgeconfigapiport              = "26.3.1"
+    forgeconfigapiport-range        = "[26.3.1,)"
 
 # Plugins
     plugin-moddevgradle             = "2.0.147"
