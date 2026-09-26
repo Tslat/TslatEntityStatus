@@ -97,7 +97,7 @@ modrinth {
         changelog.set(rootProject.file("CHANGELOG.md").readText(Charsets.UTF_8))
 
     // Comment out below to enable publishing properly
-    debugMode = true
+    //debugMode = true
     // See below for other properties and info
     // https://github.com/modrinth/minotaur#available-properties
 }
@@ -121,7 +121,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     }
 
     // Comment out below to enable publishing properly
-    debugMode = true
+    //debugMode = true
     // See below for other properties and info
     // https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
