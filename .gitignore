@@ -11,20 +11,25 @@ out
 *.ipr
 *.iws
 *.iml
-.idea
+.idea/*
+!.idea/scopes
 
 # gradle
 build
 .gradle
+logs
 
 # other
 eclipse
 run
-logs
-libs/*
-/fabric/runs/*
-/forge/runs/*
-/neoforge/runs/*
+runs
 
-# Files from Forge MDK
-forge*changelog.txt
+# Errors
+hs_err_pid*
+replay_pid*
+
+# allow gradlew
+!core/gradle/wrapper
+!core/gradlew.bat
+!gradle/wrapper
+!gradlew.bat

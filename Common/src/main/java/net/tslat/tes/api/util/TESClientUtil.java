@@ -505,7 +505,7 @@ public final class TESClientUtil {
     }
 
 	/**
-	 * Create a new {@link GuiGraphics} instance from the provided {@link net.minecraft.client.renderer.MultiBufferSource.BufferSource BufferSource}, pre-multiplying the {@link PoseStack} in line with the current pose
+	 * Create a new {@link GuiGraphics} instance from the provided {@link MultiBufferSource.BufferSource BufferSource}, pre-multiplying the {@link PoseStack} in line with the current pose
 	 */
 	public static GuiGraphics createInlineGuiGraphics(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource) {
 		GuiGraphics guiGraphics = new GuiGraphics(Minecraft.getInstance(), bufferSource);

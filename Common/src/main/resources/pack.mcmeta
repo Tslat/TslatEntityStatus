@@ -1,6 +1,6 @@
 {
     "pack": {
-        "description": "TES Resources",
+        "description": "${mod_display_name} resources",
         "pack_format": 15
     }
 }

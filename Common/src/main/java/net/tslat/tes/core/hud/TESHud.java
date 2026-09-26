@@ -105,7 +105,7 @@ public class TESHud {
 	public static void renderForHud(GuiGraphics guiGraphics, Minecraft mc, float partialTick) {
         final LivingEntity target = getTargetEntity();
 
-        if (target == null)
+        if (target == null || target.tickCount == 0)
             return;
 
 		if (!TESAPI.getConfig().hudEnabled() || (!TESAPI.getConfig().hudBossesEnabled() && TESConstants.UTILS.getEntityType(target) == TESEntityType.BOSS))
@@ -140,7 +140,7 @@ public class TESHud {
 	}
 
 	public static void renderInWorld(PoseStack poseStack, LivingEntity entity, float partialTick) {
-		if (!TESAPI.getConfig().inWorldBarsEnabled() || entity.isDeadOrDying() || (entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf()))
+		if (!TESAPI.getConfig().inWorldBarsEnabled() || entity.isDeadOrDying() || entity.tickCount == 0 || (entity.getSelfAndPassengers().anyMatch(passenger -> passenger == Minecraft.getInstance().player) && !TESAPI.getConfig().inWorldHudForSelf()))
 			return;
 
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);

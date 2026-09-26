@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
- * Interface for custom handling of damage-based {@link net.tslat.tes.api.TESParticle TESParticles} predicated by their {@link net.minecraft.world.damagesource.DamageSource}<br>
+ * Interface for custom handling of damage-based {@link TESParticle TESParticles} predicated by their {@link DamageSource}<br>
  * This can be used to more reliably special-handle damage particles for specific DamageSources (such as freezing damage, fire damage, etc)
  */
 public interface TESParticleSourceHandler {
