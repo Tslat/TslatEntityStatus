@@ -168,7 +168,7 @@ publishing {
         }
         else maven {
             name = "Cloudsmith"
-            url = uri("https://maven.cloudsmith.io/tslat/sbl/")
+            url = uri("https://maven.cloudsmith.io/tslat/tes/")
 
             credentials {
                 username = System.getenv("CLOUDSMITH_USERNAME")
