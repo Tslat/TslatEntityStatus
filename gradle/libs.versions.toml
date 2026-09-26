@@ -3,7 +3,7 @@
 
 [versions]
 # Mod
-    mod                             = "1.6.2"
+    mod                             = "1.6.3"
 
 # Common
     minecraft-range                 = "[1.20.1,)"

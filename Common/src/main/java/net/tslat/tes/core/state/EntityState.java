@@ -79,7 +79,7 @@ public class EntityState {
 	}
 	
 	public boolean isValid() {
-		return this.entity != null && this.entity.isAlive() && this.entity.level() == Minecraft.getInstance().level;
+		return this.entity != null && !this.entity.isRemoved() && this.entity.level() == Minecraft.getInstance().level;
 	}
 
 	public void tick() {

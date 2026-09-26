@@ -1,6 +1,7 @@
 # Changelog
 #### Version
-1.6.2
+1.6.3
 
-## Changes
-* I fixed a bunch of stuff, I forgot to keep track while I was doing it
+## Bug Fixes
+* Fixed the last damage dealt to an entity not spawning a particle
+* Fixed INSTAKILL particles not spawning
