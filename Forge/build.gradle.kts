@@ -3,11 +3,10 @@ import net.neoforged.moddevgradle.dsl.RunModel
 import org.slf4j.event.Level
 
 plugins {
+    alias(libs.plugins.moddevgradle)
     id("project-setup")
-
     alias(libs.plugins.minotaur)
     alias(libs.plugins.curseforgegradle)
-    alias(libs.plugins.moddevgradle)
 }
 
 val modId = project.property("modId") as String
