@@ -502,7 +502,7 @@ public final class TESClientUtil {
 
         return entity.getBoundingBox().clip(cameraPos, cameraPos.add(angle.scale(500)))
                 .orElseGet(() -> new Vec3(
-						entity.getY() + Mth.cos((float)angle.x) * entity.getBbWidth() * 0.5f,
+						entity.getX() + Mth.cos((float)angle.x) * entity.getBbWidth() * 0.5f,
 						Mth.clamp(cameraPos.y, entity.getY(), entity.getY(1)),
 						entity.getZ() + Mth.sin((float)angle.z) * entity.getBbWidth() * 0.5f));
     }
