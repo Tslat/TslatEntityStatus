@@ -3,10 +3,9 @@ import net.fabricmc.loom.task.RemapJarTask
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
-    id("tes-convention")
-
-    alias(libs.plugins.minotaur)
     alias(libs.plugins.loom)
+    id("tes-convention")
+    alias(libs.plugins.minotaur)
 }
 
 val modId              : String by project

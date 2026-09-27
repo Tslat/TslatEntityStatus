@@ -1,7 +1,6 @@
 package net.tslat.tes.mixin.client;
 
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.tslat.tes.core.hud.TESHud;
@@ -21,6 +20,6 @@ public class GuiMixin {
                     target = "Lnet/minecraft/client/gui/Gui;renderBossOverlay(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V"),
             require = 0)
     public void tes$injectFabricHudRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        TESHud.submitHudRenderTasks(guiGraphics, Minecraft.getInstance(), deltaTracker);
+        TESHud.submitHudRenderTasks(guiGraphics, deltaTracker);
     }
 }

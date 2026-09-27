@@ -7,15 +7,15 @@ plugins {
 
 val libs = project.versionCatalogs.find("libs")
 
-val modId                          : String by project
-val modDisplayName                 : String by project
-val modAuthors                     : String by project
-val modLicense                     : String by project
-val modDescription                 : String by project
-val modHomepageUrl                 : String by project
-val modSourcesUrl                  : String by project
-val modIssuesUrl                   : String by project
-val modMavenUrl                    : String by project
+val modId                          = project.property("modId") as String
+val modDisplayName                 = project.property("modDisplayName") as String
+val modAuthors                     = project.property("modAuthors") as String
+val modLicense                     = project.property("modLicense") as String
+val modDescription                 = project.property("modDescription") as String
+val modHomepageUrl                 = project.property("modHomepageUrl") as String
+val modSourcesUrl                  = project.property("modSourcesUrl") as String
+val modIssuesUrl                   = project.property("modIssuesUrl") as String
+val modMavenUrl                    = project.property("modMavenUrl") as String
 val modVersion                     = libs.get().findVersion("tes").get()
 val modJavaVersion                 = libs.get().findVersion("java").get()
 val mcVersion                      = libs.get().findVersion("minecraft").get()

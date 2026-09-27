@@ -4,11 +4,11 @@ plugins {
     alias(libs.plugins.moddevgradle)
 }
 
-val modId              : String by project
-val modDisplayName     : String by project
-val modModrinthId      : String by project
-val modCurseforgeId    : String by project
-val modChangelogUrl    : String by project
+val modId              = project.property("modId") as String
+val modDisplayName     = project.property("modDisplayName") as String
+val modModrinthId      = project.property("modModrinthId") as String
+val modCurseforgeId    = project.property("modCurseforgeId") as String
+val modChangelogUrl    = project.property("modChangelogUrl") as String
 val modVersion         = libs.versions.tes.get()
 val javaVersion        = libs.versions.java.get()
 val mcVersion          = libs.versions.minecraft.asProvider().get()

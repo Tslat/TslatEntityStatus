@@ -139,7 +139,7 @@ public class TESHud {
 		ENTITY_ICONS.add(icon);
 	}
 
-	public static void submitHudRenderTasks(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker) {
+	public static void submitHudRenderTasks(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         final LivingEntity target = getTargetEntity();
 
         if (target == null)
@@ -153,6 +153,7 @@ public class TESHud {
 		float hudOpacity = config.hudOpacity();
 		Matrix3x2fStack poseStack = guiGraphics.pose();
         TESHudRenderContext renderContext = TESHudRenderContext.guiContext(guiGraphics, deltaTracker.getGameTimeDeltaTicks());
+		Minecraft mc = Minecraft.getInstance();
 
 		poseStack.pushMatrix();
 		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);

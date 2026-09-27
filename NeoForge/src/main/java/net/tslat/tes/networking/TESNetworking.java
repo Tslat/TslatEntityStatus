@@ -1,5 +1,6 @@
 package net.tslat.tes.networking;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,6 +14,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 import net.tslat.tes.TES;
 import net.tslat.tes.core.networking.packet.*;
 import org.jetbrains.annotations.ApiStatus;
@@ -57,7 +59,11 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 
 	@Override
 	public void requestEffectsSync(int entityId) {
-		ClientPacketDistributor.sendToServer(new RequestEffectsPacket(entityId));
+		final MultiloaderPacket packet = new RequestEffectsPacket(entityId);
+		final Identifier packetId = packet.type().id();
+
+		if (NetworkRegistry.hasChannel(Minecraft.getInstance().getConnection(), packetId))
+			ClientPacketDistributor.sendToServer(packet);
 	}
 
 	@Override

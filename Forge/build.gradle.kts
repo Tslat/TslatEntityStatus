@@ -10,11 +10,11 @@ plugins {
     alias(libs.plugins.forge.at)
 }
 
-val modId              : String by project
-val modDisplayName     : String by project
-val modModrinthId      : String by project
-val modCurseforgeId    : String by project
-val modChangelogUrl    : String by project
+val modId              = project.property("modId") as String
+val modDisplayName     = project.property("modDisplayName") as String
+val modModrinthId      = project.property("modModrinthId") as String
+val modCurseforgeId    = project.property("modCurseforgeId") as String
+val modChangelogUrl    = project.property("modChangelogUrl") as String
 val modVersion         = libs.versions.tes.get()
 val javaVersion        = libs.versions.java.get()
 val mcVersion          = libs.versions.minecraft.asProvider().get()
@@ -132,7 +132,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java ${javaVersion}")
     mainFile.changelog = modChangelogUrl
-    mainFile.addRelation("forge-config-api-port-fabric", Constants.RELATION_REQUIRED)
+    mainFile.addRelation("forge-config-api-port", Constants.RELATION_REQUIRED)
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }

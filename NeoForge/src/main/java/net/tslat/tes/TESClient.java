@@ -1,6 +1,5 @@
 package net.tslat.tes;
 
-import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -25,7 +24,6 @@ public class TESClient {
     }
 
     private static void registerHudLayer(final RegisterGuiLayersEvent ev) {
-        ev.registerAbove(VanillaGuiLayers.EFFECTS, TESConstants.HUD_LAYER_ID, (guiGraphics, deltaTracker) ->
-                                    TESHud.submitHudRenderTasks(guiGraphics, Minecraft.getInstance(), deltaTracker));
+        ev.registerAbove(VanillaGuiLayers.EFFECTS, TESConstants.HUD_LAYER_ID, TESHud::submitHudRenderTasks);
     }
 }

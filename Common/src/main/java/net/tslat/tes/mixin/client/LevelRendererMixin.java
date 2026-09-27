@@ -1,15 +1,15 @@
 package net.tslat.tes.mixin.client;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.resource.ResourceHandle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.SubmitNodeStorage;
-import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.state.LevelRenderState;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.core.hud.TESHud;
@@ -25,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
-	@Shadow @Final private RenderBuffers renderBuffers;
     @Shadow
     @Final
     private SubmitNodeStorage submitNodeStorage;
@@ -33,44 +32,15 @@ public class LevelRendererMixin {
     @Final
     private LevelRenderState levelRenderState;
 
-    @Inject(method =
-            {
-                 "lambda$addMainPass$1(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/client/renderer/state/LevelRenderState;Lnet/minecraft/util/profiling/ProfilerFiller;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;ZLnet/minecraft/client/renderer/culling/Frustum;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;)V" // Neo/Forge
-            },
+    @WrapOperation(
+            method = {"lambda$addMainPass$1", "method_62214"},
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V",
-                    ordinal = 2),
-            require = 0)
-    private void tes$renderInWorldHuds(GpuBufferSlice shaderFog, LevelRenderState levelRenderState, ProfilerFiller profiler, Matrix4f frustumMatrix,
-                                       ResourceHandle itemEntityResource, ResourceHandle entityOutlineResource, boolean renderBlockOutline, Frustum frustum,
-                                       ResourceHandle translucentResource, ResourceHandle mainResource, CallbackInfo callback) {
-        profiler.popPush("tesSubmitInWorldEntities");
-
-        final PoseStack poseStack = new PoseStack();
-
-        // TODO potentially just collect entities to render from submits in levelRenderState?
-        // Will need to, since the entities should be gone by this stage
-        // Move to RenderState
-        // SIGH, I'm never getting stuff done
-        for (LivingEntity entity : TESEntityTracking.getEntitiesToRender()) {
-            TESHud.submitWorldRenderTasks(poseStack, this.submitNodeStorage, levelRenderState.cameraRenderState, entity, Minecraft.getInstance().getDeltaTracker());
-        }
-    }
-
-    @Inject(method =
-            {
-                 "method_62214(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lnet/minecraft/client/renderer/state/LevelRenderState;Lnet/minecraft/util/profiling/ProfilerFiller;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;ZLnet/minecraft/client/renderer/culling/Frustum;Lcom/mojang/blaze3d/resource/ResourceHandle;Lcom/mojang/blaze3d/resource/ResourceHandle;)V" // Fabric
-            },
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V",
-                    ordinal = 2),
-            require = 0)
-    private void tes$renderInWorldHudsFabric(GpuBufferSlice shaderFog, LevelRenderState levelRenderState, ProfilerFiller profiler, Matrix4f frustumMatrix,
-                                             ResourceHandle itemEntityResource, ResourceHandle entityOutlineResource, boolean renderBlockOutline,
-                                             ResourceHandle translucentResource, ResourceHandle mainResource, CallbackInfo callback) {
-        profiler.popPush("tesSubmitInWorldEntities");
+                    target = "Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher;renderAllFeatures()V"
+            )
+    )
+    public void tslatentitystatus$wrapFeatureRendering(FeatureRenderDispatcher instance, Operation<Void> original) {
+        original.call(instance);
 
         final PoseStack poseStack = new PoseStack();
 
