@@ -4,11 +4,10 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import org.gradle.internal.extensions.stdlib.capitalized
 
 plugins {
+    alias(libs.plugins.loom)
     id("project-setup")
-
     alias(libs.plugins.minotaur)
     alias(libs.plugins.curseforgegradle)
-    alias(libs.plugins.loom)
 }
 
 val modId = project.property("modId") as String
@@ -42,7 +41,7 @@ loom {
 
         named("client") {
             client()
-            programArg("--username=Dev")
+            programArguments.addAll("--username", "Dev")
         }
 
         named("server") {
