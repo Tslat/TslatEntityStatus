@@ -1,39 +1,37 @@
 {
-    "schemaVersion": 1,
-    "id": "${mod_id}",
-    "version": "${version}",
-  
-    "name": "${mod_name}",
-    "description": "${description}",
-    "authors": [
-      "${authors}"
-    ],
-    "contact": {
-      "homepage": "${homepage_url}",
-      "sources": "${sources_url}"
-    },
-  
-    "license": "${license}",
-    "icon": "logo.png",
-  
-    "environment": "*",
-    "entrypoints": {
-      "main": [
-        "net.tslat.tes.TES"
-      ],
-      "client": [
-        "net.tslat.tes.TESClient"
-      ]
-    },
-    "mixins": [
-      "${mod_id}.mixins.json"
-    ],
-    "accessWidener" : "${mod_id}.accesswidener",
-    "depends": {
-      "fabricloader": ">=${fabric_loader_version_range}",
-      "fabric-api": "*",
-      "minecraft": ">=${minecraft_version}",
-      "java": ">=${java_version}"
-    }
-  }
-  
+	"schemaVersion": 1,
+	"id": "${mod_id}",
+	"version": "${version}",
+	"name": "${mod_display_name}",
+	"description": "${mod_description}",
+	"authors": [
+		"${mod_authors}"
+	],
+	"contact": {
+		"homepage": "${mod_homepage}",
+		"issues": "${mod_issues_tracker}",
+		"sources": "${mod_git_repo}"
+	},
+	"license": "${mod_license}",
+	"icon": "${mod_id}.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+          "net.tslat.tes.TES"
+		],
+		"client": [
+          "net.tslat.tes.TESClient"
+		]
+	},
+	"mixins": [
+		"${mod_id}.mixins.json"
+	],
+	"accessWidener": "${mod_id}.classtweaker",
+	"depends": {
+   		"fabricloader": ">=${fabric_loader_version_range}",
+		"fabric-api": ">=${fabric_api_version_range}",
+		"java": ">=${java_version}",
+		"minecraft": ">=${minecraft_version}",
+		"midnightlib": ">=${midnightlib_version}"
+	}
+}

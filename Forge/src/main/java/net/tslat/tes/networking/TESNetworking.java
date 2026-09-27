@@ -1,5 +1,7 @@
 package net.tslat.tes.networking;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -54,7 +56,11 @@ public final class TESNetworking implements net.tslat.tes.core.networking.TESNet
 
 	@Override
 	public void requestEffectsSync(int entityId) {
-		CHANNEL.send(new RequestEffectsPacket(entityId), PacketDistributor.SERVER.noArg());
+		final MultiloaderPacket packet = new RequestEffectsPacket(entityId);
+		final ClientPacketListener listener = Minecraft.getInstance().getConnection();
+
+		if (listener != null && CHANNEL.isRemotePresent(listener.getConnection()))
+			CHANNEL.send(packet, PacketDistributor.SERVER.noArg());
 	}
 
 	@Override

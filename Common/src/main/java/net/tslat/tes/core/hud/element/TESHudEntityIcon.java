@@ -11,7 +11,7 @@ import java.util.function.Predicate;
  * Interface for rendering entity property icons in {@link BuiltinHudElements#renderEntityIcons}
  * <p>
  *     At this stage, the GUI sprite atlas has been bound, and you can safely render icons from that atlas.
- *     If you bind another texture, ensure you re-bind the {@link net.tslat.tes.api.util.TESClientUtil#SPRITES_ATLAS sprite atlas} after rendering
+ *     If you bind another texture, ensure you re-bind the {@link TESClientUtil#SPRITES_ATLAS sprite atlas} after rendering
  * </p>
  */
 @FunctionalInterface

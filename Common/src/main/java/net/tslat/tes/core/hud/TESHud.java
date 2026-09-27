@@ -170,7 +170,7 @@ public class TESHud {
 	public static void renderInWorld(PoseStack poseStack, LivingEntity entity, DeltaTracker deltaTracker) {
 		EntityState entityState = TESEntityTracking.getStateForEntity(entity);
 
-		if (entityState == null || !entityState.isValid())
+		if (entityState == null || entity.tickCount == 0 || !entityState.isValid())
 			return;
 
 		entityState.markActive();

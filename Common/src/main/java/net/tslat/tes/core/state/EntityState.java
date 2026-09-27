@@ -43,7 +43,7 @@ public class EntityState {
 		this.lastHealth = this.currentHealth;
 		this.lastRenderTick = entity.tickCount;
 
-		if (TESConstants.CONFIG.isSyncingEffects())
+		if (TESConstants.CONFIG.isSyncingEffects() && entity.level().isClientSide())
 			TESConstants.NETWORKING.requestEffectsSync(entity.getId());
 	}
 

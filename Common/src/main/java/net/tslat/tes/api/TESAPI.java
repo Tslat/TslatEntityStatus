@@ -65,7 +65,7 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Register a {@link TESParticleSourceHandler TESParticleSourceHandler} with TES for custom handling of damage-based {@link net.tslat.tes.api.TESParticle TESParticles} predicated by their {@link net.minecraft.world.damagesource.DamageSource}<br>
+	 * Register a {@link TESParticleSourceHandler TESParticleSourceHandler} with TES for custom handling of damage-based {@link TESParticle TESParticles} predicated by their {@link net.minecraft.world.damagesource.DamageSource}<br>
 	 * This can be used to more reliably special-handle damage particles for specific DamageSources (such as freezing damage, fire damage, etc)
 	 */
 	public static void registerParticleSourceHandler(TESParticleSourceHandler handler) {
@@ -122,7 +122,7 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position
+	 * Add a {@link TESParticle TESParticle} for the given position
 	 * @param level The level the particle is in
 	 * @param position The position the particle should appear at
 	 * @param contents The contents of the particle. If using a numeric value, use one of the double-based methods
@@ -137,7 +137,7 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity
+	 * Add a {@link TESParticle TESParticle} for the given entity
 	 * @param targetedEntity The entity the particle should appear on
 	 * @param contents The contents of the particle. If using a numeric value, use one of the double-based methods
 	 */
@@ -154,7 +154,7 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given position
+	 * Add a {@link TESParticle TESParticle} for the given position
 	 * @param level The level the particle is in
 	 * @param position The position the particle should appear at
 	 * @param value    The value of the particle
@@ -170,7 +170,7 @@ public final class TESAPI {
 	}
 
 	/**
-	 * Add a {@link net.tslat.tes.api.TESParticle TESParticle} for the given entity
+	 * Add a {@link TESParticle TESParticle} for the given entity
 	 * @param targetedEntity The entity the particle should appear on
 	 * @param value The value of the particle
 	 * @param colour The text colour of the particle

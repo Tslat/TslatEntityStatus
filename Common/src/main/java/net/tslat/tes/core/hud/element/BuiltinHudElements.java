@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
@@ -121,6 +122,9 @@ public final class BuiltinHudElements {
 			poseStack.translate(0, 0, 0.005f);
 
 			(inWorldHud ? TESAPI.getConfig().inWorldHudHealthFontStyle() : TESAPI.getConfig().hudHealthFontStyle()).render(mc.font, guiGraphics.pose(), Component.literal(healthText), center - halfTextWidth, -1, FastColor.ARGB32.color((int)(opacity * 255f), 255, 255, 255), guiGraphics.bufferSource());
+
+			if (!inWorldHud && mc.screen != null && !(mc.screen instanceof ChatScreen))
+				Minecraft.getInstance().renderBuffers().bufferSource().endLastBatch();
 		}
 
 		poseStack.popPose();
