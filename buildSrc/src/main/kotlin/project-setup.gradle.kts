@@ -140,16 +140,16 @@ tasks.withType<ProcessResources>().configureEach {
 // If your project is OSS, consider using Cloudsmith as your maven host: https://help.cloudsmith.io/docs/open-source-hosting-policy
 publishing {
     repositories {
-        if (System.getenv("MAVEN_USERNAME") == null && System.getenv("MAVEN_PASSWORD") == null) {
+        if (System.getenv("CLOUDSMITH_USERNAME") == null && System.getenv("CLOUDSMITH_PASSWORD") == null) {
             mavenLocal()
         }
         else maven {
-            name = "Maven"
-            url = uri("https://maven.cloudsmith.io/myname/mymod/")
+            name = "Cloudsmith"
+            url = uri("https://maven.cloudsmith.io/tslat/tes/")
 
             credentials {
-                username = System.getenv("MAVEN_USERNAME")
-                password = System.getenv("MAVEN_PASSWORD")
+                username = System.getenv("CLOUDSMITH_USERNAME")
+                password = System.getenv("CLOUDSMITH_PASSWORD")
             }
         }
     }
