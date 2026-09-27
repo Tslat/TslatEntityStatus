@@ -1,7 +1,6 @@
 # Changelog
 #### Version
-1.6.3
+1.6.4
 
 ## Bug Fixes
-* Fixed the last damage dealt to an entity not spawning a particle
-* Fixed INSTAKILL particles not spawning
+* Fixed the in-world HUD activation not working away from the world origin
