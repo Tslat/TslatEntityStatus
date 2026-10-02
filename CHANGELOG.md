@@ -1,6 +1,6 @@
 # Changelog
 #### Version
-1.6.4
+1.6.6
 
 ## Bug Fixes
-* Fixed the in-world HUD activation not working away from the world origin
+* Fixed entity healthbar on HUD rendering through GUIs
