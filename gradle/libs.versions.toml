@@ -3,9 +3,9 @@
     mod                             = "1.10"
 
 # Common
-    minecraft-range                 = "[26.1.2,)"
-    minecraft                       = "26.1.2"
-    neoform                         = "26.1.2-1"
+    minecraft-range                 = "[26.1.1,)"
+    minecraft                       = "26.1.1"
+    neoform                         = "26.1.1-1"
     java                            = "25"
 
 # Fabric
@@ -15,16 +15,16 @@
     fabric-api-range                = "0.155.0+26.1.2"
 
 # Forge
-    forge                           = "64.1.3"
-    forge-mc                        = "26.1.2-64.1.3"
-    forge-fml-range                 = "[64,)"
-    forge-range                     = "[64.1.0,)"
+    forge                           = "63.0.2"
+    forge-mc                        = "26.1.1-63.0.2"
+    forge-fml-range                 = "[63,)"
+    forge-range                     = "[63.0.0,)"
     forge-eventbusvalidator         = "7.0.5"
 
 # Neoforge
     neoforge-loader-range           = "[5,)"
-    neoforge                        = "26.1.2.109"
-    neoforge-range                  = "[26.1.2.100,)"
+    neoforge                        = "26.1.1.15-beta"
+    neoforge-range                  = "[26.1.1.0-beta,)"
 
 # Dependencies
     mixin                           = "0.8.7"
