@@ -4,7 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.Vec3;
 import net.tslat.tslatentitystatus.api.client.util.TESClientUtil;
 import net.tslat.tslatentitystatus.api.client.util.TESRenderUtil;
 import net.tslat.tslatentitystatus.core.particle.type.GenericTESParticle;
@@ -77,7 +79,11 @@ public interface TESParticle<D> {
 		public static final Animation POP_OFF = new Animation() {
 			@Override
 			public Vector3f getInitialVelocity(TESParticle<?> particle, Vector3f position, RandomSource random) {
-				return new Vector3f((float)random.nextGaussian() * 0.03f + 0.025f, random.nextFloat() * 0.035f + 0.37f, (float)random.nextGaussian() * 0.03f + 0.025f);
+				final Vec3 cameraPos = TESClientUtil.getCameraPosition();
+				float velocity = random.nextFloat() * 0.035f + 0.37f;
+                velocity *= Mth.clamp(position.distance((float)cameraPos.x, (float)cameraPos.y, (float)cameraPos.z) / 3f, 0.25f, 1f);
+
+				return new Vector3f((float)random.nextGaussian() * 0.03f + 0.025f, velocity, (float)random.nextGaussian() * 0.03f + 0.025f);
 			}
 
 			@Override
