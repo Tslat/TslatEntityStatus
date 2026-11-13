@@ -147,7 +147,7 @@ public class TESHud {
 		if (!config.hudEnabled() || Minecraft.getInstance().gui.hud.isHidden() || tesEntityState == null)
 			return;
 
-		if (!config.hudBossesEnabled() && TESConstants.PLATFORM.getTESEntityRelation(target) == TESEntityRelation.BOSS)
+		if (!config.hudBossesEnabled() && TESUtil.getTESEntityRelation(target) == TESEntityRelation.BOSS)
 			return;
 
 		final TickRateManager tickRateManager = target.level().tickRateManager();

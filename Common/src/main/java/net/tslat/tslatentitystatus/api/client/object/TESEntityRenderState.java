@@ -15,7 +15,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.tslatentitystatus.api.TESConstants;
 import net.tslat.tslatentitystatus.api.client.util.TESClientUtil;
 import net.tslat.tslatentitystatus.api.common.constant.TESEntityRelation;
 import net.tslat.tslatentitystatus.api.common.util.TESUtil;
@@ -80,7 +79,7 @@ public final class TESEntityRenderState {
 		this.prevTransitionHealth = tesState.getLastTransitionHealth();
 		this.prevTransitionTime = tesState.getLastTransitionTime();
 		this.partialTick = partialTick;
-		this.entityRelation = TESConstants.PLATFORM.getTESEntityRelation(entity);
+		this.entityRelation = TESUtil.getTESEntityRelation(entity);
 		this.isPlayerOrVehicle = entity.getPassengersAndSelf().anyMatch(e -> e == TESClientUtil.getClientPlayer());
 		this.hasCustomName = entity.hasCustomName();
 		this.displayName = entity.getDisplayName();
