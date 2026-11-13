@@ -91,5 +91,21 @@ public final class TESClientParticleUtil {
             addTESParticle(new NumericParticle(entityState, position.toVector3f(), value).withColour(colour));
     }
 
+    /// Generate the position for a new health-particle for TES, based on the entity it's related to
+    ///
+    /// This positions the particle at their eye height, brought closer to the camera to reduce occlusion
+    public static Vec3 getHealthParticlePosition(LivingEntity entity) {
+        final Vec3 cameraPos = TESClientUtil.getCameraPosition();
+        final Vec3 eyePos = entity.getEyePosition();
+
+        if (cameraPos.equals(Vec3.ZERO))
+            return eyePos;
+
+        final Vec3 direction = eyePos.vectorTo(cameraPos).multiply(1, 0, 1);
+        final double dist = direction.length();
+
+        return new Vec3(eyePos.x, Math.min(eyePos.y, cameraPos.y), eyePos.z).add(direction.normalize().scale(Math.min(entity.getBbWidth() * 0.75f, dist)));
+    }
+
     private TESClientParticleUtil() {}
 }

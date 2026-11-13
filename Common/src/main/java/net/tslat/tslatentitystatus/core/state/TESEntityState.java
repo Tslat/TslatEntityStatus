@@ -10,15 +10,16 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.tslat.tslatentitystatus.api.TESConfig;
 import net.tslat.tslatentitystatus.api.TESConstants;
 import net.tslat.tslatentitystatus.api.client.object.TESParticle;
+import net.tslat.tslatentitystatus.api.client.util.TESClientParticleUtil;
 import net.tslat.tslatentitystatus.api.client.util.TESClientUtil;
 import net.tslat.tslatentitystatus.core.particle.TESParticleManager;
 import net.tslat.tslatentitystatus.core.particle.type.ComponentParticle;
 import net.tslat.tslatentitystatus.core.particle.type.DamageParticle;
 import net.tslat.tslatentitystatus.core.particle.type.HealParticle;
-import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -107,11 +108,11 @@ public class TESEntityState {
 		if (healthDelta == 0)
 			return;
 
-		TESParticleManager.addParticle(getHealthParticle(entity, entity.getEyePosition().toVector3f(), healthDelta, damageSource, config));
+		TESParticleManager.addParticle(getHealthParticle(entity, TESClientParticleUtil.getHealthParticlePosition(entity), healthDelta, damageSource, config));
 	}
 
 	/// Get the health-change-related particle to spawn for the current tick
-	protected TESParticle<?> getHealthParticle(LivingEntity entity, Vector3f position, float healthDelta, @Nullable DamageSource relevantDamageSource, TESConfig config) {
+	protected TESParticle<?> getHealthParticle(LivingEntity entity, Vec3 particlePos, float healthDelta, @Nullable DamageSource relevantDamageSource, TESConfig config) {
 		if (healthDelta < 0) {
 			this.lastTransitionTime = entity.level().getGameTime();
 			int colour = config.getDamageParticleColour();
@@ -129,20 +130,20 @@ public class TESEntityState {
 			}
 
 			if (config.verbalHealthParticles() && this.currentHealth <= 0 && this.lastHealth >= entity.getMaxHealth()) {
-				return new ComponentParticle(this, position, TESParticle.Animation.POP_OFF, Component.translatable("config.tes.particle.verbal.instakill")
+				return new ComponentParticle(this, particlePos.toVector3f(), TESParticle.Animation.POP_OFF, Component.translatable("config.tes.particle.verbal.instakill")
 						.setStyle(Style.EMPTY.withColor(colour)));
 			}
 			else {
-				return new DamageParticle(this, position, -healthDelta).withColour(colour);
+				return new DamageParticle(this, particlePos.toVector3f(), -healthDelta).withColour(colour);
 			}
 		}
 		else {
 			if (config.verbalHealthParticles() && this.currentHealth >= entity.getMaxHealth() && this.lastHealth <= entity.getMaxHealth() * 0.05f) {
-				return new ComponentParticle(this, position, TESParticle.Animation.RISE, Component.translatable("config.tes.particle.verbal.fullHeal")
+				return new ComponentParticle(this, particlePos.toVector3f(), TESParticle.Animation.RISE, Component.translatable("config.tes.particle.verbal.fullHeal")
 						.setStyle(Style.EMPTY.withColor(config.getHealParticleColour())));
 			}
 			else {
-				return new HealParticle(this, position, healthDelta);
+				return new HealParticle(this, particlePos.toVector3f(), healthDelta);
 			}
 		}
 	}
