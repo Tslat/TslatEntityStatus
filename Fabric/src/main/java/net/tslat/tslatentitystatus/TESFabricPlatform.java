@@ -4,16 +4,14 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalEntityTypeTags;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.tslat.tslatentitystatus.api.client.util.TESClientUtil;
 import net.tslat.tslatentitystatus.api.common.constant.TESEntityRelation;
 import net.tslat.tslatentitystatus.core.platform.TESPlatform;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -56,5 +54,11 @@ public class TESFabricPlatform implements TESPlatform {
 	@Override
 	public boolean hasServerMod() {
 		return HAS_SERVER_MOD;
+	}
+
+	/// @return An array of part entity instances for the given entity, or `null` if not a multipart entity
+	@Override
+	public Entity @Nullable [] getPartEntities(LivingEntity entity) {
+		return null;
 	}
 }

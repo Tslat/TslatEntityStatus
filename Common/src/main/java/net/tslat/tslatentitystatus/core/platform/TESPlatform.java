@@ -42,4 +42,7 @@ public interface TESPlatform {
 	/// Set the syncing state for effects for the TES HUD
 	@ApiStatus.Internal
 	void setSyncingEffects(boolean syncingEffects);
+
+	/// @return An array of part entity instances for the given entity, or `null` if not a multipart entity
+	Entity @Nullable[] getPartEntities(LivingEntity entity);
 }

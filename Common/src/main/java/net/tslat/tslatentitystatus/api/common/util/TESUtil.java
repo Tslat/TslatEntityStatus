@@ -16,6 +16,7 @@ import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
+import net.minecraft.world.phys.AABB;
 import net.tslat.tslatentitystatus.api.TESConstants;
 import net.tslat.tslatentitystatus.api.common.constant.TESEntityRelation;
 
@@ -136,5 +137,33 @@ public final class TESUtil {
 	/// This allows for handling different entities in different ways, particularly for render formatting
 	public static TESEntityRelation getTESEntityRelation(LivingEntity entity) {
 		return TESConstants.PLATFORM.getTESEntityRelation(entity);
+	}
+
+	/// Get the largest encapsulating bounding box for the given entity, including multipart pieces as relevant
+	public static AABB getEntityBounds(LivingEntity entity) {
+		final Entity[] parts = TESConstants.PLATFORM.getPartEntities(entity);
+		final AABB baseBounds = entity.getBoundingBox();
+
+		if (parts == null)
+			return baseBounds;
+
+		double minX = baseBounds.minX;
+		double minY = baseBounds.minY;
+		double minZ = baseBounds.minZ;
+		double maxX = baseBounds.maxX;
+		double maxY = baseBounds.maxY;
+		double maxZ = baseBounds.maxZ;
+
+		for (Entity part : parts) {
+			final AABB partBounds = part.getBoundingBox();
+			minX = Math.min(minX, partBounds.minX);
+			minY = Math.min(minY, partBounds.minY);
+			minZ = Math.min(minZ, partBounds.minZ);
+			maxX = Math.max(maxX, partBounds.maxX);
+			maxY = Math.max(maxY, partBounds.maxY);
+			maxZ = Math.max(maxZ, partBounds.maxZ);
+		}
+
+		return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 }

@@ -72,4 +72,10 @@ public class TESForgePlatform implements TESPlatform {
 	public boolean hasServerMod() {
 		return HAS_SERVER_MOD;
 	}
+
+	/// @return An array of part entity instances for the given entity, or `null` if not a multipart entity
+	@Override
+	public Entity @Nullable[] getPartEntities(LivingEntity entity) {
+		return entity.getParts();
+	}
 }

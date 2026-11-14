@@ -1,10 +1,12 @@
 package net.tslat.tslatentitystatus;
 
+import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.Tags;
@@ -15,7 +17,9 @@ import net.tslat.tslatentitystatus.core.platform.TESPlatform;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
 
 public class TESNeoForgePlatform implements TESPlatform {
 	private static final Map<EntityType<?>, TESEntityRelation> ENTITY_RELATIONS = new Reference2ObjectOpenHashMap<>();
@@ -71,5 +75,11 @@ public class TESNeoForgePlatform implements TESPlatform {
 	@Override
 	public boolean hasServerMod() {
 		return HAS_SERVER_MOD;
+	}
+
+	/// @return An array of part entity instances for the given entity, or `null` if not a multipart entity
+	@Override
+	public Entity @Nullable[] getPartEntities(LivingEntity entity) {
+		return entity.getParts();
 	}
 }
