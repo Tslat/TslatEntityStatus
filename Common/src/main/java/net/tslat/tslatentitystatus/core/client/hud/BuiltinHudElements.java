@@ -79,14 +79,13 @@ public final class BuiltinHudElements {
 			final float filledPercent = tesRenderState.health / tesRenderState.maxHealth;
 			final float transitionPercent = tesRenderState.prevTransitionHealth / tesRenderState.maxHealth;
 			final boolean doSegmentsOverlay = inWorldHud ? config.inWorldBarsSegments() : config.hudHealthBarSegments();
-			int teamColour = tesRenderState.teamColour;
-			final TESEntityRelation textureType = teamColour == -1 ? tesRenderState.entityRelation : TESEntityRelation.UNKNOWN;
+			final TESEntityRelation textureType = tesRenderState.teamColour == -1 ? tesRenderState.entityRelation : TESEntityRelation.UNKNOWN;
 			final TextureAtlasSprite emptyBar = TESRenderUtil.getGuiAtlasSprite(textureType.backgroundTexture());
 			final TextureAtlasSprite filledBar = TESRenderUtil.getGuiAtlasSprite(textureType.overlayTexture());
 			final TextureAtlasSprite barBackground = TESRenderUtil.getGuiAtlasSprite(TESTextures.BAR_EMPTY);
 			final TextureAtlasSprite barOverlay = doSegmentsOverlay ? TESRenderUtil.getGuiAtlasSprite(TESTextures.BAR_OVERLAY_SEGMENTS) : null;
 
-			TESRenderUtil.renderBar(renderContext, 0, 0, barWidth, filledPercent, transitionPercent, opacity, barBackground, emptyBar, filledBar, barOverlay, teamColour);
+			TESRenderUtil.renderBar(renderContext, 0, 0, barWidth, filledPercent, transitionPercent, opacity, barBackground, emptyBar, filledBar, barOverlay, tesRenderState.teamColour);
 		}
 
 		if (renderType != TESHud.BarRenderType.BAR && renderType != TESHud.BarRenderType.BAR_ICONS) {
