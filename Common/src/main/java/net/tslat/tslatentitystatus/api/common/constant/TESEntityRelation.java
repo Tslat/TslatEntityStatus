@@ -8,6 +8,7 @@ import org.jetbrains.annotations.ApiStatus;
 // TODO Clear Relations cache on world exit/load
 /// TES enum to differentiate entities by their relationship to the player
 public interface TESEntityRelation {
+	TESEntityRelation UNKNOWN = new Impl(TESConstants.id("bar/bar_background"), TESConstants.id("bar/bar_fill"));
 	TESEntityRelation PASSIVE = new Impl(TESConstants.id("bar/passive_background"), TESConstants.id("bar/passive_fill"));
 	TESEntityRelation NEUTRAL = new Impl(TESConstants.id("bar/neutral_background"), TESConstants.id("bar/neutral_fill"));
 	TESEntityRelation HOSTILE = new Impl(TESConstants.id("bar/hostile_background"), TESConstants.id("bar/hostile_fill"));

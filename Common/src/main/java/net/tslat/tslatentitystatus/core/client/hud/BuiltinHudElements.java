@@ -21,6 +21,7 @@ import net.tslat.tslatentitystatus.api.client.object.TESHudRenderContext;
 import net.tslat.tslatentitystatus.api.client.object.renderhelper.TextRenderHelper;
 import net.tslat.tslatentitystatus.api.client.object.renderhelper.TextureRenderHelper;
 import net.tslat.tslatentitystatus.api.client.util.TESRenderUtil;
+import net.tslat.tslatentitystatus.api.common.constant.TESEntityRelation;
 import net.tslat.tslatentitystatus.api.common.util.TESUtil;
 
 import java.util.List;
@@ -78,12 +79,14 @@ public final class BuiltinHudElements {
 			final float filledPercent = tesRenderState.health / tesRenderState.maxHealth;
 			final float transitionPercent = tesRenderState.prevTransitionHealth / tesRenderState.maxHealth;
 			final boolean doSegmentsOverlay = inWorldHud ? config.inWorldBarsSegments() : config.hudHealthBarSegments();
-			final TextureAtlasSprite emptyBar = TESRenderUtil.getGuiAtlasSprite(tesRenderState.entityRelation.backgroundTexture());
-			final TextureAtlasSprite filledBar = TESRenderUtil.getGuiAtlasSprite(tesRenderState.entityRelation.overlayTexture());
+			int teamColour = tesRenderState.teamColour;
+			final TESEntityRelation textureType = teamColour == -1 ? tesRenderState.entityRelation : TESEntityRelation.UNKNOWN;
+			final TextureAtlasSprite emptyBar = TESRenderUtil.getGuiAtlasSprite(textureType.backgroundTexture());
+			final TextureAtlasSprite filledBar = TESRenderUtil.getGuiAtlasSprite(textureType.overlayTexture());
 			final TextureAtlasSprite barBackground = TESRenderUtil.getGuiAtlasSprite(TESTextures.BAR_EMPTY);
 			final TextureAtlasSprite barOverlay = doSegmentsOverlay ? TESRenderUtil.getGuiAtlasSprite(TESTextures.BAR_OVERLAY_SEGMENTS) : null;
 
-			TESRenderUtil.renderBar(renderContext, 0, 0, barWidth, filledPercent, transitionPercent, opacity, barBackground, emptyBar, filledBar, barOverlay);
+			TESRenderUtil.renderBar(renderContext, 0, 0, barWidth, filledPercent, transitionPercent, opacity, barBackground, emptyBar, filledBar, barOverlay, teamColour);
 		}
 
 		if (renderType != TESHud.BarRenderType.BAR && renderType != TESHud.BarRenderType.BAR_ICONS) {

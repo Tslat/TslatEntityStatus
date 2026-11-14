@@ -86,32 +86,68 @@ public final class TESRenderUtil {
     /// @param overlayBar           The overlay notches or detail sprite for the bar, if applicable
     public static void renderBar(TESHudRenderContext renderContext, int x, int y, int barWidth, float completionPercentage, float transitionPercentage, float opacity,
                                  TextureAtlasSprite background, TextureAtlasSprite emptyBar, TextureAtlasSprite filledBar, @Nullable TextureAtlasSprite overlayBar) {
+        renderBar(renderContext, x, y, barWidth, completionPercentage, transitionPercentage, opacity, background, emptyBar, filledBar, overlayBar, -1);
+    }
+
+    /// Render a complete bar, automatically handling all layers and transitions
+    ///
+    /// @param renderContext        The render context to render the bar in
+    /// @param x                    The x position to render at
+    /// @param y                    The y position to render at
+    /// @param barWidth             The render-width of the bar
+    /// @param completionPercentage The percentage value that the bar is full
+    /// @param transitionPercentage The percentage value that the bar is full for its transition display (for transitioning between values)
+    /// @param opacity              The opaqueness of the bar
+    /// @param background           The background sprite for the bar
+    /// @param emptyBar             The empty bar sprite for the bar
+    /// @param filledBar            The filled bar sprite for the bar
+    /// @param overlayBar           The overlay notches or detail sprite for the bar, if applicable
+    /// @param colour               The colour overlay of the bar to use, or `-1` for default
+    public static void renderBar(TESHudRenderContext renderContext, int x, int y, int barWidth, float completionPercentage, float transitionPercentage, float opacity,
+                                 TextureAtlasSprite background, TextureAtlasSprite emptyBar, TextureAtlasSprite filledBar, @Nullable TextureAtlasSprite overlayBar,
+                                 int colour) {
         renderBarLayer(renderContext, x, y, background, barWidth, 1f, opacity);
 
         renderContext.translate(0, 0, 0.01f);
         renderBarLayer(renderContext.withRenderOrder(1), x, y, emptyBar, barWidth, transitionPercentage, opacity);
         renderContext.translate(0, 0, 0.01f);
-        renderBarLayer(renderContext.withRenderOrder(2), x, y, filledBar, barWidth, completionPercentage, opacity);
+        renderBarLayer(renderContext.withRenderOrder(2), x, y, filledBar, barWidth, completionPercentage, opacity, colour);
 
         if (overlayBar != null) {
             renderContext.translate(0, 0, 0.01f);
-            renderBarLayer(renderContext.withRenderOrder(3), x, y, overlayBar, barWidth, 1f, 0.75f * opacity);
+            renderBarLayer(renderContext.withRenderOrder(3), x, y, overlayBar, barWidth, 1f, 0.75f * opacity, colour);
         }
     }
 
     /// Render a single bar layer, splitting it into 3 sections to nicely preserve its edge shapes
     public static void renderBarLayer(TESHudRenderContext renderContext, int x, int y, TextureAtlasSprite sprite, float barWidth, float filledPercent, float opacity) {
+        renderBarLayer(renderContext, x, y, sprite, barWidth, filledPercent, opacity, -1);
+    }
+
+    /// Render a single bar layer, splitting it into 3 sections to nicely preserve its edge shapes
+    public static void renderBarLayer(TESHudRenderContext renderContext, int x, int y, TextureAtlasSprite sprite, float barWidth, float filledPercent, float opacity, int colour) {
         final float pixelWidth = sprite.contents().width();
         final float barPercent = Math.round(barWidth * filledPercent);
         final float pixelPercent = Math.round(pixelWidth * filledPercent);
         final float midBarWidth = barWidth - 10;
         final float leftEndPixels = Math.min(5, Math.min(barPercent, pixelPercent));
         final float rightEndPixels = Math.min(5, 5 - (pixelWidth - pixelPercent));
-        final TextureRenderHelper barLeft = TextureRenderHelper.of(sprite).uWidth(leftEndPixels).width(leftEndPixels).colour(ARGB.white(opacity));
-        final TextureRenderHelper barMiddle = pixelWidth <= 10 || midBarWidth <= 0 || barPercent <= 10 ? null :
-                                        TextureRenderHelper.of(sprite).uWidth(pixelPercent - 10).uOffset(5).width(barPercent >= barWidth - 5 ? midBarWidth : barPercent - 10).colour(ARGB.white(opacity));
-        final TextureRenderHelper barRight = rightEndPixels <= 0 || barPercent - 5 <= 0 ? null :
-                                       TextureRenderHelper.of(sprite).uWidth(rightEndPixels).uOffset(pixelWidth - 5).width(Math.min(5, rightEndPixels)).colour(ARGB.white(opacity));
+        colour = ARGB.multiplyAlpha(colour == -1 ? 0xFFFFFFFF : colour, opacity);
+        final TextureRenderHelper barLeft = TextureRenderHelper.of(sprite).uWidth(leftEndPixels).width(leftEndPixels).colour(colour);
+        final TextureRenderHelper barMiddle = pixelWidth <= 10 || midBarWidth <= 0 || barPercent <= 10 ?
+                                              null :
+                                              TextureRenderHelper.of(sprite)
+                                                      .uWidth(pixelPercent - 10)
+                                                      .uOffset(5)
+                                                      .width(barPercent >= barWidth - 5 ? midBarWidth : barPercent - 10)
+                                                      .colour(colour);
+        final TextureRenderHelper barRight = rightEndPixels <= 0 || barPercent - 5 <= 0 ?
+                                             null :
+                                             TextureRenderHelper.of(sprite)
+                                                     .uWidth(rightEndPixels)
+                                                     .uOffset(pixelWidth - 5)
+                                                     .width(Math.min(5, rightEndPixels))
+                                                     .colour(colour);
 
         if (renderContext.isInWorld()) {
             int packedLight = renderContext.getPackedLight();

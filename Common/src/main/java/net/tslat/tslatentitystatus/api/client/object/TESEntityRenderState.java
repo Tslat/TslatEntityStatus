@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Team;
 import net.tslat.tslatentitystatus.api.client.util.TESClientUtil;
 import net.tslat.tslatentitystatus.api.common.constant.TESEntityRelation;
 import net.tslat.tslatentitystatus.api.common.util.TESUtil;
@@ -42,6 +43,7 @@ public final class TESEntityRenderState {
 	public final float partialTick;
 
 	public final TESEntityRelation entityRelation;
+	public final int teamColour;
 
 	public final boolean isPlayerOrVehicle;
 
@@ -98,6 +100,10 @@ public final class TESEntityRenderState {
 		this.isIllager = entity.is(EntityTypeTags.ILLAGER);
 		this.isArthropod = entity.is(EntityTypeTags.ARTHROPOD);
 		this.isUndead = entity.is(EntityTypeTags.UNDEAD);
+
+		Team team = entity.getTeam();
+
+		this.teamColour = team != null && team.getColor().isPresent() ? team.getColor().get().rgb() : -1;
 	}
 
 	/// Create a new [TESEntityRenderState] instance for the current render pass for the given entity
