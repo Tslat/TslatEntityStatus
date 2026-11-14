@@ -4,8 +4,6 @@ import net.minecraft.resources.Identifier;
 import net.tslat.tslatentitystatus.api.TESConstants;
 import org.jetbrains.annotations.ApiStatus;
 
-// TODO switch to dynamic bar colours
-// TODO Clear Relations cache on world exit/load
 /// TES enum to differentiate entities by their relationship to the player
 public interface TESEntityRelation {
 	TESEntityRelation UNKNOWN = new Impl(TESConstants.id("bar/bar_background"), TESConstants.id("bar/bar_fill"));

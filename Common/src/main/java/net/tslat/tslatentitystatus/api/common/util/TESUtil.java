@@ -1,7 +1,5 @@
 package net.tslat.tslatentitystatus.api.common.util;
 
-// TODO Clear mobs cache on world exit/load
-
 import it.unimi.dsi.fastutil.objects.Reference2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Reference2BooleanOpenHashMap;
 import net.minecraft.core.component.DataComponents;
