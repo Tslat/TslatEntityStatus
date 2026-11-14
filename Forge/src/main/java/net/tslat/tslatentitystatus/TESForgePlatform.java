@@ -51,7 +51,7 @@ public class TESForgePlatform implements TESPlatform {
 		if (entity.getType() != EntityTypes.PLAYER && entity.isAlliedTo(TESClientUtil.getClientPlayer()))
 			return TESEntityRelation.PASSIVE;
 
-		if (entity.is(Tags.EntityTypes.BOATS))
+		if (entity.is(Tags.EntityTypes.BOSSES))
 			return TESEntityRelation.BOSS;
 
 		return ENTITY_RELATIONS.computeIfAbsent(entity.getType(), _ -> switch(entity) {
