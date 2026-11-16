@@ -10,6 +10,7 @@ import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.phys.AABB;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.TESEntityType;
@@ -124,6 +125,34 @@ public interface TESUtil {
 		return !entity.getType().is(TESConstants.NO_TES_HANDLING) && isVisibleToPlayer(entity, player);
 	}
 
+	/// Get the largest encapsulating bounding box for the given entity, including multipart pieces as relevant
+	static AABB getEntityBounds(LivingEntity entity) {
+		final Entity[] parts = TESConstants.UTILS.getPartEntities(entity);
+		final AABB baseBounds = entity.getBoundingBox();
+
+		if (parts == null)
+			return baseBounds;
+
+		double minX = baseBounds.minX;
+		double minY = baseBounds.minY;
+		double minZ = baseBounds.minZ;
+		double maxX = baseBounds.maxX;
+		double maxY = baseBounds.maxY;
+		double maxZ = baseBounds.maxZ;
+
+		for (Entity part : parts) {
+			final AABB partBounds = part.getBoundingBox();
+			minX = Math.min(minX, partBounds.minX);
+			minY = Math.min(minY, partBounds.minY);
+			minZ = Math.min(minZ, partBounds.minZ);
+			maxX = Math.max(maxX, partBounds.maxX);
+			maxY = Math.max(maxY, partBounds.maxY);
+			maxZ = Math.max(maxZ, partBounds.maxZ);
+		}
+
+		return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
+	}
+
 	/**
 	 * Get a LivingEntity instance from the provided Entity instance, if possible.<br>
 	 * Includes handling for part-entities and eliminates invalid entities
@@ -142,6 +171,9 @@ public interface TESUtil {
 	boolean isBossEntity(LivingEntity entity);
 
 	void clearDynamicCaches();
+
+	/// @return An array of part entity instances for the given entity, or `null` if not a multipart entity
+	Entity @Nullable [] getPartEntities(LivingEntity entity);
 
 	// Because vanilla isn't even remotely consistent
 	private static boolean isMeleeMobHardcoded(LivingEntity entity) {

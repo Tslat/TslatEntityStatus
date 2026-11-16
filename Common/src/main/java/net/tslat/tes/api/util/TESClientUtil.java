@@ -28,6 +28,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
@@ -143,7 +144,8 @@ public final class TESClientUtil {
 	 * Render a statically-positioned view of an {@link LivingEntity entity} instance, optionally including the frame TES usually renders with
 	 */
 	public static void renderEntityIcon(GuiGraphics guiGraphics, Minecraft mc, DeltaTracker deltaTracker, LivingEntity entity, float opacity, boolean includeFrame) {
-		float scale = 0.04f * (float)Math.pow(Math.min(30 / entity.getBbWidth(), 40 / entity.getBbHeight()), 0.95f);
+		AABB bounds = TESUtil.getEntityBounds(entity);
+		float scale = 0.04f * (float)Math.pow(Math.min(30 / Math.max(bounds.getXsize(), bounds.getZsize()), 40 / bounds.getYsize()), 0.95f);
 		MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 		boolean scissor = TESConstants.CONFIG.hudPreventEntityOverflow();
 
@@ -165,7 +167,7 @@ public final class TESClientUtil {
 		}
 
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0, entity.getBbHeight() * -0.5f, entity.getBbWidth());
+		poseStack.translate(0, bounds.getYsize() * -0.5f, Math.max(bounds.getXsize(), bounds.getZsize()));
 
 		float yBodyRotPrev = entity.yBodyRot;
 		float yRotPrev = entity.getYRot();

@@ -66,4 +66,10 @@ public class TESUtil implements net.tslat.tes.api.util.TESUtil {
 	public final void clearDynamicCaches() {
 		this.entityTypeMap.entrySet().removeIf(classTESEntityTypeEntry -> classTESEntityTypeEntry.getValue() == TESEntityType.BOSS);
 	}
+
+	/// @return An array of part entity instances for the given entity, or `null` if not a multipart entity
+	@Override
+	public Entity @Nullable [] getPartEntities(LivingEntity entity) {
+		return entity.getParts();
+	}
 }
