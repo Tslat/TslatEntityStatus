@@ -8,6 +8,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import net.tslat.tes.api.util.TESClientUtil;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -80,8 +82,11 @@ public interface TESParticle<D> {
 	abstract class Animation {
 		public static final Animation POP_OFF = new Animation() {
 			@Override
-			public Vector3f getInitialVelocity(TESParticle<?> particle, Vector3f position, Random random) {
-				return new Vector3f((float)random.nextGaussian() * 0.03f + 0.025f, random.nextFloat() * 0.035f + 0.37f, (float)random.nextGaussian() * 0.03f + 0.025f);
+			public Vector3f getInitialVelocity(TESParticle<?> particle, Vector3f position, Random random) {final Vec3 cameraPos = TESClientUtil.getCameraPosition();
+				float velocity = random.nextFloat() * 0.035f + 0.37f;
+				velocity *= Mth.clamp(position.distance((float)cameraPos.x, (float)cameraPos.y, (float)cameraPos.z) / 3f, 0.25f, 1f);
+
+				return new Vector3f((float)random.nextGaussian() * 0.03f + 0.025f, velocity, (float)random.nextGaussian() * 0.03f + 0.025f);
 			}
 
 			@Override
