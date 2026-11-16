@@ -11,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.tslat.tes.api.TESAPI;
 import net.tslat.tes.api.TESConstants;
 import net.tslat.tes.api.TESParticle;
+import net.tslat.tes.api.util.TESClientUtil;
 import net.tslat.tes.core.particle.TESParticleManager;
 import net.tslat.tes.core.particle.type.ComponentParticle;
 import net.tslat.tes.core.particle.type.DamageParticle;
@@ -134,7 +135,7 @@ public class EntityState {
 			if (healthDelta == 0)
 				return;
 
-			Vector3f particlePos = new Vector3f((float)getEntity().getX(), (float)getEntity().getEyeY(), (float)getEntity().getZ());
+			Vector3f particlePos = TESClientUtil.getHealthParticlePosition(entity).toVector3f();
 
 			if (healthDelta < 0) {
 				this.lastTransitionTime = getEntity().level().getGameTime();

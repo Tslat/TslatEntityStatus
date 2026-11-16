@@ -570,6 +570,22 @@ public final class TESClientUtil {
 				Mth.floor((colour & 255) * multiplier) & 255);
 	}
 
+	/// Generate the position for a new health-particle for TES, based on the entity it's related to
+	///
+	/// This positions the particle at their eye height, brought closer to the camera to reduce occlusion
+	public static Vec3 getHealthParticlePosition(LivingEntity entity) {
+		final Vec3 cameraPos = getCameraPosition();
+		final Vec3 eyePos = entity.getEyePosition();
+
+		if (cameraPos.equals(Vec3.ZERO))
+			return eyePos;
+
+		final Vec3 direction = eyePos.vectorTo(cameraPos).multiply(1, 0, 1);
+		final double dist = direction.length();
+
+		return new Vec3(eyePos.x, Math.min(eyePos.y, cameraPos.y), eyePos.z).add(direction.normalize().scale(Math.min(entity.getBbWidth() * 0.75f, dist)));
+	}
+
 	@FunctionalInterface
 	public interface StyledTextRenderer {
 		void render(final Font fontRenderer, final Matrix4f pose, final FormattedCharSequence text, float x, float y, int colour, int outlineColour, int packedLight, final MultiBufferSource.BufferSource bufferSource);
