@@ -19,10 +19,12 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.Brightness;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.AABB;
 import net.tslat.tslatentitystatus.api.TESConfig;
 import net.tslat.tslatentitystatus.api.client.constant.TESTextures;
 import net.tslat.tslatentitystatus.api.client.object.TESHudRenderContext;
 import net.tslat.tslatentitystatus.api.client.object.renderhelper.TextureRenderHelper;
+import net.tslat.tslatentitystatus.api.common.util.TESUtil;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
@@ -173,10 +175,10 @@ public final class TESRenderUtil {
     /// Render a statically-positioned view of a [LivingEntity] instance, optionally including the frame TES usually renders with
     public static void renderEntityIcon(TESHudRenderContext.InGuiArgs args, Minecraft mc, LivingEntity entity, float opacity, boolean includeFrame) {
         final TESConfig config = TESClientUtil.getConfig();
-        final float scale = 0.04f * (float)Math.pow(Math.min(30 / entity.getBbWidth(), 40 / entity.getBbHeight()), 0.95f) * 20;
+        final EntityRenderState renderState = createEntityIconExtract(entity, config);
+        final float scale = 0.04f * (float)Math.pow(Math.min(30 / renderState.boundingBoxWidth, 40 / renderState.boundingBoxHeight), 0.95f) * 20;
         final boolean scissor = config.hudPreventEntityOverflow();
         final GuiGraphicsExtractor guiGraphics = args.guiGraphics();
-        final EntityRenderState renderState = createEntityIconExtract(entity, config);
         final Quaternionf rotation = new Quaternionf().rotateZ(Mth.PI).rotateY(Mth.PI + 45 * Mth.DEG_TO_RAD);
 
         if (scissor)
@@ -185,24 +187,29 @@ public final class TESRenderUtil {
         if (includeFrame)
             TextureRenderHelper.ofSprite(TESTextures.ENTITY_ICON_FRAME).colour(ARGB.white(0.5f * opacity)).renderForHud(args, 2, 2);
 
-        guiGraphics.entity(renderState, scale / entity.getScale(), new Vector3f(0, renderState.boundingBoxHeight / 2f + 0.0625f, 0),
-                                            rotation, null, 2, 2, 36, 47);
+        guiGraphics.entity(renderState, scale,
+                           new Vector3f(0, (renderState.boundingBoxHeight / 2f + 0.0625f) / entity.getScale(), 0),
+                           rotation, new Quaternionf(), 2, 2, 36, 47);
 
         if (scissor)
             guiGraphics.disableScissor();
     }
 
     private static EntityRenderState createEntityIconExtract(LivingEntity entity, TESConfig config) {
-        final EntityRenderState renderState = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity).createRenderState(entity, 1f);
+        final float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        final EntityRenderState renderState = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity).createRenderState(entity, partialTick);
+        final AABB bounds = TESUtil.getEntityBounds(entity);
         renderState.shadowRadius = 0;
         renderState.lightCoords = Brightness.FULL_BRIGHT.pack();
         renderState.shadowPieces.clear();
+        renderState.boundingBoxHeight = (float)bounds.getYsize();
+        renderState.boundingBoxWidth = (float)Math.max(bounds.getXsize(), bounds.getZsize());
 
         if (renderState instanceof LivingEntityRenderState livingEntityRenderState) {
             livingEntityRenderState.deathTime = 0;
             livingEntityRenderState.nameTag = null;
-            livingEntityRenderState.xRot = 0;
             livingEntityRenderState.bodyRot = 22.5f;
+            livingEntityRenderState.scale = 1f;
 
             if (!config.hudEntityDamageOverlay())
                 livingEntityRenderState.hasRedOverlay = false;
