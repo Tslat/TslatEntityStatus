@@ -1,10 +1,11 @@
 # Changelog
 #### Version
-1.10
+1.10.3
 
 ## Changes
-- Updated to 26.1.2
-- Moved over to Jspecify's nullability schema, and revised all nullability handling throughout the mod
-- Added `package-info` files for all packages for further documentation and clarity
-- Moved TESParticles onto vanilla's level random rather than a distinct random, to allow for seeded particle randomness
-- Numerous other internal changes
+- Health bars now use team colours when the entity (or player) is on a team with a custom colour
+- Adjust the position of TES health particles to reduce the amount that get hidden behind entities
+- Adjusted the particle animation for damage particles when at close range to reduce offscreen particles
+- Multipart entities will now be fully considered when it comes to sizing for rendering their portrait
+- Fixed bosses not being recognised as bosses on Forge
+- Hopefully add support for fresh animations
