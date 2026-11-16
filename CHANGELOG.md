@@ -1,9 +1,8 @@
 # Changelog
 #### Version
-1.8.4
+1.8.6
 
 ## Changes
-* Fixed the in-world HUD activation basically being completely broken when away from spawn (#89)
-* Fixed the mod crashing on realms servers (#91)
-* Fixed in-world HUD rendering being weird for mods that cache client-side entities (#97)
-* Fixed the TES HUD entity health rendering on top of other screens (#95)
+* Adjust the position of TES health particles to reduce the amount that get hidden behind entities
+* Adjusted the particle animation for damage particles when at close range to reduce offscreen particles
+* Multipart entities will now be fully considered when it comes to sizing for rendering their portrait
